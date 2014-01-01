@@ -74,7 +74,7 @@
                 compile: function(element, attrs, childTranscludeFn) {
                     return function ( scope, element, attrs, treemodelCntr ) {
 
-                        function updateNodeOnRootScope(newValue) {
+                        scope.$watch("treeModel", function updateNodeOnRootScope(newValue) {
                             if (angular.isArray(newValue)) {
                                 scope.node = {};
                                 scope.node[scope.options.nodeChildren] = newValue;
@@ -82,9 +82,7 @@
                             else {
                                 scope.node = newValue;
                             }
-                        }
-                        scope.$watch("treeModel", updateNodeOnRootScope);
-                        updateNodeOnRootScope(scope.treeModel);
+                        });
 
                         //Rendering template for a root node
                         treemodelCntr.templateRoot( scope, function(clone) {
