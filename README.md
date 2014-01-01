@@ -10,12 +10,12 @@ Pure [AngularJS](http://www.angularjs.org) based tree control component.
 We have tried a number of tree controls built for angular and experience a of issues with each. As a result we decided
 to build a new tree control with the following design guidelines
 
-- isolated scope - the tree control should not pollute the scope it is rendered at
-- do not change the tree data - some tree implementations mark on the tree data the selection and expansion of nodes
-- allow customization of the tree node label using the angular way - as an angular template
-- support large trees with minimal overhead
-- react to changes in the tree data, updating the tree as required
-- support css styling - we provide three built in styles and allowing to add more
+- Isolated scope - the tree control should not pollute the scope it is rendered at
+- Does not change the tree data - some tree implementations mark on the tree data the selection and expansion of nodes
+- Allows customization of the tree node label using the angular way - as an angular template
+- Supports large trees with minimal overhead
+- Reacts to changes in the tree data, updating the tree as required
+- Supports css styling, with three built in styles
 
 ## Installation
 
@@ -87,4 +87,4 @@ The MIT License.
 
 Copyright ⓒ 2013 AHN JAE-HA.
 
-See [LICENSE](https://github.com/eu81273/angular.treeview/blob/master/LICENSE)
+See [LICENSE](https://github.com/wix/angular.treecontrol/blob/master/LICENSE)
