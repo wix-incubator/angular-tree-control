@@ -16,7 +16,8 @@
                 controller: function( $scope ) {
 
                     $scope.options = $scope.options || {
-                        nodeChildren: "children"
+                        nodeChildren: "children",
+                        dirSelectable: true
                     };
                     $scope.expandedNodes = {};
 
@@ -38,10 +39,16 @@
                     };
 
                     $scope.selectNodeLabel = function( selectedNode ){
-                        $scope.selectedScope = this.$id;
-                        $scope.selectedNode = selectedNode;
-                        if ($scope.onSelection)
-                            $scope.onSelection({node: selectedNode});
+                        if (selectedNode[$scope.options.nodeChildren] && selectedNode[$scope.options.nodeChildren].length > 0 &&
+                            !$scope.options.dirSelectable) {
+                            $scope.expandedNodes[this.$id] = !$scope.expandedNodes[this.$id];
+                        }
+                        else {
+                            $scope.selectedScope = this.$id;
+                            $scope.selectedNode = selectedNode;
+                            if ($scope.onSelection)
+                                $scope.onSelection({node: selectedNode});
+                        }
                     };
 
                     $scope.selectedClass = function() {
