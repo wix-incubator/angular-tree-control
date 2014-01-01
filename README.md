@@ -3,7 +3,7 @@ Angular Tree Controll
 
 Pure [AngularJS](http://www.angularjs.org) based tree control component.
 
-[![ScreenShot](https://raw.github.com/wix/angular.treecontrol/master/images/sample.png)](http://jsfiddle.net/8ApLX/5/)
+[![ScreenShot](https://raw.github.com/wix/angular-tree-control/master/images/sample.png)](http://jsfiddle.net/8ApLX/5/)
 
 Running sample on [jsFiddle](http://jsfiddle.net/8ApLX/5/)
 
@@ -93,6 +93,4 @@ This tree control is based in part on the angular.treeview component
 
 The MIT License.
 
-Copyright ⓒ 2013 AHN JAE-HA.
-
-See [LICENSE](https://github.com/wix/angular.treecontrol/blob/master/LICENSE)
+See [LICENSE](https://github.com/wix/angular-tree-control/blob/master/LICENSE)
