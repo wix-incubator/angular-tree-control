@@ -11,17 +11,19 @@
                     treeModel: "=",
                     selectedNode: "=",
                     onSelection: "&",
-                    nodeChildren: "@"
+                    options: "=?"
                 },
                 controller: function( $scope ) {
 
-                    $scope.nodeChildren = $scope.nodeChildren || 'children';
+                    $scope.options = $scope.options || {
+                        nodeChildren: "children"
+                    };
                     $scope.expandedNodes = {};
 
                     $scope.headClass = function(node) {
-                        if (node[$scope.nodeChildren].length && !$scope.expandedNodes[this.$id])
+                        if (node[$scope.options.nodeChildren].length && !$scope.expandedNodes[this.$id])
                             return "tree-collapsed";
-                        else if (node[$scope.nodeChildren].length && $scope.expandedNodes[this.$id])
+                        else if (node[$scope.options.nodeChildren].length && $scope.expandedNodes[this.$id])
                             return "tree-expanded";
                         else
                             return "tree-normal"
@@ -49,7 +51,7 @@
                     //tree template
                     var template =
                         '<ul>' +
-                            '<li ng-repeat="node in node.' + $scope.nodeChildren+'" ng-class="headClass(node)">' +
+                            '<li ng-repeat="node in node.' + $scope.options.nodeChildren+'" ng-class="headClass(node)">' +
                             '<i class="tree-has-children" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-normal"></i>' +
                             '<div class="tree-label" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
@@ -68,7 +70,7 @@
                         function updateNodeOnRootScope(newValue) {
                             if (angular.isArray(newValue)) {
                                 scope.node = {};
-                                scope.node[scope.nodeChildren] = newValue;
+                                scope.node[scope.options.nodeChildren] = newValue;
                             }
                             else {
                                 scope.node = newValue;
