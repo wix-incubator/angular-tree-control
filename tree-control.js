@@ -9,7 +9,7 @@
                 transclude: true,
                 scope: {
                     treeModel: "=",
-                    selectedNode: "=",
+                    selectedNode: "=?",
                     onSelection: "&",
                     options: "=?"
                 },
