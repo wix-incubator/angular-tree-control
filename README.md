@@ -39,7 +39,7 @@ Add tree elements to your Angular template
 ```html
 <treecontrol class="tree-classic"
    tree-model="dataForTheTree"
-   node-children="children"
+   options="treeOptions"
    on-selection="showSelected(node)"
    selected-node="node1">
    employee: {{node.name}} age {{node.age}}
@@ -49,6 +49,10 @@ Add tree elements to your Angular template
 and add the data for the tree
 
 ```javascript
+$scope.treeOptions = {
+    nodeChildren: "children",
+    dirSelectable: true
+}
 $scope.dataForTheTree =
 [
 	{ "name" : "Joe", "age" : "21", "children" : [
@@ -73,9 +77,11 @@ Attributes of angular treecontrol
 - treecontrol: the treeview element.
 - element content: the template to evaluate against each node for the node label.
 - tree-model : the tree data on the $scope. This can be an array of nodes or a single node.
-- node-children : the name of the property of each node that holds the node children. Defaults to 'children'
-- on-selection : function to call on the current $scope on node selection
-- selected-node : parameter on the $scope to update with the current selection
+- options : different options to customize the tree control.
+  - nodeChildren : the name of the property of each node that holds the node children. Defaults to 'children'.
+  - dirSelection : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to true.
+- on-selection : function to call on the current $scope on node selection.
+- selected-node : parameter on the $scope to update with the current selection.
 
 
 ## Reference
