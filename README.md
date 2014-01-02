@@ -21,6 +21,8 @@ to build a new tree control with the following design guidelines
 
 ## Installation
 
+**Bower**: `bower install angular-tree-control`
+
 Copy the script and css into your project and add a script and link tag to your page.
 
 ```html
