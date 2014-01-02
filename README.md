@@ -24,7 +24,7 @@ to build a new tree control with the following design guidelines
 Copy the script and css into your project and add a script and link tag to your page.
 
 ```html
-<script type="text/javascript" src="/tree-control.js"></script>
+<script type="text/javascript" src="/angular-tree-control.js"></script>
 <link rel="stylesheet" type="text/css" href="css/tree-control.css">
 ```
 
