@@ -67,8 +67,7 @@
                             '</ul>';
 
                     return {
-                        templateRoot: $compile(template),
-                        templateChild: $compile(template)
+                        template: $compile(template)
                     }
                 },
                 compile: function(element, attrs, childTranscludeFn) {
@@ -85,7 +84,7 @@
                         });
 
                         //Rendering template for a root node
-                        treemodelCntr.templateRoot( scope, function(clone) {
+                        treemodelCntr.template( scope, function(clone) {
                             element.html('').append( clone );
                         });
                         // save the transclude function from compile (which is not bound to a scope as apposed to the one from link)
@@ -103,7 +102,7 @@
                 link: function( scope, element, attrs, treemodelCntr) {
 
                     // Rendering template for the current node
-                    treemodelCntr.templateChild(scope, function(clone) {
+                    treemodelCntr.template(scope, function(clone) {
                         element.html('').append(clone);
                     });
                 }
