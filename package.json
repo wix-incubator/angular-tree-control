@@ -1,0 +1,23 @@
+{
+  "name": "angular-tree-control",
+  "version": "0.1.0",
+  "description": "Angular Tree Control",
+  "main": "angular-tree-control.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wix/angular-tree-control.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wix/angular-tree-control/issues"
+  },
+  "homepage": "https://github.com/wix/angular-tree-control",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-release": "~0.6.0"
+  }
+}
