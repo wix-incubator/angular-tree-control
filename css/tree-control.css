@@ -27,10 +27,10 @@ treecontrol li {
     line-height: 20px;
 }
 
-treecontrol li.tree-expanded i.tree-normal, treecontrol li.tree-collapsed i.tree-normal {display:none;}
-treecontrol li.tree-expanded i.tree-has-children, treecontrol li.tree-collapsed i.tree-has-children {display:inline;}
-treecontrol li.tree-normal i.tree-has-children {display:none;}
-treecontrol li.tree-normal i.tree-normal {display:inline;}
+treecontrol li.tree-expanded i.tree-leaf-head, treecontrol li.tree-collapsed i.tree-leaf-head {display:none;}
+treecontrol li.tree-expanded i.tree-branch-head, treecontrol li.tree-collapsed i.tree-branch-head {display:inline;}
+treecontrol li.tree-leaf i.tree-branch-head {display:none;}
+treecontrol li.tree-leaf i.tree-leaf-head {display:inline;}
 
 treecontrol li i {
     cursor: pointer;
@@ -52,7 +52,7 @@ treecontrol.tree-classic li.tree-collapsed i {
     background: url("../images/folder-closed.png") no-repeat;
 }
 
-treecontrol.tree-classic li.tree-normal i {
+treecontrol.tree-classic li.tree-leaf i {
     padding: 1px 10px;
     background: url("../images/file.png") no-repeat;
 }
@@ -73,7 +73,7 @@ treecontrol.tree-light li.tree-collapsed i {
     background: url("../images/node-closed-2.png") no-repeat;
 }
 
-treecontrol.tree-light li.tree-normal i {
+treecontrol.tree-light li.tree-leaf i {
     padding: 1px 10px;
     width: 16px; height: 16px;
     background: none no-repeat;
@@ -94,7 +94,7 @@ treecontrol.tree-dark li.tree-collapsed i {
     background: url("../images/node-closed-light.png") no-repeat;
 }
 
-treecontrol.tree-dark li.tree-normal i {
+treecontrol.tree-dark li.tree-leaf i {
     padding: 1px 10px;
     width: 16px; height: 16px;
     background: none no-repeat;

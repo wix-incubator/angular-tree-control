@@ -27,7 +27,7 @@
                         else if (node[$scope.options.nodeChildren].length && $scope.expandedNodes[this.$id])
                             return "tree-expanded";
                         else
-                            return "tree-normal"
+                            return "tree-leaf"
                     };
 
                     $scope.nodeExpanded = function() {
@@ -59,8 +59,8 @@
                     var template =
                         '<ul>' +
                             '<li ng-repeat="node in node.' + $scope.options.nodeChildren+'" ng-class="headClass(node)">' +
-                            '<i class="tree-has-children" ng-click="selectNodeHead(node)"></i>' +
-                            '<i class="tree-normal"></i>' +
+                            '<i class="tree-branch-head" ng-click="selectNodeHead(node)"></i>' +
+                            '<i class="tree-leaf-head"></i>' +
                             '<div class="tree-label" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
