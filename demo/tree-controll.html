@@ -17,21 +17,21 @@
         <div class="tree-border">
             <h3>Classic Tree</h3>
             <div>Selected: {{node1.label?node1.label:"N/A"}}</div>
-            <treecontrol class="tree-classic" tree-model="treedata" options="opt2" on-selection="showSelected(node)" selected-node="node1">
+            <treecontrol class="tree-classic" tree-model="treedata" options="opt1" on-selection="showSelected(node)" selected-node="node1">
                 label: {{node.label}} ({{node.id}})
             </treecontrol>
         </div>
         <div class="tree-border">
             <h3>Light Tree</h3>
             <div>Selected: {{node2.label?node2.label:"N/A"}}</div>
-            <treecontrol class="tree-light" tree-model="treedata" options="opt1" on-selection="showSelected(node)" selected-node="node2">
+            <treecontrol class="tree-light" tree-model="treedata" options="opt2" on-selection="showSelected(node)" selected-node="node2">
                 label: {{node.label}} ({{node.id}})
             </treecontrol>
         </div>
         <div class="tree-border" style=" background: #555;">
             <h3 style="color: white">Dark Tree</h3>
             <div style="color: white">Selected: {{node3.label?node3.label:"N/A"}}</div>
-            <treecontrol class="tree-dark" tree-model="treedata" options="opt2" on-selection="showSelected(node)" selected-node="node3">
+            <treecontrol class="tree-dark" tree-model="treedata" options="opt3" on-selection="showSelected(node)" selected-node="node3">
                 label: {{node.label}} ({{node.id}})
             </treecontrol>
         </div>
@@ -77,13 +77,26 @@
 
             $scope.opt1 = {
                 nodeChildren: "children",
-                dirSelectable: false
+                dirSelectable: true
             };
 
             $scope.opt2 = {
                 nodeChildren: "children",
-                dirSelectable: true
+                dirSelectable: false
             };
+
+            $scope.opt3 = {
+                nodeChildren: "children",
+                dirSelectable: true,
+                injectClasses: {
+                    ul: "a1",
+                    li: "a2",
+                    iExpanded: "a3",
+                    iCollapsed: "a4",
+                    iLeaf: "a5",
+                    label: "a6"
+                }
+            }
         }
 
     </script>

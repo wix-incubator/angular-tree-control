@@ -53,7 +53,15 @@ and add the data for the tree
 ```javascript
 $scope.treeOptions = {
     nodeChildren: "children",
-    dirSelectable: true
+    dirSelectable: true,
+    injectClasses: {
+        ul: "a1",
+        li: "a2",
+        iExpanded: "a3",
+        iCollapsed: "a4",
+        iLeaf: "a5",
+        label: "a6"
+    }
 }
 $scope.dataForTheTree =
 [
@@ -82,8 +90,58 @@ Attributes of angular treecontrol
 - options : different options to customize the tree control.
   - nodeChildren : the name of the property of each node that holds the node children. Defaults to 'children'.
   - dirSelection : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to true.
+  - injectClasses : allows to inject additional CSS classes into the tree dom
+    - ul : inject classes into the ul elements
+    - li : inject classes into the li elements
+    - iExpanded : inhect classes into the 'i' element for the expanded nodes
+    - iCollapsed : inhect classes into the 'i' element for the collapsed nodes
+    - iLeaf : inhect classes into the 'i' element for leaf nodes
+    - label : inhect classes into the div element around the label
 - on-selection : function to call on the current $scope on node selection.
 - selected-node : parameter on the $scope to update with the current selection.
+
+
+## Styling
+
+The angular-tree-control renders to the following DOM structure
+```html
+<treecontrol class="tree-classic">
+  <ul>
+    <li class="tree-expanded">
+      <i class="tree-branch-head"></i>
+      <i class="tree-leaf-head"></i>
+      <div class="tree-label">
+         ... label - expanded angular template is in the treecontrol element ...
+      </div>
+      <treeitem>
+        <ul>
+          <li class="tree-leaf">
+            <i class="tree-branch-head"></i>
+            <i class="tree-leaf-head"></i>
+            <div class="tree-label tree-selected">
+              ... label - expanded angular template is in the treecontrol element ...
+            </div>
+          </li>
+          <li class="tree-leaf">
+            <i class="tree-branch-head"></i>
+            <i class="tree-leaf-head"></i>
+            <div class="tree-label">
+              ... label - expanded angular template is in the treecontrol element ...
+            </div>
+          </li>
+        </ul>
+      </treeitem>
+    </li>
+  </ul>
+</treecontrol>
+```
+
+The following CSS classes are used in the built-in styles for the tree-control.
+Additional classes can be added using the options.injectClasses member (see above)
+
+- tree-expanded, tree-collapsed, tree-leaf - are placed on the 'ul' element
+- tree-branch-head, tree-leaf-head - are placed on the 'i' elements. We use those classes to place the icons for the tree
+- tree-selected - placed on the div around the label
 
 
 ## Reference
