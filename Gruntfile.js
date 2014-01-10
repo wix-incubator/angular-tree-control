@@ -22,7 +22,7 @@ module.exports = function(grunt) {
       options: {
         livereload: true,
         port: 9000,
-        open: 'http://localhost:<%= connect.options.port %>/demo/tree-controll.html'
+        open: 'http://localhost:<%= connect.options.port %>/demo/tree-control.html'
       },
       server: {
       }

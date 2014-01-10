@@ -1,4 +1,4 @@
-Angular Tree Controll
+Angular Tree Control
 ================
 
 Pure [AngularJS](http://www.angularjs.org) based tree control component.
