@@ -10,7 +10,9 @@ module.exports = function(grunt) {
         configFile: 'karma.conf.js'
       },
       ci: {
-        singleRun: true
+        singleRun: true,
+        preprocessors: {'*.js': 'coverage'},
+        reporters: ['progress', 'coverage']
       },
       dev: {
         background: true
