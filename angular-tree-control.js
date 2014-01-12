@@ -49,12 +49,12 @@
                     $scope.expandedNodes = {};
 
                     $scope.headClass = function(node) {
-                        if (node[$scope.options.nodeChildren].length && !$scope.expandedNodes[this.$id])
-                            return "tree-collapsed";
-                        else if (node[$scope.options.nodeChildren].length && $scope.expandedNodes[this.$id])
+                        if (!node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0)
+                            return "tree-leaf"
+                        if ($scope.expandedNodes[this.$id])
                             return "tree-expanded";
                         else
-                            return "tree-leaf"
+                            return "tree-collapsed";
                     };
 
                     $scope.iBranchClass = function() {

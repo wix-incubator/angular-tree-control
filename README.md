@@ -1,4 +1,4 @@
-Angular Tree Controll
+Angular Tree Control [![Build Status](https://travis-ci.org/wix/angular-tree-control.png)](https://travis-ci.org/wix/angular-tree-control)
 ================
 
 Pure [AngularJS](http://www.angularjs.org) based tree control component.
