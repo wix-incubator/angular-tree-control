@@ -123,7 +123,7 @@ describe('unit testing angular tree control directive', function() {
       element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
       $rootScope.$digest();
 
-      element.find('li:eq(0) div').click();
+      element.find('li:eq(0) .tree-branch-head').click();
       expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
       
       $rootScope.treedata = angular.copy(testTree);
@@ -157,7 +157,7 @@ describe('unit testing angular tree control directive', function() {
       element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
       $rootScope.$digest();
 
-      element.find('li:eq(0) div').click();
+      element.find('li:eq(0) .tree-branch-head').click();
       expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
       
       $rootScope.treedata = createSubTree(2, 2);

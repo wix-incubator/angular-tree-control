@@ -82,7 +82,7 @@
                     $scope.selectNodeLabel = function( selectedNode ){
                         if (selectedNode[$scope.options.nodeChildren] && selectedNode[$scope.options.nodeChildren].length > 0 &&
                             !$scope.options.dirSelectable) {
-                            $scope.selectNodeHead();
+                            this.selectNodeHead();
                         }
                         else {
                             $scope.selectedScope = this.$id;
@@ -114,16 +114,16 @@
                 compile: function(element, attrs, childTranscludeFn) {
                     return function ( scope, element, attrs, treemodelCntr ) {
 
-                        scope.$watch("treeModel", function updateNodeOnRootScope(newValue, oldValue) {
-                            if (angular.equals(newValue, oldValue)) {
-                              return;
-                            }
-                            
+                        scope.$watch("treeModel", function updateNodeOnRootScope(newValue) {
                             if (angular.isArray(newValue)) {
+                                if (angular.isDefined(scope.node) && angular.equals(scope.node[scope.options.nodeChildren], newValue))
+                                    return;
                                 scope.node = {};
                                 scope.node[scope.options.nodeChildren] = newValue;
                             }
                             else {
+                                if (angular.equals(scope.node, newValue))
+                                    return;
                                 scope.node = newValue;
                             }
                         });
