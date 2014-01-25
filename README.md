@@ -84,21 +84,22 @@ $scope.dataForTheTree =
 
 Attributes of angular treecontrol
 
-- treecontrol: the treeview element.
-- element content: the template to evaluate against each node for the node label.
-- tree-model : the tree data on the $scope. This can be an array of nodes or a single node.
-- options : different options to customize the tree control.
-  - nodeChildren : the name of the property of each node that holds the node children. Defaults to 'children'.
-  - dirSelection : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to true.
-  - injectClasses : allows to inject additional CSS classes into the tree dom
-    - ul : inject classes into the ul elements
-    - li : inject classes into the li elements
-    - iExpanded : inhect classes into the 'i' element for the expanded nodes
-    - iCollapsed : inhect classes into the 'i' element for the collapsed nodes
-    - iLeaf : inhect classes into the 'i' element for leaf nodes
-    - label : inhect classes into the div element around the label
-- on-selection : function to call on the current $scope on node selection.
-- selected-node : parameter on the $scope to update with the current selection.
+- `treecontrol` : the treeview element.
+- element content : the template to evaluate against each node for the node label.
+- `tree-model` : the tree data on the `$scope`. This can be an array of nodes or a single node.
+- `options` : different options to customize the tree control.
+  - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
+  - `dirSelection` : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to `true`.
+  - `equality` : the function used to determine equality between old nodes and new ones when checking whether a replacement node should be expanded and/or marked as selected. Defaults to a function which uses `angular.equals()` on everything except the property indicated in `nodeChildren`.
+  - `injectClasses` : allows to inject additional CSS classes into the tree DOM
+    - `ul` : inject classes into the ul elements
+    - `li` : inject classes into the li elements
+    - `iExpanded` : inhect classes into the 'i' element for the expanded nodes
+    - `iCollapsed` : inhect classes into the 'i' element for the collapsed nodes
+    - `iLeaf` : inhect classes into the 'i' element for leaf nodes
+    - `label` : inhect classes into the div element around the label
+- `on-selection` : function to call on the current `$scope` on node selection.
+- `selected-node` : parameter on the `$scope` to update with the current selection.
 
 
 ## Styling
