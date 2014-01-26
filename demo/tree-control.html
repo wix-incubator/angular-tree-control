@@ -42,23 +42,19 @@
     <h2>Mutate the tree</h2>
     <a class="fake-link" ng-click="addRoot()">add root</a></br>
     <a class="fake-link" ng-click="addChild()">add child (to the first root of the tree)</a></br>
+    <a class="fake-link" ng-click="replaceData()">Replace tree data</a></br>
     <script>
 
         function Controller($scope) {
 
-            var num = 1;
-            function getNum() {
-                return num++;
-            }
-
-            $scope.treedata=createSubTree(3);
-            function createSubTree(level) {
+            $scope.treedata=createSubTree(3, "");
+            function createSubTree(level, prefix) {
                 if (level > 0)
                     return [
-                        { "label" : "Node " + getNum(), "id" : "id", "children": createSubTree(level-1) },
-                        { "label" : "Node " + getNum(), "id" : "id", "children": createSubTree(level-1) },
-                        { "label" : "Node " + getNum(), "id" : "id", "children": createSubTree(level-1) },
-                        { "label" : "Node " + getNum(), "id" : "id", "children": createSubTree(level-1) }
+                        { "label" : "Node " + prefix + "1", "id" : "id"+prefix + "1", "children": createSubTree(level-1, prefix + "1.") },
+                        { "label" : "Node " + prefix + "2", "id" : "id"+prefix + "2", "children": createSubTree(level-1, prefix + "2.") },
+                        { "label" : "Node " + prefix + "3", "id" : "id"+prefix + "3", "children": createSubTree(level-1, prefix + "3.") },
+                        { "label" : "Node " + prefix + "4", "id" : "id"+prefix + "4", "children": createSubTree(level-1, prefix + "4.") }
                     ];
                 else
                     return [];
@@ -69,10 +65,14 @@
             };
 
             $scope.addRoot = function() {
-                $scope.treedata.push({ "label" : "New Node " + getNum(), "id" : "id", "children": [] });
+                $scope.treedata.push({ "label" : "New Node A", "id" : "id A", "children": [] });
             };
             $scope.addChild = function() {
-                $scope.treedata[0].children.push({ "label" : "New Node " + getNum(), "id" : "id", "children": [] });
+                $scope.treedata[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });
+            };
+            $scope.replaceData = function() {
+                num = 1;
+                $scope.treedata = createSubTree(4, "");
             };
 
             $scope.opt1 = {
