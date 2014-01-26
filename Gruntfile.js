@@ -40,7 +40,7 @@ module.exports = function(grunt) {
     release: {
       options: {
         file: 'bower.json',
-        npm: false,
+        npm: false
       }
     }
   });

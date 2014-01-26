@@ -164,7 +164,7 @@
                     if (scope.options.equality(scope.node, scope.selectedNode)) {
                         scope.selectNodeLabel(scope.node);
                     }
-                    
+
                     scope.$treeTransclude(scope, function(clone) {
                         element.empty();
                         element.append(clone);
