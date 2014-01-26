@@ -1,6 +1,6 @@
 (function ( angular ) {
     'use strict';
-
+    
     angular.module( 'treeControl', [] )
         .directive( 'treecontrol', ['$compile', function( $compile ) {
             /**
@@ -17,12 +17,12 @@
                 else
                     return "";
             }
-
+            
             function ensureDefault(obj, prop, value) {
                 if (!obj.hasOwnProperty(prop))
                     obj[prop] = value;
             }
-
+            
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -45,6 +45,13 @@
                     ensureDefault($scope.options.injectClasses, "iCollapsed", "");
                     ensureDefault($scope.options.injectClasses, "iLeaf", "");
                     ensureDefault($scope.options.injectClasses, "label", "");
+                    ensureDefault($scope.options, "equality", function (a, b) {
+                        if (a === undefined || b === undefined)
+                            return false;
+                        a = angular.copy(a); a[$scope.options.nodeChildren] = [];
+                        b = angular.copy(b); b[$scope.options.nodeChildren] = [];
+                        return angular.equals(a, b);
+                    });
 
                     $scope.expandedNodes = {};
 
@@ -65,17 +72,17 @@
                     };
 
                     $scope.nodeExpanded = function() {
-                        return $scope.expandedNodes[this.$id];
+                        return !!$scope.expandedNodes[this.$id];
                     };
 
                     $scope.selectNodeHead = function() {
-                        $scope.expandedNodes[this.$id] = !$scope.expandedNodes[this.$id];
+                        $scope.expandedNodes[this.$id] = ($scope.expandedNodes[this.$id] === undefined ? this.node : undefined);
                     };
 
                     $scope.selectNodeLabel = function( selectedNode ){
                         if (selectedNode[$scope.options.nodeChildren] && selectedNode[$scope.options.nodeChildren].length > 0 &&
                             !$scope.options.dirSelectable) {
-                            $scope.expandedNodes[this.$id] = !$scope.expandedNodes[this.$id];
+                            this.selectNodeHead();
                         }
                         else {
                             $scope.selectedScope = this.$id;
@@ -109,10 +116,14 @@
 
                         scope.$watch("treeModel", function updateNodeOnRootScope(newValue) {
                             if (angular.isArray(newValue)) {
+                                if (angular.isDefined(scope.node) && angular.equals(scope.node[scope.options.nodeChildren], newValue))
+                                    return;
                                 scope.node = {};
                                 scope.node[scope.options.nodeChildren] = newValue;
                             }
                             else {
+                                if (angular.equals(scope.node, newValue))
+                                    return;
                                 scope.node = newValue;
                             }
                         });
@@ -134,7 +145,6 @@
                 restrict: 'E',
                 require: "^treecontrol",
                 link: function( scope, element, attrs, treemodelCntr) {
-
                     // Rendering template for the current node
                     treemodelCntr.template(scope, function(clone) {
                         element.html('').append(clone);
@@ -145,6 +155,16 @@
         .directive("treeTransclude", function() {
             return {
                 link: function(scope, element, attrs, controller) {
+                    angular.forEach(scope.expandedNodes, function (node, id) {
+                        if (scope.options.equality(node, scope.node)) {
+                            scope.expandedNodes[scope.$id] = scope.node;
+                            scope.expandedNodes[id] = undefined;
+                        }
+                    });
+                    if (scope.options.equality(scope.node, scope.selectedNode)) {
+                        scope.selectNodeLabel(scope.node);
+                    }
+                    
                     scope.$treeTransclude(scope, function(clone) {
                         element.empty();
                         element.append(clone);
@@ -153,7 +173,3 @@
             }
         });
 })( angular );
-
-
-
-

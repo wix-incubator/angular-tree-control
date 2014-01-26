@@ -117,6 +117,55 @@ describe('unit testing angular tree control directive', function() {
       expect(element.find('.tree-selected').length).toBe(1);
     });
 
+    it('should retain expansions after full model refresh', function () {
+      var testTree = createSubTree(2, 2);
+      $rootScope.treedata = angular.copy(testTree);
+      element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+      $rootScope.$digest();
+
+      element.find('li:eq(0) .tree-branch-head').click();
+      expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
+      
+      $rootScope.treedata = angular.copy(testTree);
+      $rootScope.$digest();
+      expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
+    });
+
+    it('should retain selection after full model refresh', function () {
+      var testTree = createSubTree(2, 2);
+      $rootScope.treedata = angular.copy(testTree);
+      element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+      $rootScope.$digest();
+
+      element.find('li:eq(0) div').click();
+      expect(element.find('.tree-selected').length).toBe(1);
+      
+      $rootScope.treedata = angular.copy(testTree);
+      $rootScope.$digest();
+      expect(element.find('.tree-selected').length).toBe(1);
+    });
+
+    it('should be able to accept alternative equality function', function () {
+      $rootScope.treedata = createSubTree(2, 2);
+      $rootScope.treedata[0].id = 'id0';
+      $rootScope.treeOptions = {equality: function(a, b) {
+        if (a === undefined || b === undefined || a.id === undefined || b.id === undefined)
+          return false;
+        else
+          return angular.equals(a.id, b.id);
+      }};
+      element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+      $rootScope.$digest();
+
+      element.find('li:eq(0) .tree-branch-head').click();
+      expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
+      
+      $rootScope.treedata = createSubTree(2, 2);
+      $rootScope.treedata[0].id = 'id0';
+      $rootScope.$digest();
+      expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
+    });
+
     it('should be able to accept additional class names', function () {
       $rootScope.treedata = createSubTree(2, 2);
       $rootScope.treeOptions = {injectClasses: {ul: 'ulcls', li: 'licls', iExpanded: 'expandcls',
