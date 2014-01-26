@@ -47,15 +47,14 @@
 
         function Controller($scope) {
 
-            $scope.treedata=createSubTree(3, "");
-            function createSubTree(level, prefix) {
-                if (level > 0)
-                    return [
-                        { "label" : "Node " + prefix + "1", "id" : "id"+prefix + "1", "children": createSubTree(level-1, prefix + "1.") },
-                        { "label" : "Node " + prefix + "2", "id" : "id"+prefix + "2", "children": createSubTree(level-1, prefix + "2.") },
-                        { "label" : "Node " + prefix + "3", "id" : "id"+prefix + "3", "children": createSubTree(level-1, prefix + "3.") },
-                        { "label" : "Node " + prefix + "4", "id" : "id"+prefix + "4", "children": createSubTree(level-1, prefix + "4.") }
-                    ];
+            $scope.treedata=createSubTree(3, 4, "");
+            function createSubTree(level, width, prefix) {
+                if (level > 0) {
+                    var res = [];
+                    for (var i=1; i <= width; i++)
+                        res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "children": createSubTree(level-1, width, prefix + i +".") });
+                    return res;
+                }
                 else
                     return [];
             }
@@ -71,8 +70,7 @@
                 $scope.treedata[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });
             };
             $scope.replaceData = function() {
-                num = 1;
-                $scope.treedata = createSubTree(4, "");
+                $scope.treedata = createSubTree(4, 5, "");
             };
 
             $scope.opt1 = {
