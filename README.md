@@ -23,11 +23,16 @@ to build a new tree control with the following design guidelines
 
 **Bower**: `bower install angular-tree-control`
 
+The tree control can be used as a Dom element or as an attribute.
+
 Copy the script and css into your project and add a script and link tag to your page.
 
 ```html
 <script type="text/javascript" src="/angular-tree-control.js"></script>
+<!-- link for CSS when using the tree as a Dom element -->
 <link rel="stylesheet" type="text/css" href="css/tree-control.css">
+<!-- link for CSS when using the tree as an attribute -->
+<link rel="stylesheet" type="text/css" href="css/tree-control-attribute.css">
 ```
 
 Add a dependency to your application module.
@@ -39,6 +44,7 @@ angular.module('myApp', ['treeControl']);
 Add tree elements to your Angular template
 
 ```html
+<!-- as a Dom element -->
 <treecontrol class="tree-classic"
    tree-model="dataForTheTree"
    options="treeOptions"
@@ -46,6 +52,14 @@ Add tree elements to your Angular template
    selected-node="node1">
    employee: {{node.name}} age {{node.age}}
 </treecontrol>
+<!-- as an attribute -->
+<div treecontrol class="tree-classic"
+   tree-model="dataForTheTree"
+   options="treeOptions"
+   on-selection="showSelected(node)"
+   selected-node="node1">
+   employee: {{node.name}} age {{node.age}}
+</div>
 ```
 
 and add the data for the tree

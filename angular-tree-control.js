@@ -24,7 +24,7 @@
             }
 
             return {
-                restrict: 'E',
+                restrict: 'EA',
                 require: "treecontrol",
                 transclude: true,
                 scope: {
