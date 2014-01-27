@@ -184,4 +184,68 @@ describe('unit testing angular tree control directive', function() {
     });
   });
 
+    describe('testing that tree customizations work properly', function () {
+        beforeEach(function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treedata.push({});
+            $rootScope.treeOptions = {
+                injectClasses: {
+                    ul: "ulClass",
+                    li: "liClass",
+                    liSelected: "liSelectedClass",
+                    iExpanded: "iExpandClass",
+                    iCollapsed: "iCollapsedClass",
+                    iLeaf: "iLeafClass",
+                    label: "labelClass",
+                    labelSelected: "labelSelectedClass"
+                }
+            };
+
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+        });
+
+        it('should render the ulClass on the ul Element', function () {
+            expect(element.find("ul").hasClass("ulClass")).toBeTruthy();
+        });
+
+        it('should render the liClass on the li Element', function () {
+            expect(element.find("li").hasClass("liClass")).toBeTruthy();
+        });
+
+        it('should not render the liSelectedClass initially on the li Element', function () {
+            expect(element.find('li:eq(0)').hasClass('liSelectedClass')).toBeFalsy();
+        });
+
+        it('should render the liSelectedClass on the a selected li Element', function () {
+            element.find('li:eq(0) div').click();
+            expect(element.find('li:eq(0)').hasClass('liSelectedClass')).toBeTruthy();
+        });
+
+        it('should render the iCollapsedClass on the i head element when collapsed', function () {
+            expect(element.find('li:eq(0) i:eq(0)').hasClass('iCollapsedClass')).toBeTruthy();
+        });
+
+        it('should render the iLeafClass on leafs', function () {
+            expect(element.find('li:eq(2) i:eq(1)').hasClass('iLeafClass')).toBeTruthy();
+        });
+
+        it('should render the iExpandClass on expanded nodes', function () {
+            element.find('li:eq(0) .tree-branch-head').click();
+            expect(element.find('li:eq(0) i:eq(0)').hasClass('iExpandClass')).toBeTruthy();
+        });
+
+        it('should render the labelClass on the label div element', function () {
+            expect(element.find('li:eq(0) div').hasClass('labelClass')).toBeTruthy();
+        });
+
+        it('should not render the labelSelectedClass on the label div element when it is not selected', function () {
+            expect(element.find('li:eq(0) div').hasClass('labelSelectedClass')).toBeFalsy();
+        });
+
+        it('should render the labelSelectedClass on the label div element when it is selected', function () {
+            element.find('li:eq(0) div').click();
+            expect(element.find('li:eq(0) div').hasClass('labelSelectedClass')).toBeTruthy();
+        });
+    });
 });

@@ -71,10 +71,12 @@ $scope.treeOptions = {
     injectClasses: {
         ul: "a1",
         li: "a2",
+        liSelected: "a7",
         iExpanded: "a3",
         iCollapsed: "a4",
         iLeaf: "a5",
-        label: "a6"
+        label: "a6",
+        labelSelected: "a8"
     }
 }
 $scope.dataForTheTree =
@@ -108,10 +110,12 @@ Attributes of angular treecontrol
   - `injectClasses` : allows to inject additional CSS classes into the tree DOM
     - `ul` : inject classes into the ul elements
     - `li` : inject classes into the li elements
+    - `liSelected` : inject classes into the li elements only when the node is selected
     - `iExpanded` : inhect classes into the 'i' element for the expanded nodes
     - `iCollapsed` : inhect classes into the 'i' element for the collapsed nodes
     - `iLeaf` : inhect classes into the 'i' element for leaf nodes
     - `label` : inhect classes into the div element around the label
+    - `labelSelected` : inhect classes into the div element around the label only when the node is selected
 - `on-selection` : function to call on the current `$scope` on node selection.
 - `selected-node` : parameter on the `$scope` to update with the current selection.
 

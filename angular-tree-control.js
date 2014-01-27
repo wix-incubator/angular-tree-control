@@ -41,10 +41,12 @@
                     ensureDefault($scope.options, "injectClasses", {});
                     ensureDefault($scope.options.injectClasses, "ul", "");
                     ensureDefault($scope.options.injectClasses, "li", "");
+                    ensureDefault($scope.options.injectClasses, "liSelected", "");
                     ensureDefault($scope.options.injectClasses, "iExpanded", "");
                     ensureDefault($scope.options.injectClasses, "iCollapsed", "");
                     ensureDefault($scope.options.injectClasses, "iLeaf", "");
                     ensureDefault($scope.options.injectClasses, "label", "");
+                    ensureDefault($scope.options.injectClasses, "labelSelected", "");
                     ensureDefault($scope.options, "equality", function (a, b) {
                         if (a === undefined || b === undefined)
                             return false;
@@ -56,12 +58,16 @@
                     $scope.expandedNodes = {};
 
                     $scope.headClass = function(node) {
+                        var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
+                        var injectSelectionClass = "";
+                        if (liSelectionClass && (this.$id == $scope.selectedScope))
+                            injectSelectionClass = " " + liSelectionClass;
                         if (!node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0)
-                            return "tree-leaf"
+                            return "tree-leaf" + injectSelectionClass
                         if ($scope.expandedNodes[this.$id])
-                            return "tree-expanded";
+                            return "tree-expanded" + injectSelectionClass;
                         else
-                            return "tree-collapsed";
+                            return "tree-collapsed" + injectSelectionClass;
                     };
 
                     $scope.iBranchClass = function() {
@@ -93,7 +99,12 @@
                     };
 
                     $scope.selectedClass = function() {
-                        return (this.$id == $scope.selectedScope)?"tree-selected":"";
+                        var labelSelectionClass = classIfDefined($scope.options.injectClasses.labelSelected, false);
+                        var injectSelectionClass = "";
+                        if (labelSelectionClass && (this.$id == $scope.selectedScope))
+                            injectSelectionClass = " " + labelSelectionClass;
+
+                        return (this.$id == $scope.selectedScope)?"tree-selected" + injectSelectionClass:"";
                     };
 
                     //tree template
