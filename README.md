@@ -101,7 +101,7 @@ $scope.dataForTheTree =
 Attributes of angular treecontrol
 
 - `treecontrol` : the treeview element.
-- element content : the template to evaluate against each node for the node label.
+- element content : the template to evaluate against each node (and the parent scope of the tree) for the node label.
 - `tree-model` : the tree data on the `$scope`. This can be an array of nodes or a single node.
 - `options` : different options to customize the tree control.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
@@ -118,6 +118,15 @@ Attributes of angular treecontrol
     - `labelSelected` : inhect classes into the div element around the label only when the node is selected
 - `on-selection` : function to call on the current `$scope` on node selection.
 - `selected-node` : parameter on the `$scope` to update with the current selection.
+
+### The tree labels
+
+The Angular Tree control uses a similar paradigm to ng-repeat in that it allows using the current node as well as values from
+the parent scope. The current node is injected into the scope used to render the label as the ```node``` member (unlike ng-repeat, we
+do not allow to name the current node item in the transcluded scope).
+
+In order to render a template that takes a value ```X``` from the parent scope of the tree and value ```Y``` from the current node, use the following template
+```{{X}} {{node.Y}}```
 
 
 ## Styling

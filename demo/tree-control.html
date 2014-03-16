@@ -32,7 +32,7 @@
             <h3 style="color: white">Dark Tree</h3>
             <div style="color: white">Selected: {{node3.label?node3.label:"N/A"}}</div>
             <treecontrol class="tree-dark" tree-model="treedata" options="opt3" on-selection="showSelected(node)" selected-node="node3">
-                label: {{node.label}} ({{node.id}})
+                label: {{node.label}} ({{node.id}})  [{{label}}]
             </treecontrol>
         </div>
     </div>
@@ -43,10 +43,13 @@
     <a class="fake-link" ng-click="addRoot()">add root</a></br>
     <a class="fake-link" ng-click="addChild()">add child (to the first root of the tree)</a></br>
     <a class="fake-link" ng-click="replaceData()">Replace tree data</a></br>
+    External Scope Label: <input ng-model="label"></br>
+    Bind to tree label of node 1.1 <input ng-model="treedata[0].children[0].label"></br>
     <script>
 
         function Controller($scope) {
 
+            $scope.label = "label from external scope";
             $scope.treedata=createSubTree(3, 4, "");
             function createSubTree(level, width, prefix) {
                 if (level > 0) {

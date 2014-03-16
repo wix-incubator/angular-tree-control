@@ -56,6 +56,7 @@
                     });
 
                     $scope.expandedNodes = {};
+                    $scope.parentScopeOfTree = $scope.$parent;
 
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
@@ -176,7 +177,14 @@
                         scope.selectNodeLabel(scope.node);
                     }
 
-                    scope.$treeTransclude(scope, function(clone) {
+                    // create a scope for the transclusion, whos parent is the parent of the tree control
+                    scope.transcludeScope = scope.parentScopeOfTree.$new();
+                    scope.transcludeScope.node = scope.node;
+                    scope.$on('$destroy', function() {
+                        scope.transcludeScope.$destroy();
+                    });
+
+                    scope.$treeTransclude(scope.transcludeScope, function(clone) {
                         element.empty();
                         element.append(clone);
                     });

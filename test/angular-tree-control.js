@@ -73,6 +73,21 @@ describe('unit testing angular tree control directive', function() {
     });
   });
 
+  describe('testing that tree label rendering uses external scope data', function () {
+      beforeEach(function () {
+          $rootScope.label = "exLabel";
+          $rootScope.treedata = createSubTree(2, 2);
+          $rootScope.treedata.push({});
+          element = $compile('<treecontrol tree-model="treedata">{{label}} - {{node.label}}</treecontrol>')($rootScope);
+          $rootScope.$digest();
+      });
+
+      it('should transclude tree labels', function () {
+          expect(element.find('li:eq(0) span').text()).toBe('exLabel - node 1');
+          expect(element.find('li:eq(1) span').text()).toBe('exLabel - node 4');
+      });
+  });
+
   describe('testing that all options are handled correctly', function () {
     it('should publish the currently selected node on scope', function () {
       $rootScope.treedata = createSubTree(2, 2);
