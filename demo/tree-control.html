@@ -41,7 +41,8 @@
     Based on binding (selected-node): {{node1.label}}, {{node2.label}}, {{node3.label}}
     <h2>Mutate the tree</h2>
     <a class="fake-link" ng-click="addRoot()">add root</a></br>
-    <a class="fake-link" ng-click="addChild()">add child (to the first root of the tree)</a></br>
+    <a class="fake-link" ng-click="addChild()">add child (to node 1)</a></br>
+    <a class="fake-link" ng-click="addDeepChild()">add child (to node 1.1.1)</a></br>
     <a class="fake-link" ng-click="replaceData()">Replace tree data</a></br>
     External Scope Label: <input ng-model="label"></br>
     Bind to tree label of node 1.1 <input ng-model="treedata[0].children[0].label"></br>
@@ -71,6 +72,9 @@
             };
             $scope.addChild = function() {
                 $scope.treedata[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });
+            };
+            $scope.addDeepChild = function() {
+                $scope.treedata[0].children[0].children[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });
             };
             $scope.replaceData = function() {
                 $scope.treedata = createSubTree(4, 5, "");
