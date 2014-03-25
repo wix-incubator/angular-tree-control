@@ -684,6 +684,65 @@
         </script>
     </section>
 
+    <section id="injectFunctions" ng-controller="InjectFunctions">
+        <div class="page-header">
+            <h1>Custom Functions in node template <small>(options.injectFunctions)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="children-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         on-selection="showSelected(node)"
+                                         inject-functions="f"
+                                         options="opts">
+                                <button ng-click="f.buttonClick($event, node)">Click Me!</button> label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>Angular tree control allows an <code>inject-functions</code> for custom actions on tree-view nodes.
+                <p>Selected node: <code>{{selected ? selected.label : "N/A"}}</code></p>
+                <p>Last clicked: <code>{{lastClicked ? lastClicked.label : "N/A"}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="children-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="children-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="children-js">
+            function InjectFunctions($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+
+                $scope.opts = {};
+                $scope.selected = null;
+                $scope.lastClicked = null;
+                $scope.showSelected = function(node) {
+                    $scope.selected = node;    
+                };
+                $scope.f = {
+                    buttonClick: function($event, node) {
+                        $scope.lastClicked = node;
+                        // Prevents the default from firing
+                        // e.g: showSelected(node)
+                        $event.stopPropagation();
+                    }     
+                };
+            }
+        </script>
+    </section>
+
     order nodes
     conditional css class
 </div>
