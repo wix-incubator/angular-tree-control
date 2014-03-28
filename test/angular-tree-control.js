@@ -108,6 +108,25 @@ describe('unit testing angular tree control directive', function() {
       expect($rootScope.itemSelected).toHaveBeenCalledWith('node 1');
     });
 
+    if('should be able to order sibling nodes using orderBy and reverseOrder attributes', function() {
+      $rootScope.treedata = [
+        { label: "a", children: [] },
+        { label: "c", children: [] },
+        { label: "b", children: [] },
+      ];
+      $rootScope.predicate = 'label';
+      $rootScope.reverse = false;
+      element = $compile('<treecontrol tree-model="treedata" orderBy="{{predicate}}" reverseOrder="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+      expect(element.find('li:eq(0)').text()).toBe('a');
+      expect(element.find('li:eq(1)').text()).toBe('b');
+      expect(element.find('li:eq(2)').text()).toBe('c');
+      $rootScope.reverse = true;
+      $rootScope.$digest();
+      expect(element.find('li:eq(0)').text()).toBe('c');
+      expect(element.find('li:eq(1)').text()).toBe('b');
+      expect(element.find('li:eq(2)').text()).toBe('a');
+    });
+
     it('should be able to accept alternative children variable name', function () {
       $rootScope.treedata = createSubTree(2, 2);
       $rootScope.treedata.push({kinder: [{}]});
