@@ -108,10 +108,19 @@
                         return (this.$id == $scope.selectedScope)?"tree-selected" + injectSelectionClass:"";
                     };
 
+                    // orderBy clause (if any) for template
+                    var orderByClause = (function() {
+                      if (angular.isDefined($scope.orderBy)) {
+                        return " | orderBy:'" + $scope.orderBy + "'";
+                      } else {
+                        return '';
+                      }
+                    })();
+
                     //tree template
                     var template =
                         '<ul '+classIfDefined($scope.options.injectClasses.ul, true)+'>' +
-                            '<li ng-repeat="node in node.' + $scope.options.nodeChildren+'" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
+                            '<li ng-repeat="node in node.' + $scope.options.nodeChildren + orderByClause + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
                             '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
