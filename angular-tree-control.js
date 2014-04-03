@@ -33,7 +33,7 @@
                     onSelection: "&",
                     options: "=?"
                 },
-                controller: function( $scope ) {
+                controller: ['$scope', function( $scope ) {
 
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "nodeChildren", "children");
@@ -122,7 +122,7 @@
                     return {
                         template: $compile(template)
                     }
-                },
+                }],
                 compile: function(element, attrs, childTranscludeFn) {
                     return function ( scope, element, attrs, treemodelCntr ) {
 
