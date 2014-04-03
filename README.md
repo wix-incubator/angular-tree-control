@@ -118,6 +118,8 @@ Attributes of angular treecontrol
     - `labelSelected` : inhect classes into the div element around the label only when the node is selected
 - `on-selection` : function to call on the current `$scope` on node selection.
 - `selected-node` : parameter on the `$scope` to update with the current selection.
+- `order-by` : value for ng-repeat to use for ording sibling nodes
+- `reverse-order` : whether or not to reverse the ordering of sibling nodes based on the value of `order-by`
 
 ### The tree labels
 
