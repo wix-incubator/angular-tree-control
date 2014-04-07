@@ -66,7 +66,7 @@
                         if (liSelectionClass && (this.$id == $scope.selectedScope))
                             injectSelectionClass = " " + liSelectionClass;
                         if (!node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0)
-                            return "tree-leaf" + injectSelectionClass
+                            return "tree-leaf" + injectSelectionClass;
                         if ($scope.expandedNodes[this.$id])
                             return "tree-expanded" + injectSelectionClass;
                         else
