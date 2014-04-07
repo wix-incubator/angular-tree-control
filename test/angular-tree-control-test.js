@@ -22,7 +22,7 @@ describe('unit testing angular tree control directive', function() {
         beforeEach(function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata.push({});
-            element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" selected-node="selected">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
         });
 
@@ -54,11 +54,13 @@ describe('unit testing angular tree control directive', function() {
 
         it('should not have any nodes selected initially', function () {
             expect(element.find('.tree-selected').length).toBe(0);
+            expect($rootScope.selected).toBeUndefined();
         });
 
         it('should select node when clicked', function () {
             element.find('li:eq(0) div').click();
             expect(element.find('li:eq(0) div').hasClass('tree-selected')).toBeTruthy();
+            expect($rootScope.selected).toBeDefined();
         });
 
         it('should transclude tree labels', function () {
@@ -135,7 +137,7 @@ describe('unit testing angular tree control directive', function() {
             $rootScope.treedata = [
                 { label: "a", children: [] },
                 { label: "c", children: [] },
-                { label: "b", children: [] },
+                { label: "b", children: [] }
             ];
             $rootScope.predicate = 'label';
             $rootScope.reverse = false;
@@ -150,7 +152,7 @@ describe('unit testing angular tree control directive', function() {
             $rootScope.treedata = [
                 { label: "a", children: [] },
                 { label: "c", children: [] },
-                { label: "b", children: [] },
+                { label: "b", children: [] }
             ];
             $rootScope.predicate = 'label';
             $rootScope.reverse = true;
