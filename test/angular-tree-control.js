@@ -73,7 +73,31 @@ describe('unit testing angular tree control directive', function() {
     });
   });
 
-  describe('testing that tree label rendering uses external scope data', function () {
+
+    describe('testing customising tree leaf / branches using options.isLeaf', function () {
+        it('should display first level parents as collapsed nodes, including the leaf', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treedata.push({});
+            $rootScope.treeOptions = {isLeaf: function(node) {return false;}};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li.tree-collapsed').length).toBe(3);
+            expect(element.find('li.tree-leaf').length).toBe(0);
+        });
+
+        it('should display first level parents as leafs, including the actual branches', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treedata.push({});
+            $rootScope.treeOptions = {isLeaf: function(node) {return true;}};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li.tree-collapsed').length).toBe(0);
+            expect(element.find('li.tree-leaf').length).toBe(3);
+        });
+
+    });
+
+    describe('testing that tree label rendering uses external scope data', function () {
       beforeEach(function () {
           $rootScope.label = "exLabel";
           $rootScope.treedata = createSubTree(2, 2);

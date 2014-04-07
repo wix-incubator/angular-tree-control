@@ -37,6 +37,20 @@
                 },
                 controller: ['$scope', function( $scope ) {
 
+                    function defaultIsLeaf(node) {
+                        return !node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0;
+                    }
+
+                    function defaultEquality(a, b) {
+                        if (a === undefined || b === undefined)
+                            return false;
+                        a = angular.copy(a);
+                        a[$scope.options.nodeChildren] = [];
+                        b = angular.copy(b);
+                        b[$scope.options.nodeChildren] = [];
+                        return angular.equals(a, b);
+                    }
+
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "nodeChildren", "children");
                     ensureDefault($scope.options, "dirSelectable", "true");
@@ -49,23 +63,19 @@
                     ensureDefault($scope.options.injectClasses, "iLeaf", "");
                     ensureDefault($scope.options.injectClasses, "label", "");
                     ensureDefault($scope.options.injectClasses, "labelSelected", "");
-                    ensureDefault($scope.options, "equality", function (a, b) {
-                        if (a === undefined || b === undefined)
-                            return false;
-                        a = angular.copy(a); a[$scope.options.nodeChildren] = [];
-                        b = angular.copy(b); b[$scope.options.nodeChildren] = [];
-                        return angular.equals(a, b);
-                    });
+                    ensureDefault($scope.options, "equality", defaultEquality);
+                    ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
 
                     $scope.expandedNodes = {};
                     $scope.parentScopeOfTree = $scope.$parent;
+
 
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
                         var injectSelectionClass = "";
                         if (liSelectionClass && (this.$id == $scope.selectedScope))
                             injectSelectionClass = " " + liSelectionClass;
-                        if (!node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0)
+                        if ($scope.options.isLeaf(node))
                             return "tree-leaf" + injectSelectionClass;
                         if ($scope.expandedNodes[this.$id])
                             return "tree-expanded" + injectSelectionClass;
