@@ -73,7 +73,6 @@ describe('unit testing angular tree control directive', function() {
         });
     });
 
-
     describe('testing customising tree leaf / branches using options.isLeaf', function () {
         it('should display first level parents as collapsed nodes, including the leaf', function () {
             $rootScope.treedata = createSubTree(2, 2);
@@ -317,4 +316,25 @@ describe('unit testing angular tree control directive', function() {
             expect(element.find('li:eq(0) div').hasClass('labelSelectedClass')).toBeTruthy();
         });
     });
+
+    describe('testing that tree nodes can be rendered expanded on tree creation', function () {
+        beforeEach(function () {
+            $rootScope.treedata = createSubTree(3, 2);
+            $rootScope.treedata.push({});
+            $rootScope.treeOptions = {
+                defaultExpanded: [$rootScope.treedata[1], $rootScope.treedata[1].children[1]]
+            };
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+        });
+
+        it('should display first level parents - one expanded and one collapsed', function () {
+            expect(element.find('li:eq(0)').hasClass('tree-collapsed')).toBeTruthy();
+            expect(element.find('li:eq(1)').hasClass('tree-expanded')).toBeTruthy();
+            expect(element.find('li:eq(1) li:eq(0)').hasClass('tree-collapsed')).toBeTruthy();
+            expect(element.find('li:eq(1) li:eq(1)').hasClass('tree-expanded')).toBeTruthy();
+        });
+
+    });
+
 });

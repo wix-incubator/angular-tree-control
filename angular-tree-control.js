@@ -67,6 +67,11 @@
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
 
                     $scope.expandedNodes = {};
+                    if ($scope.options.defaultExpanded && angular.isArray($scope.options.defaultExpanded)) {
+                        for (var i=0; i < $scope.options.defaultExpanded.length; i++) {
+                            $scope.expandedNodes[""+i] = $scope.options.defaultExpanded[i];
+                        }
+                    }
                     $scope.parentScopeOfTree = $scope.$parent;
 
 
