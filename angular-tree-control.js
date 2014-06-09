@@ -1,6 +1,6 @@
 (function ( angular ) {
     'use strict';
-    
+
     angular.module( 'treeControl', [] )
         .directive( 'treecontrol', ['$compile', function( $compile ) {
             /**
@@ -17,12 +17,12 @@
                 else
                     return "";
             }
-            
+
             function ensureDefault(obj, prop, value) {
                 if (!obj.hasOwnProperty(prop))
                     obj[prop] = value;
             }
-            
+
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -39,6 +39,10 @@
 
                     function defaultIsLeaf(node) {
                         return !node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0;
+                    }
+
+                    function defaultGetNodeCustomCSSClass(node) {
+                        return "";
                     }
 
                     function defaultEquality(a, b) {
@@ -65,6 +69,7 @@
                     ensureDefault($scope.options.injectClasses, "labelSelected", "");
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
+                    ensureDefault($scope.options, "getNodeCustomCSSClass", defaultGetNodeCustomCSSClass);
 
                     $scope.expandedNodes = {};
                     if ($scope.options.defaultExpanded && angular.isArray($scope.options.defaultExpanded)) {
@@ -77,15 +82,21 @@
 
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
+                        var nodeCustomClass = $scope.options.getNodeCustomCSSClass(node);
+                        if (nodeCustomClass) {
+                            nodeCustomClass = " " + nodeCustomClass;
+                        }
+
                         var injectSelectionClass = "";
                         if (liSelectionClass && (this.$id == $scope.selectedScope))
                             injectSelectionClass = " " + liSelectionClass;
+
                         if ($scope.options.isLeaf(node))
-                            return "tree-leaf" + injectSelectionClass;
+                            return "tree-leaf" + injectSelectionClass + nodeCustomClass;
                         if ($scope.expandedNodes[this.$id])
-                            return "tree-expanded" + injectSelectionClass;
+                            return "tree-expanded" + injectSelectionClass + nodeCustomClass;
                         else
-                            return "tree-collapsed" + injectSelectionClass;
+                            return "tree-collapsed" + injectSelectionClass + nodeCustomClass;
                     };
 
                     $scope.iBranchClass = function() {
@@ -128,13 +139,13 @@
                     //tree template
                     var template =
                         '<ul '+classIfDefined($scope.options.injectClasses.ul, true)+'>' +
-                            '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | orderBy:orderBy:reverseOrder" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
-                            '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
-                            '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
-                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
-                            '<treeitem ng-if="nodeExpanded()"></treeitem>' +
-                            '</li>' +
-                            '</ul>';
+                        '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | orderBy:orderBy:reverseOrder" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
+                        '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
+                        '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
+                        '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                        '<treeitem ng-if="nodeExpanded()"></treeitem>' +
+                        '</li>' +
+                        '</ul>';
 
                     return {
                         template: $compile(template)
