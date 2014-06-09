@@ -9,6 +9,7 @@
         h2, h3 {font-family: Georgia; font-style: italic}
         .tree-border {flex: 1;border: 1px solid #47a; box-shadow: 2px 2px 2px 2px #257; margin: 0 5px; overflow: scroll}
         .fake-link {color: blue; text-decoration: underline; cursor: pointer;}
+        .specialNode { background-color: lightgreen; }
     </style>
 </head>
 <body ng-app="treeControl">
@@ -42,6 +43,7 @@
     <h2>Mutate the tree</h2>
     <a class="fake-link" ng-click="addRoot()">add root</a></br>
     <a class="fake-link" ng-click="addChild()">add child (to node 1)</a></br>
+    <a class="fake-link" ng-click="addChildWithCustomClass()">add child with custom CSS class (to node 1)</a></br>
     <a class="fake-link" ng-click="addDeepChild()">add child (to node 1.1.1)</a></br>
     <a class="fake-link" ng-click="replaceData()">Replace tree data</a></br>
     External Scope Label: <input ng-model="label"></br>
@@ -73,6 +75,9 @@
             $scope.addChild = function() {
                 $scope.treedata[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });
             };
+            $scope.addChildWithCustomClass = function() {
+                $scope.treedata[0].children.push({ "label" : "New Custom Node B", "id" : "id B", "customCSSClass" : "specialNode", "children": [] });
+            };
             $scope.addDeepChild = function() {
                 $scope.treedata[0].children[0].children[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });
             };
@@ -82,7 +87,13 @@
 
             $scope.opt1 = {
                 nodeChildren: "children",
-                dirSelectable: true
+                dirSelectable: true,
+                getNodeCustomCSSClass: function(node) {
+                    if (node && node.customCSSClass)
+                        return node.customCSSClass;
+                    else
+                        return "";
+                }
             };
 
             $scope.opt2 = {
