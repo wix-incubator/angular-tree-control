@@ -13,10 +13,19 @@ module.exports = function(grunt) {
         singleRun: true,
         preprocessors: {'*.js': 'coverage'},
         reporters: ['progress', 'coverage'],
-        coverageReporter: {type: 'lcov'}
+        coverageReporter: {type: 'lcov'},
+        browsers: ['Chrome']
       },
+        ci_travis: {
+            singleRun: true,
+            preprocessors: {'*.js': 'coverage'},
+            reporters: ['progress', 'coverage'],
+            coverageReporter: {type: 'lcov'},
+            browsers: ['PhantomJS']
+        },
       dev: {
-        background: true
+        background: true,
+          browsers: ['Chrome']
       }
     },
     connect: {
@@ -46,7 +55,16 @@ module.exports = function(grunt) {
   });
 
   //run tests only once (continuous integration mode)
-  grunt.registerTask('test', ['karma:ci']);
+//  grunt.registerTask('test', ['karma:ci']);
+  grunt.registerTask('test', function() {
+      console.log(process.env.TREE_CI_ENV);
+      if (process.env.TREE_CI_ENV == 'travis') {
+          grunt.task.run(['karma:ci_travis']);
+      }
+      else {
+          grunt.task.run(['karma:ci']);
+      }
+  });
 
   //to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
   grunt.registerTask('serve', ['karma:dev', 'connect', 'watch']);
