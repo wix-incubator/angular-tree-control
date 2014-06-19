@@ -31,6 +31,7 @@
                     treeModel: "=",
                     selectedNode: "=?",
                     onSelection: "&",
+                    onExpand: "&",
                     options: "=?",
                     orderBy: "@",
                     reverseOrder: "@"
@@ -101,6 +102,8 @@
 
                     $scope.selectNodeHead = function() {
                         $scope.expandedNodes[this.$id] = ($scope.expandedNodes[this.$id] === undefined ? this.node : undefined);
+                        if ($scope.onExpand)
+                            $scope.onExpand({node: this.node});
                     };
 
                     $scope.selectNodeLabel = function( selectedNode ){
