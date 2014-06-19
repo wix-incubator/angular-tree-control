@@ -1,0 +1,315 @@
+<!doctype html>
+<html>
+<head>
+    <script src="../bower_components/jquery/jquery.js"></script>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../bower_components/google-code-prettify/src/prettify.js"></script>
+
+    <link  href="../bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link  href="prettify-style.css" rel="stylesheet" type="text/css">
+
+    <script src="../angular-tree-control.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/tree-control.css">
+    <style>
+        h2, h3 {font-family: Georgia; font-style: italic}
+        .example-caption {color: #bbb; font-size: 12px}
+        .fake-link {color: blue; text-decoration: underline; cursor: pointer;}
+        .docs-body{width: 1140px; margin: auto;}
+        .tab-pane{background-color: #f8f8f8; border-right: 1px solid #ccc;border-left: 1px solid #ccc;border-bottom: 1px solid #ccc; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px }
+        .nav li.active a{background-color: #f8f8f8}
+        pre.code {border:none; background-color: #f8f8f8; padding: 10px; margin: 0; font-family: Consolas, 'Liberation Mono', Courier, monospace;}
+    </style>
+</head>
+<body ng-app="example">
+
+<div class="docs-body">
+
+    <section id="classic" ng-controller="Classic">
+        <div class="page-header">
+            <h1>Classic Style <small>(Basic style, default configuration)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="classic-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts"
+                                         on-selection="showSelected(node)">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>Classic style of the tree control, set using the class <code>tree-classic</code>.</p>
+                <p> Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree.</p>
+                <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="classic-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="classic-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="classic-js">
+            function Classic($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+                $scope.opts = {
+                    nodeChildren: "children",
+                    dirSelectable: true
+                };
+
+                $scope.showSelected = function(sel) {
+                    $scope.selectedNode = sel;
+                };
+            }
+        </script>
+    </section>
+
+    <section id="light" ng-controller="Light">
+        <div class="page-header">
+            <h1>Light Style <small>(Basic style, default configuration)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="light-html">
+                            <treecontrol class="tree-light"
+                                         tree-model="treedata"
+                                         options="opts"
+                                         on-selection="showSelected(node)">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>Light style of the tree control, set using the class <code>tree-light</code>.</p>
+                <p> Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree.</p>
+                <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="light-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="light-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="light-js">
+            function Light($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+                $scope.opts = {
+                    nodeChildren: "children",
+                    dirSelectable: true
+                };
+
+                $scope.showSelected = function(sel) {
+                    $scope.selectedNode = sel;
+                };
+            }
+        </script>
+    </section>
+
+</div>
+
+<!--<div ng-controller="Controller">-->
+<!--<div style="display: flex; flex-direction: row">-->
+<!--<div class="tree-border">-->
+<!--<h3>Classic Tree</h3>-->
+<!--<div>Selected: {{node1.label?node1.label:"N/A"}}</div>-->
+<!--<treecontrol class="tree-classic" tree-model="treedata" options="opt1" on-selection="showSelected(node)" selected-node="node1">-->
+<!--label: {{node.label}} ({{node.id}})-->
+<!--</treecontrol>-->
+<!--</div>-->
+<!--<div class="tree-border">-->
+<!--<h3>Light Tree</h3>-->
+<!--<div>Selected: {{node2.label?node2.label:"N/A"}}</div>-->
+<!--<treecontrol class="tree-light" tree-model="treedata" options="opt2" on-selection="showSelected(node)" selected-node="node2">-->
+<!--label: {{node.label}} ({{node.id}})-->
+<!--</treecontrol>-->
+<!--</div>-->
+<!--<div class="tree-border" style=" background: #555;">-->
+<!--<h3 style="color: white">Dark Tree</h3>-->
+<!--<div style="color: white">Selected: {{node3.label?node3.label:"N/A"}}</div>-->
+<!--<treecontrol class="tree-dark" tree-model="treedata" options="opt3" on-selection="showSelected(node)" selected-node="node3">-->
+<!--label: {{node.label}} ({{node.id}})  [{{label}}]-->
+<!--</treecontrol>-->
+<!--</div>-->
+<!--</div>-->
+<!--<h2>Selection</h2>-->
+<!--Based on callback (on-selection): {{selected}}</br>-->
+<!--Based on binding (selected-node): {{node1.label}}, {{node2.label}}, {{node3.label}}-->
+<!--<h2>Mutate the tree</h2>-->
+<!--<a class="fake-link" ng-click="addRoot()">add root</a></br>-->
+<!--<a class="fake-link" ng-click="addChild()">add child (to node 1)</a></br>-->
+<!--<a class="fake-link" ng-click="addDeepChild()">add child (to node 1.1.1)</a></br>-->
+<!--<a class="fake-link" ng-click="replaceData()">Replace tree data</a></br>-->
+<!--External Scope Label: <input ng-model="label"></br>-->
+<!--Bind to tree label of node 1.1 <input ng-model="treedata[0].children[0].label"></br>-->
+<!--<script>-->
+
+<!--function Controller($scope) {-->
+
+<!--$scope.label = "label from external scope";-->
+<!--$scope.treedata=createSubTree(3, 4, "");-->
+<!--function createSubTree(level, width, prefix) {-->
+<!--if (level > 0) {-->
+<!--var res = [];-->
+<!--for (var i=1; i <= width; i++)-->
+<!--res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "children": createSubTree(level-1, width, prefix + i +".") });-->
+<!--return res;-->
+<!--}-->
+<!--else-->
+<!--return [];-->
+<!--}-->
+
+<!--$scope.showSelected = function(sel) {-->
+<!--$scope.selected = sel.label;-->
+<!--};-->
+
+<!--$scope.addRoot = function() {-->
+<!--$scope.treedata.push({ "label" : "New Node A", "id" : "id A", "children": [] });-->
+<!--};-->
+<!--$scope.addChild = function() {-->
+<!--$scope.treedata[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });-->
+<!--};-->
+<!--$scope.addDeepChild = function() {-->
+<!--$scope.treedata[0].children[0].children[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });-->
+<!--};-->
+<!--$scope.replaceData = function() {-->
+<!--$scope.treedata = createSubTree(4, 5, "");-->
+<!--};-->
+
+<!--$scope.opt1 = {-->
+<!--nodeChildren: "children",-->
+<!--dirSelectable: true-->
+<!--};-->
+
+<!--$scope.opt2 = {-->
+<!--nodeChildren: "children",-->
+<!--dirSelectable: false-->
+<!--};-->
+
+<!--$scope.opt3 = {-->
+<!--nodeChildren: "children",-->
+<!--dirSelectable: true,-->
+<!--injectClasses: {-->
+<!--ul: "a1",-->
+<!--li: "a2",-->
+<!--iExpanded: "a3",-->
+<!--iCollapsed: "a4",-->
+<!--iLeaf: "a5",-->
+<!--label: "a6"-->
+<!--}-->
+<!--}-->
+<!--}-->
+
+<!--</script>-->
+<!--</div>-->
+<script>
+    var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+    };
+
+    function escapeHtml(string) {
+        return String(string).replace(/[&<>"'\/]/g, function (s) {
+            return entityMap[s];
+        });
+    }
+
+    var nonSpace = /\S/;
+    function trimIndent(content) {
+        var lines = content.split("\n");
+        var begin = 0;
+        var end = lines.length-1;
+        while ((nonSpace.exec(lines[begin]) == null) && (begin < lines.length))
+            begin = begin + 1;
+        while ((nonSpace.exec(lines[end]) == null) && end >= begin)
+            end = end - 1;
+        var ident = nonSpace.exec(lines[begin]).index;
+        var formatted = "";
+        for (var i = begin; i <= end; i++) {
+            formatted = formatted + lines[i].slice(ident-1) + ((i < end)?"\n":"");
+        }
+        return formatted;
+
+    }
+    var example = angular.module("example", ["treeControl", "ui.bootstrap", "template/tabs/tab.html", "template/tabs/tabset.html"])
+                    .factory("$savedContent", function() {
+                        return [];
+                    })
+                    .directive("highlight", function() {
+                        return {
+                            restrict: "EAC",
+                            compile: function($element, $attrs) {
+                                var pre = prettyPrintOne($element.html(), $attrs.hrLang);
+                                $element.html(pre);
+                            }
+                        }
+                    })
+                    .directive("saveContent", function($savedContent) {
+                        return {
+                            restrict: "A",
+                            compile: function($element, $attrs) {
+                                var content = $element.html();
+                                console.log(content);
+                                $savedContent[$attrs.saveContent] = content;
+                            }
+                        }
+                    })
+                    .directive("applyContent", function($savedContent) {
+                        return {
+                            restrict: "EAC",
+                            compile: function($element, $attrs) {
+                                return function($scope, $element, $attrs) {
+                                    var content = $savedContent[$attrs.applyContent];
+                                    var lang = $attrs.highlightLang;
+                                    if (lang == "html")
+                                        content = escapeHtml(content);
+                                    content = trimIndent(content);
+                                    var pre = prettyPrintOne(content, lang);
+                                    $element.html(pre);
+                                }
+                            }
+                        }
+                    })
+            ;
+
+    function createSubTree(level, width, prefix) {
+        if (level > 0) {
+            var res = [];
+            for (var i=1; i <= width; i++)
+                res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "children": createSubTree(level-1, width, prefix + i +".") });
+            return res;
+        }
+        else
+            return [];
+    }
+
+</script>
+
+</body>
+</html>
