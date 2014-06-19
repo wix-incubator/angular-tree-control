@@ -12,6 +12,7 @@
 
     <script src="../angular-tree-control.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/tree-control.css">
+    <link rel="stylesheet" type="text/css" href="../css/tree-control-attribute.css">
     <style>
         h2, h3 {font-family: Georgia; font-style: italic}
         .example-caption {color: #bbb; font-size: 12px}
@@ -64,6 +65,58 @@
         </div>
         <script save-content="classic-js">
             function Classic($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+                $scope.opts = {
+                    nodeChildren: "children",
+                    dirSelectable: true
+                };
+
+                $scope.showSelected = function(sel) {
+                    $scope.selectedNode = sel;
+                };
+            }
+        </script>
+    </section>
+
+    <section id="as-attribute" ng-controller="AsAttribute">
+        <div class="page-header">
+            <h1>Using as Attribute <small>(Instead of a Custom Element)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="as-attribute-html">
+                            <div treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts"
+                                         on-selection="showSelected(node)">
+                                label: {{node.label}} ({{node.id}})
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>Using the tree control as an attribute is as easy as using a div and adding a <code>treecontrol</code> attribute to it</p>
+                <p>Note that you have to include the <code>tree-control-attribute.css</code> file instead of the <code>tree-control.css</code>
+                    as the CSS selectors are quite different between the two styles of using the tree control.</p>
+                <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="as-attribute-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="as-attribute-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="as-attribute-js">
+            function AsAttribute($scope) {
                 $scope.treedata=createSubTree(3, 4, "");
                 $scope.opts = {
                     nodeChildren: "children",
@@ -183,6 +236,62 @@
         </script>
     </section>
 
+    <section id="labels-template" ng-controller="LabelsTemplate">
+        <div class="page-header">
+            <h1>Tree Label Templates <small>(Customize the tree labels)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="labels-template-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts"
+                                         on-selection="showSelected(node)">
+                                <span style="color: {{getColor(node)}}">{{node.label}}</span>
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>Taking control of the tree labels is as simple as with <code>ng-repeat</code> - you include a template in the tree control tag.</p>
+                <p>The current node is ingected into that template as the <code>node</code> scope parameter.</p>
+                <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="labels-template-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="labels-template-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="labels-template-js">
+            function LabelsTemplate($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+                $scope.opts = {
+                    nodeChildren: "children",
+                    dirSelectable: true
+                };
+
+                $scope.getColor = function(node) {
+                    return ["#a40", "#04a", "#990", "#0a4"][node.i % 4];
+                };
+
+                $scope.showSelected = function(sel) {
+                    $scope.selectedNode = sel;
+                };
+            }
+        </script>
+    </section>
+
+
     <section id="dirSelection" ng-controller="DirSelection">
         <div class="page-header">
             <h1>Clicking Labels Expand & Collapse <small>(options.dirSelectable)</small></h1>
@@ -234,6 +343,7 @@
         </script>
     </section>
 
+    tree as attribute
     events - selection and expand
     start tree with expanded nodes
     set selected - selected node
@@ -281,21 +391,11 @@
                     .factory("$savedContent", function() {
                         return [];
                     })
-                    .directive("highlight", function() {
-                        return {
-                            restrict: "EAC",
-                            compile: function($element, $attrs) {
-                                var pre = prettyPrintOne($element.html(), $attrs.hrLang);
-                                $element.html(pre);
-                            }
-                        }
-                    })
                     .directive("saveContent", function($savedContent) {
                         return {
                             restrict: "A",
                             compile: function($element, $attrs) {
                                 var content = $element.html();
-                                console.log(content);
                                 $savedContent[$attrs.saveContent] = content;
                             }
                         }
@@ -322,7 +422,7 @@
         if (level > 0) {
             var res = [];
             for (var i=1; i <= width; i++)
-                res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "children": createSubTree(level-1, width, prefix + i +".") });
+                res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "i": i, "children": createSubTree(level-1, width, prefix + i +".") });
             return res;
         }
         else
