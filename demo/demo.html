@@ -48,7 +48,7 @@
             </div>
             <div class="col-md-6">
                 <p>Classic style of the tree control, set using the class <code>tree-classic</code>.</p>
-                <p> Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree.</p>
+                <p>Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree.</p>
                 <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
             </div>
         </div>
@@ -99,7 +99,7 @@
             </div>
             <div class="col-md-6">
                 <p>Light style of the tree control, set using the class <code>tree-light</code>.</p>
-                <p> Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree.</p>
+                <p>Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree.</p>
                 <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
             </div>
         </div>
@@ -128,102 +128,122 @@
         </script>
     </section>
 
+    <section id="dark" ng-controller="Dark">
+        <div class="page-header">
+            <h1>Dark Style <small>(Basic style, default configuration)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="background-color: #555;">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="dark-html">
+                            <!-- Note that the tree does not set the background color. We inject it from the wrapper div. -->
+                            <div style="background-color: #555;">
+                                <treecontrol class="tree-dark"
+                                             tree-model="treedata"
+                                             options="opts"
+                                             on-selection="showSelected(node)">
+                                    label: {{node.label}} ({{node.id}})
+                                </treecontrol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>Dark style of the tree control, set using the class <code>tree-dark</code>. The style does not include the background color, instead,
+                inject your own background color using a wrapper div element.</p>
+                <p>Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree.</p>
+                <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="dark-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="dark-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="dark-js">
+            function Dark($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+                $scope.opts = {
+                    nodeChildren: "children",
+                    dirSelectable: true
+                };
+
+                $scope.showSelected = function(sel) {
+                    $scope.selectedNode = sel;
+                };
+            }
+        </script>
+    </section>
+
+    <section id="dirSelection" ng-controller="DirSelection">
+        <div class="page-header">
+            <h1>Clicking Labels Expand & Collapse <small>(options.dirSelectable)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="dir-selection-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts"
+                                         on-selection="showSelected(node)">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>In order to prevent selection of branches (folders) in the tree, set the <code>options.dirSelectable</code> to <code>false</code>.
+                    Clicking folder labels at this point will expand and contract the node.</p>
+                <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="dir-selection-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="dir-selection-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="dir-selection-js">
+            function DirSelection($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+                $scope.opts = {
+                    nodeChildren: "children",
+                    dirSelectable: false
+                };
+
+                $scope.showSelected = function(sel) {
+                    $scope.selectedNode = sel;
+                };
+            }
+        </script>
+    </section>
+
+    events - selection and expand
+    start tree with expanded nodes
+    set selected - selected node
+    set expanded - expanded nodes
+    customizing css classes
+    conditional css class
+    order nodes
 </div>
 
-<!--<div ng-controller="Controller">-->
-<!--<div style="display: flex; flex-direction: row">-->
-<!--<div class="tree-border">-->
-<!--<h3>Classic Tree</h3>-->
-<!--<div>Selected: {{node1.label?node1.label:"N/A"}}</div>-->
-<!--<treecontrol class="tree-classic" tree-model="treedata" options="opt1" on-selection="showSelected(node)" selected-node="node1">-->
-<!--label: {{node.label}} ({{node.id}})-->
-<!--</treecontrol>-->
-<!--</div>-->
-<!--<div class="tree-border">-->
-<!--<h3>Light Tree</h3>-->
-<!--<div>Selected: {{node2.label?node2.label:"N/A"}}</div>-->
-<!--<treecontrol class="tree-light" tree-model="treedata" options="opt2" on-selection="showSelected(node)" selected-node="node2">-->
-<!--label: {{node.label}} ({{node.id}})-->
-<!--</treecontrol>-->
-<!--</div>-->
-<!--<div class="tree-border" style=" background: #555;">-->
-<!--<h3 style="color: white">Dark Tree</h3>-->
-<!--<div style="color: white">Selected: {{node3.label?node3.label:"N/A"}}</div>-->
-<!--<treecontrol class="tree-dark" tree-model="treedata" options="opt3" on-selection="showSelected(node)" selected-node="node3">-->
-<!--label: {{node.label}} ({{node.id}})  [{{label}}]-->
-<!--</treecontrol>-->
-<!--</div>-->
-<!--</div>-->
-<!--<h2>Selection</h2>-->
-<!--Based on callback (on-selection): {{selected}}</br>-->
-<!--Based on binding (selected-node): {{node1.label}}, {{node2.label}}, {{node3.label}}-->
-<!--<h2>Mutate the tree</h2>-->
-<!--<a class="fake-link" ng-click="addRoot()">add root</a></br>-->
-<!--<a class="fake-link" ng-click="addChild()">add child (to node 1)</a></br>-->
-<!--<a class="fake-link" ng-click="addDeepChild()">add child (to node 1.1.1)</a></br>-->
-<!--<a class="fake-link" ng-click="replaceData()">Replace tree data</a></br>-->
-<!--External Scope Label: <input ng-model="label"></br>-->
-<!--Bind to tree label of node 1.1 <input ng-model="treedata[0].children[0].label"></br>-->
-<!--<script>-->
 
-<!--function Controller($scope) {-->
-
-<!--$scope.label = "label from external scope";-->
-<!--$scope.treedata=createSubTree(3, 4, "");-->
-<!--function createSubTree(level, width, prefix) {-->
-<!--if (level > 0) {-->
-<!--var res = [];-->
-<!--for (var i=1; i <= width; i++)-->
-<!--res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "children": createSubTree(level-1, width, prefix + i +".") });-->
-<!--return res;-->
-<!--}-->
-<!--else-->
-<!--return [];-->
-<!--}-->
-
-<!--$scope.showSelected = function(sel) {-->
-<!--$scope.selected = sel.label;-->
-<!--};-->
-
-<!--$scope.addRoot = function() {-->
-<!--$scope.treedata.push({ "label" : "New Node A", "id" : "id A", "children": [] });-->
-<!--};-->
-<!--$scope.addChild = function() {-->
-<!--$scope.treedata[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });-->
-<!--};-->
-<!--$scope.addDeepChild = function() {-->
-<!--$scope.treedata[0].children[0].children[0].children.push({ "label" : "New Node B", "id" : "id B", "children": [] });-->
-<!--};-->
-<!--$scope.replaceData = function() {-->
-<!--$scope.treedata = createSubTree(4, 5, "");-->
-<!--};-->
-
-<!--$scope.opt1 = {-->
-<!--nodeChildren: "children",-->
-<!--dirSelectable: true-->
-<!--};-->
-
-<!--$scope.opt2 = {-->
-<!--nodeChildren: "children",-->
-<!--dirSelectable: false-->
-<!--};-->
-
-<!--$scope.opt3 = {-->
-<!--nodeChildren: "children",-->
-<!--dirSelectable: true,-->
-<!--injectClasses: {-->
-<!--ul: "a1",-->
-<!--li: "a2",-->
-<!--iExpanded: "a3",-->
-<!--iCollapsed: "a4",-->
-<!--iLeaf: "a5",-->
-<!--label: "a6"-->
-<!--}-->
-<!--}-->
-<!--}-->
-
-<!--</script>-->
-<!--</div>-->
 <script>
     var entityMap = {
         "&": "&amp;",
