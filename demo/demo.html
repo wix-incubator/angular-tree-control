@@ -343,7 +343,69 @@
         </script>
     </section>
 
-    tree as attribute
+
+    <section id="events" ng-controller="Events">
+        <div class="page-header">
+            <h1>Events <small>(onExpand & onSelection)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="events-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts"
+                                         on-selection="showSelected(node)"
+                                         on-node-toggle="showToggle(node, expanded)">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>In order to prevent selection of branches (folders) in the tree, set the <code>options.dirSelectable</code> to <code>false</code>.
+                    Clicking folder labels at this point will expand and contract the node.</p>
+                <p>Events fired:</p>
+                <ul id="events-listing">
+
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="events-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="events-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="events-js">
+            function Events($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+                $scope.showToggle = function(node, expanded) {
+                    $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") + "</li>");
+                };
+
+                $scope.showSelected = function(node) {
+                    $("#events-listing").append("<li>"+node.label+" selected</li>");
+                };
+
+                $scope.opts = {
+                    nodeChildren: "children",
+                    dirSelectable: true
+                };
+
+            }
+        </script>
+    </section>
+
+
+
     events - selection and expand
     start tree with expanded nodes
     set selected - selected node

@@ -118,7 +118,8 @@ Attributes of angular treecontrol
     - `iLeaf` : inhect classes into the 'i' element for leaf nodes
     - `label` : inhect classes into the div element around the label
     - `labelSelected` : inhect classes into the div element around the label only when the node is selected
-- `on-selection` : function to call on the current `$scope` on node selection.
+- `on-selection` : callback called whenever selecting a node in the tree. The callback argument is the selected node.
+- `on-node-toggle` : callback called whenever a node expands or collapses in the tree. The function arguments are the toggled node and a boolean which is true for expansion, false for collapse.
 - `selected-node` : parameter on the `$scope` to update with the current selection.
 - `order-by` : value for ng-repeat to use for ording sibling nodes
 - `reverse-order` : whether or not to reverse the ordering of sibling nodes based on the value of `order-by`

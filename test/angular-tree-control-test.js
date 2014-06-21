@@ -123,7 +123,7 @@ describe('unit testing angular tree control directive', function() {
             expect($rootScope.selectedItem.label).toBe('node 1');
         });
 
-        it('should invoke callback when item is selected', function () {
+        it('should invoke on-selection callback when item is selected', function () {
             $rootScope.treedata = createSubTree(2, 2);
             element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label)">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
@@ -131,6 +131,18 @@ describe('unit testing angular tree control directive', function() {
             $rootScope.itemSelected = jasmine.createSpy('itemSelected');
             element.find('li:eq(0) div').click();
             expect($rootScope.itemSelected).toHaveBeenCalledWith('node 1');
+        });
+
+        it('should not invoke on-selection callback when item is re-selected', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            $rootScope.itemSelected = jasmine.createSpy('itemSelected');
+            element.find('li:eq(0) div').click();
+            element.find('li:eq(0) div').click();
+            expect($rootScope.itemSelected).toHaveBeenCalledWith('node 1');
+            expect($rootScope.itemSelected.calls.length).toBe(1);
         });
 
         it('should order sibling nodes in normal order', function() {
