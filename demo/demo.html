@@ -50,6 +50,9 @@
             <div class="col-md-6">
                 <p>Classic style of the tree control, set using the class <code>tree-classic</code>.</p>
                 <p>Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree.</p>
+                <p>The tree data is set using the <code>tree-model</code> attribute, which accepts either a node object or an array of node objects.
+                    A Node object is a regular javascript object which has a <code>children</code> array property (children is the defuault name,
+                    it can be overridden using the tree options). </p>
                 <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
             </div>
         </div>
@@ -405,9 +408,61 @@
     </section>
 
 
+    <section id="defaultExpanded" ng-controller="DefaultExpanded">
+        <div class="page-header">
+            <h1>Default Expanded Nodes <small>(defaultExpanded)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="default-expanded-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>In order set the nodes that are expanded (opened) when the tree initially renders, use the <code>defaultExpanded</code> option.</p>
+                <p>The <code>defaultExpanded</code> is an array of the same node objects you use in the tree-model.</p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="default-expanded-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="default-expanded-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="default-expanded-js">
+            function DefaultExpanded($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
 
-    events - selection and expand
-    start tree with expanded nodes
+                var defExpanded = [$scope.treedata[1],
+                    $scope.treedata[3],
+                    $scope.treedata[3].children[2],
+                    $scope.treedata[3].children[2].children[1]];
+
+                $scope.opts = {
+                    nodeChildren: "children",
+                    dirSelectable: true,
+                    defaultExpanded: defExpanded
+                };
+
+            }
+        </script>
+    </section>
+
+
+
     set selected - selected node
     set expanded - expanded nodes
     customizing css classes
