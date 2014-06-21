@@ -123,6 +123,15 @@ describe('unit testing angular tree control directive', function() {
             expect($rootScope.selectedItem.label).toBe('node 1');
         });
 
+        it('should update the tree selection if the external scope selected-node changes', function() {
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" selected-node="selectedItem">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.selectedItem = $rootScope.treedata[1];
+            $rootScope.$digest();
+
+            expect(element.find('li:eq(1) div.tree-selected').length).toBe(1);
+        });
+
         it('should invoke on-selection callback when item is selected', function () {
             $rootScope.treedata = createSubTree(2, 2);
             element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label)">{{node.label}}</treecontrol>')($rootScope);

@@ -462,6 +462,67 @@
     </section>
 
 
+    <section id="selected" ng-controller="Selected">
+        <div class="page-header">
+            <h1>Selected Node Binding<small>(selected-node)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="selected-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts"
+                                         selected-node="selected">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>The <code>selected-node</code> attribute of <code>treecontrol</code> is bound to the currently selected node object of the tree.
+                Like any other Angular bound value, updating selected-node will set the tree selection, and clicking the tree (selecting a node) will
+                update back the selected-node.</p>
+                <p>Setting <code>selected-node</code> can also be used to set the default selected node of the tree.</p>
+                <a ng-click="selectNode(0)">select node 1</a>
+                <a ng-click="selectNode(1)">select node 2</a>
+                <a ng-click="selectNode(2)">select node 3</a>
+                <a ng-click="selectNode(3)">select node 4</a>
+                <p>Selected node: <code>{{selected.label}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="selected-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="selected-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="selected-js">
+            function Selected($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+
+                $scope.selected = $scope.treedata[2];
+                $scope.selectNode = function(num) {
+                    $scope.selected = $scope.treedata[num];
+                };
+
+                $scope.opts = {
+                    nodeChildren: "children",
+                    dirSelectable: true
+                };
+
+            }
+        </script>
+    </section>
+
+
 
     set selected - selected node
     set expanded - expanded nodes

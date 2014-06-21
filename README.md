@@ -102,7 +102,10 @@ Attributes of angular treecontrol
 
 - `treecontrol` : the treeview element.
 - element content : the template to evaluate against each node (and the parent scope of the tree) for the node label.
-- `tree-model` : the tree data on the `$scope`. This can be an array of nodes or a single node.
+- `tree-model` : [Node|Array[Node]] the tree data on the `$scope`. This can be an array of nodes or a single node.
+- `selected-node` : [Node] binding for the selected node in the tree. Updating this value updates the selection displayed in the tree. Selecting a node in the tree will update this value.
+- `on-selection` : callback called whenever selecting a node in the tree. The callback argument is the selected node.
+- `on-node-toggle` : callback called whenever a node expands or collapses in the tree. The function arguments are the toggled node and a boolean which is true for expansion, false for collapse.
 - `options` : different options to customize the tree control.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
   - `dirSelectable` : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to `true`.
@@ -118,9 +121,6 @@ Attributes of angular treecontrol
     - `iLeaf` : inhect classes into the 'i' element for leaf nodes
     - `label` : inhect classes into the div element around the label
     - `labelSelected` : inhect classes into the div element around the label only when the node is selected
-- `on-selection` : callback called whenever selecting a node in the tree. The callback argument is the selected node.
-- `on-node-toggle` : callback called whenever a node expands or collapses in the tree. The function arguments are the toggled node and a boolean which is true for expansion, false for collapse.
-- `selected-node` : parameter on the `$scope` to update with the current selection.
 - `order-by` : value for ng-repeat to use for ording sibling nodes
 - `reverse-order` : whether or not to reverse the ordering of sibling nodes based on the value of `order-by`
 

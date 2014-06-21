@@ -79,7 +79,7 @@
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
                         var injectSelectionClass = "";
-                        if (liSelectionClass && (this.$id == $scope.selectedScope))
+                        if (liSelectionClass && (this.node == $scope.selectedNode))
                             injectSelectionClass = " " + liSelectionClass;
                         if ($scope.options.isLeaf(node))
                             return "tree-leaf" + injectSelectionClass;
@@ -112,8 +112,7 @@
                             this.selectNodeHead();
                         }
                         else {
-                            if ($scope.selectedScope != this.$id) {
-                                $scope.selectedScope = this.$id;
+                            if ($scope.selectedNode != selectedNode) {
                                 $scope.selectedNode = selectedNode;
                                 if ($scope.onSelection)
                                     $scope.onSelection({node: selectedNode});
@@ -124,10 +123,10 @@
                     $scope.selectedClass = function() {
                         var labelSelectionClass = classIfDefined($scope.options.injectClasses.labelSelected, false);
                         var injectSelectionClass = "";
-                        if (labelSelectionClass && (this.$id == $scope.selectedScope))
+                        if (labelSelectionClass && (this.node == $scope.selectedNode))
                             injectSelectionClass = " " + labelSelectionClass;
 
-                        return (this.$id == $scope.selectedScope)?"tree-selected" + injectSelectionClass:"";
+                        return (this.node == $scope.selectedNode)?"tree-selected" + injectSelectionClass:"";
                     };
 
                     //tree template
