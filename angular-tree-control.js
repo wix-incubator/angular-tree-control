@@ -161,6 +161,15 @@
                             }
                         });
 
+                        scope.$watch('options.defaultExpanded', function(newValue) {
+                            scope.expandedNodes = {};
+                            if (scope.options.defaultExpanded && angular.isArray(scope.options.defaultExpanded)) {
+                                for (var i=0; i < scope.options.defaultExpanded.length; i++) {
+                                    scope.expandedNodes[""+i] = scope.options.defaultExpanded[i];
+                                }
+                            }
+                        });
+
                         //Rendering template for a root node
                         treemodelCntr.template( scope, function(clone) {
                             element.html('').append( clone );

@@ -14,22 +14,35 @@
     <link rel="stylesheet" type="text/css" href="../css/tree-control.css">
     <link rel="stylesheet" type="text/css" href="../css/tree-control-attribute.css">
     <style>
-        h2, h3 {font-family: Georgia; font-style: italic}
+        .header{padding-top: 50px; padding-bottom:50px; background-color: #444980;}
+        .head-container{width: 1140px; margin:auto;}
+        .header h1 {color: #fffffa; font-size: 60px}
+        .header h2 {color: #fffffa; font-size: 24px; font-style: normal}
         .example-caption {color: #bbb; font-size: 12px}
         .fake-link {color: blue; text-decoration: underline; cursor: pointer;}
         .docs-body{width: 1140px; margin: auto;}
         .tab-pane{background-color: #f8f8f8; border-right: 1px solid #ccc;border-left: 1px solid #ccc;border-bottom: 1px solid #ccc; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px }
         .nav li.active a{background-color: #f8f8f8}
         pre.code {border:none; background-color: #f8f8f8; padding: 10px; margin: 0; font-family: Consolas, 'Liberation Mono', Courier, monospace;}
+        .docs-sidenav { margin-top: 45px; margin-bottom: 0; }
+        .docs-sidenav > li > a {display: block; font-size: 13px; font-weight: 500; color: #999; padding: 4px 20px;}
+        .docs-sidenav > li.active > a {font-weight: 700; color: #563d7c; border-left: 2px solid #563d7c;padding-left: 18px;}
+        .docs-sidenav > li > a:hover {background-color: transparent; color: #563d7c; border-left: 1px solid #563d7c;padding-left: 19px;}
     </style>
 </head>
 <body ng-app="example">
-
-<div class="docs-body">
+<div class="header">
+    <div class="head-container">
+        <h1>Angular Tree Control</h1>
+        <h2>The AngularJS tree component</h2>
+    </div>
+</div>
+<div class="row docs-body">
+<div class="col-md-9">
 
     <section id="classic" ng-controller="Classic">
         <div class="page-header">
-            <h1>Classic Style <small>(Basic style, default configuration)</small></h1>
+            <h1>Basic Usage <small>(Classic style, default configuration)</small></h1>
         </div>
         <div class="row">
             <div class="col-md-6 show-grid">
@@ -430,6 +443,7 @@
             <div class="col-md-6">
                 <p>In order set the nodes that are expanded (opened) when the tree initially renders, use the <code>defaultExpanded</code> option.</p>
                 <p>The <code>defaultExpanded</code> is an array of the same node objects you use in the tree-model.</p>
+                <a ng-click="setExpanded()">set expanded</a>
             </div>
         </div>
         <div class="row">
@@ -451,6 +465,11 @@
                     $scope.treedata[3].children[2],
                     $scope.treedata[3].children[2].children[1]];
 
+                $scope.setExpanded = function() {
+                    $scope.opts.defaultExpanded = [$scope.treedata[1],
+                        $scope.treedata[2]];
+                };
+
                 $scope.opts = {
                     nodeChildren: "children",
                     dirSelectable: true,
@@ -464,7 +483,7 @@
 
     <section id="selected" ng-controller="Selected">
         <div class="page-header">
-            <h1>Selected Node Binding<small>(selected-node)</small></h1>
+            <h1>Selected Node Binding <small>(selected-node)</small></h1>
         </div>
         <div class="row">
             <div class="col-md-6 show-grid">
@@ -524,14 +543,18 @@
 
 
 
-    set selected - selected node
     set expanded - expanded nodes
     customizing css classes
     conditional css class
     order nodes
 </div>
+<div class="col-md-3">
+    <ul nav class="nav docs-sidenav">
+        <!--<li class="active"><a href="#as-attribute">classic</a></li>-->
+    </ul>
+</div>
 
-
+</div>
 <script>
     var entityMap = {
         "&": "&amp;",
@@ -591,6 +614,21 @@
                                     var pre = prettyPrintOne(content, lang);
                                     $element.html(pre);
                                 }
+                            }
+                        }
+                    })
+                    .directive("nav", function() {
+                        return {
+                            restrict: "A",
+                            compile: function($element) {
+                                var sections = $("section");
+                                angular.forEach(sections, function(section) {
+                                    var $section = $(section);
+                                    var id = $section.attr('id');
+                                    var titleHtml = $section.find("h1").html();
+                                    titleHtml = titleHtml.slice(0, titleHtml.indexOf("<")).trim();
+                                    $element.append("<li><a href='#"+id+"'>"+titleHtml+"</a></li>")
+                                })
                             }
                         }
                     })
