@@ -52,7 +52,6 @@
                         <div save-content="classic-html">
                             <treecontrol class="tree-classic"
                                          tree-model="treedata"
-                                         options="opts"
                                          on-selection="showSelected(node)">
                                 label: {{node.label}} ({{node.id}})
                             </treecontrol>
@@ -82,10 +81,6 @@
         <script save-content="classic-js">
             function Classic($scope) {
                 $scope.treedata=createSubTree(3, 4, "");
-                $scope.opts = {
-                    nodeChildren: "children",
-                    dirSelectable: true
-                };
 
                 $scope.showSelected = function(sel) {
                     $scope.selectedNode = sel;
@@ -106,7 +101,6 @@
                         <div save-content="as-attribute-html">
                             <div treecontrol class="tree-classic"
                                          tree-model="treedata"
-                                         options="opts"
                                          on-selection="showSelected(node)">
                                 label: {{node.label}} ({{node.id}})
                             </div>
@@ -134,10 +128,6 @@
         <script save-content="as-attribute-js">
             function AsAttribute($scope) {
                 $scope.treedata=createSubTree(3, 4, "");
-                $scope.opts = {
-                    nodeChildren: "children",
-                    dirSelectable: true
-                };
 
                 $scope.showSelected = function(sel) {
                     $scope.selectedNode = sel;
@@ -158,7 +148,6 @@
                         <div save-content="light-html">
                             <treecontrol class="tree-light"
                                          tree-model="treedata"
-                                         options="opts"
                                          on-selection="showSelected(node)">
                                 label: {{node.label}} ({{node.id}})
                             </treecontrol>
@@ -185,10 +174,6 @@
         <script save-content="light-js">
             function Light($scope) {
                 $scope.treedata=createSubTree(3, 4, "");
-                $scope.opts = {
-                    nodeChildren: "children",
-                    dirSelectable: true
-                };
 
                 $scope.showSelected = function(sel) {
                     $scope.selectedNode = sel;
@@ -211,7 +196,6 @@
                             <div style="background-color: #555;">
                                 <treecontrol class="tree-dark"
                                              tree-model="treedata"
-                                             options="opts"
                                              on-selection="showSelected(node)">
                                     label: {{node.label}} ({{node.id}})
                                 </treecontrol>
@@ -240,10 +224,6 @@
         <script save-content="dark-js">
             function Dark($scope) {
                 $scope.treedata=createSubTree(3, 4, "");
-                $scope.opts = {
-                    nodeChildren: "children",
-                    dirSelectable: true
-                };
 
                 $scope.showSelected = function(sel) {
                     $scope.selectedNode = sel;
@@ -264,7 +244,6 @@
                         <div save-content="labels-template-html">
                             <treecontrol class="tree-classic"
                                          tree-model="treedata"
-                                         options="opts"
                                          on-selection="showSelected(node)">
                                 <span style="color: {{getColor(node)}}">{{node.label}}</span>
                             </treecontrol>
@@ -291,10 +270,6 @@
         <script save-content="labels-template-js">
             function LabelsTemplate($scope) {
                 $scope.treedata=createSubTree(3, 4, "");
-                $scope.opts = {
-                    nodeChildren: "children",
-                    dirSelectable: true
-                };
 
                 $scope.getColor = function(node) {
                     return ["#a40", "#04a", "#990", "#0a4"][node.i % 4];
@@ -348,7 +323,6 @@
             function DirSelection($scope) {
                 $scope.treedata=createSubTree(3, 4, "");
                 $scope.opts = {
-                    nodeChildren: "children",
                     dirSelectable: false
                 };
 
@@ -362,7 +336,7 @@
 
     <section id="events" ng-controller="Events">
         <div class="page-header">
-            <h1>Events <small>(onExpand & onSelection)</small></h1>
+            <h1>Events <small>(on-expand & on-selection)</small></h1>
         </div>
         <div class="row">
             <div class="col-md-6 show-grid">
@@ -372,7 +346,6 @@
                         <div save-content="events-html">
                             <treecontrol class="tree-classic"
                                          tree-model="treedata"
-                                         options="opts"
                                          on-selection="showSelected(node)"
                                          on-node-toggle="showToggle(node, expanded)">
                                 label: {{node.label}} ({{node.id}})
@@ -411,10 +384,6 @@
                     $("#events-listing").append("<li>"+node.label+" selected</li>");
                 };
 
-                $scope.opts = {
-                    nodeChildren: "children",
-                    dirSelectable: true
-                };
 
             }
         </script>
@@ -471,8 +440,6 @@
                 };
 
                 $scope.opts = {
-                    nodeChildren: "children",
-                    dirSelectable: true,
                     defaultExpanded: defExpanded
                 };
 
@@ -493,7 +460,6 @@
                         <div save-content="selected-html">
                             <treecontrol class="tree-classic"
                                          tree-model="treedata"
-                                         options="opts"
                                          selected-node="selected">
                                 label: {{node.label}} ({{node.id}})
                             </treecontrol>
@@ -532,15 +498,71 @@
                     $scope.selected = $scope.treedata[num];
                 };
 
-                $scope.opts = {
-                    nodeChildren: "children",
-                    dirSelectable: true
-                };
 
             }
         </script>
     </section>
 
+
+    <section id="children" ng-controller="Children">
+        <div class="page-header">
+            <h1>Custom Children <small>(options.nodeChildren)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="children-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>Angular tree control assumes that the tree nodes have a <code>children</code> array property for the children of the node.
+                You can override the children property name using the tree <code>nodeChildren</code> property of the tree options.</p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="children-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="children-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="children-js">
+            function Children($scope) {
+                $scope.treedata=[
+                    {id:"id1", label: "Node 1", links: [
+                        {id:"id1.1", label: "Node 1.1", links: {}},
+                        {id:"id1.2", label: "Node 1.1", links: {}}
+                    ]},
+                    {id:"id2", label: "Node 2", links: []},
+                    {id:"id3", label: "Node 3", links: []},
+                    {id:"id4", label: "Node 4", links: []}
+                ]
+
+
+                $scope.selected = $scope.treedata[2];
+                $scope.selectNode = function(num) {
+                    $scope.selected = $scope.treedata[num];
+                };
+
+                $scope.opts = {
+                    nodeChildren: "links"
+                };
+
+            }
+        </script>
+    </section>
 
 
     set expanded - expanded nodes
