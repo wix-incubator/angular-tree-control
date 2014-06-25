@@ -116,12 +116,12 @@ Attributes of angular treecontrol
     - `ul` : inject classes into the ul elements
     - `li` : inject classes into the li elements
     - `liSelected` : inject classes into the li elements only when the node is selected
-    - `iExpanded` : inhect classes into the 'i' element for the expanded nodes
-    - `iCollapsed` : inhect classes into the 'i' element for the collapsed nodes
-    - `iLeaf` : inhect classes into the 'i' element for leaf nodes
-    - `label` : inhect classes into the div element around the label
-    - `labelSelected` : inhect classes into the div element around the label only when the node is selected
-- `order-by` : value for ng-repeat to use for ording sibling nodes
+    - `iExpanded` : inject classes into the 'i' element for the expanded nodes
+    - `iCollapsed` : inject classes into the 'i' element for the collapsed nodes
+    - `iLeaf` : inject classes into the 'i' element for leaf nodes
+    - `label` : inhject classes into the div element around the label
+    - `labelSelected` : inject classes into the div element around the label only when the node is selected
+- `order-by` : value for ng-repeat to use for ordering sibling nodes
 - `reverse-order` : whether or not to reverse the ordering of sibling nodes based on the value of `order-by`
 
 ### The tree labels

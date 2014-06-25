@@ -548,13 +548,7 @@
                     {id:"id2", label: "Node 2", links: []},
                     {id:"id3", label: "Node 3", links: []},
                     {id:"id4", label: "Node 4", links: []}
-                ]
-
-
-                $scope.selected = $scope.treedata[2];
-                $scope.selectNode = function(num) {
-                    $scope.selected = $scope.treedata[num];
-                };
+                ];
 
                 $scope.opts = {
                     nodeChildren: "links"
@@ -564,11 +558,83 @@
         </script>
     </section>
 
+    <section id="custom-css" ng-controller="CustomCss">
+        <div class="page-header">
+            <h1>Custom Css Classes <small>(options.injectClasses)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="custom-css-html">
+                            <style>
+                                .c-ul {border: 1px solid #abcdef;}
+                                .c-li {background-color: #defacb}
+                                .c-liSelected {background-color: #fedbca}
+                                .c-iExpanded {border: 1px solid #77a}
+                                .c-iCollapsed {border: 1px solid #7c7}
+                                .c-iLeaf {border: 1px solid #a77}
+                                treecontrol.tree-classic li .tree-label.c-label {color: #44c}
+                                treecontrol.tree-classic li .tree-selected.c-labelSelected {background-color: yellow}
+                            </style>
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>The <code>options.injectClasses</code> option allows to add custom CSS classes on the tree DOM. The selected classes are</p>
+                <ul>
+                    <li><code>ul</code> - inject classes into the ul elements (branch elements)</li>
+                    <li><code>li</code> - inject classes into the li elements (both branch and leaf elements)</li>
+                    <li><code>liSelected</code> - inject classes into the li elements of the selected node</li>
+                    <li><code>iExpanded</code> - inject classes into the 'i' element for the expanded nodes (the icon)</li>
+                    <li><code>iCollapsed</code> - inject classes into the 'i' element for the collapsed nodes</li>
+                    <li><code>iLeaf</code> - inject classes into the 'i' element for leaf nodes</li>
+                    <li><code>label</code> - inject classes into the div element around the label</li>
+                    <li><code>labelSelected</code> - inject classes into the div element around the label only when the node is selected</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="custom-css-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="custom-css-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="custom-css-js">
+            function CustomCss($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
 
-    set expanded - expanded nodes
+                $scope.opts = {
+                    injectClasses: {
+                        "ul": "c-ul",
+                        "li": "c-li",
+                        "liSelected": "c-liSelected",
+                        "iExpanded": "c-iExpanded",
+                        "iCollapsed": "c-iCollapsed",
+                        "iLeaf": "c-iLeaf",
+                        "label": "c-label",
+                        "labelSelected": "c-labelSelected"
+                    }
+                };
+
+            }
+        </script>
+    </section>
     customizing css classes
     conditional css class
     order nodes
+    set expanded - expanded nodes
 </div>
 <div class="col-md-3">
     <ul nav class="nav docs-sidenav">
