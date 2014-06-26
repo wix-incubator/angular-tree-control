@@ -186,6 +186,58 @@
         </script>
     </section>
 
+    <section id="changing" ng-controller="Changing">
+        <div class="page-header">
+            <h1>Changing the live tree <small>(adding and removing nodes)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="changing-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>You can modify the <code>tree-model</code> bound tree, and the tree will update with the new structure</p>
+                <p>For instance, adding nodes:</p>
+                <ul>
+                    <li><a ng-click="addRoot()">Add a new root</a></li>
+                    <li><a ng-click="addChildToSecondRoot()">Add a child to the 2nd node</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="changing-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="changing-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="changing-js">
+            function Changing($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+
+                $scope.addRoot = function() {
+                    $scope.treedata.push({label: "New Root", id:"some id", children: []})
+                };
+
+                $scope.addChildToSecondRoot = function() {
+                    $scope.treedata[1].children.push({label: "New Child", id:"some id", children: []})
+                };
+            }
+        </script>
+    </section>
+
     <section id="selected" ng-controller="Selected">
         <div class="page-header">
             <h1>Selected Node Binding <small>(selected-node)</small></h1>
