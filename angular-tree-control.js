@@ -30,6 +30,7 @@
                 scope: {
                     treeModel: "=",
                     selectedNode: "=?",
+                    expandedNodes: "=?",
                     onSelection: "&",
                     onNodeToggle: "&",
                     options: "=?",
@@ -67,11 +68,10 @@
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
 
-                    $scope.expandedNodes = {};
-                    if ($scope.options.defaultExpanded && angular.isArray($scope.options.defaultExpanded)) {
-                        for (var i=0; i < $scope.options.defaultExpanded.length; i++) {
-                            $scope.expandedNodes[""+i] = $scope.options.defaultExpanded[i];
-                        }
+                    $scope.expandedNodes = $scope.expandedNodes || [];
+                    $scope.expandedNodesMap = {};
+                    for (var i=0; i < $scope.expandedNodes.length; i++) {
+                        $scope.expandedNodesMap[""+i] = $scope.expandedNodes[i];
                     }
                     $scope.parentScopeOfTree = $scope.$parent;
 
@@ -83,27 +83,41 @@
                             injectSelectionClass = " " + liSelectionClass;
                         if ($scope.options.isLeaf(node))
                             return "tree-leaf" + injectSelectionClass;
-                        if ($scope.expandedNodes[this.$id])
+                        if ($scope.expandedNodesMap[this.$id])
                             return "tree-expanded" + injectSelectionClass;
                         else
                             return "tree-collapsed" + injectSelectionClass;
                     };
 
                     $scope.iBranchClass = function() {
-                        if ($scope.expandedNodes[this.$id])
+                        if ($scope.expandedNodesMap[this.$id])
                             return classIfDefined($scope.options.injectClasses.iExpanded);
                         else
                             return classIfDefined($scope.options.injectClasses.iCollapsed);
                     };
 
                     $scope.nodeExpanded = function() {
-                        return !!$scope.expandedNodes[this.$id];
+                        return !!$scope.expandedNodesMap[this.$id];
                     };
 
                     $scope.selectNodeHead = function() {
-                        $scope.expandedNodes[this.$id] = ($scope.expandedNodes[this.$id] === undefined ? this.node : undefined);
+                        var expanding = $scope.expandedNodesMap[this.$id] === undefined;
+                        $scope.expandedNodesMap[this.$id] = (expanding ? this.node : undefined);
+                        if (expanding) {
+                            $scope.expandedNodes.push(this.node);
+                        }
+                        else {
+                            var index;
+                            for (var i=0; (i < $scope.expandedNodes.length) && !index; i++) {
+                                if ($scope.options.equality($scope.expandedNodes[i], this.node)) {
+                                    index = i;
+                                }
+                            }
+                            if (index != undefined)
+                                $scope.expandedNodes.splice(index, 1);
+                        }
                         if ($scope.onNodeToggle)
-                            $scope.onNodeToggle({node: this.node, expanded: !!$scope.expandedNodes[this.$id]});
+                            $scope.onNodeToggle({node: this.node, expanded: expanding});
                     };
 
                     $scope.selectNodeLabel = function( selectedNode ){
@@ -161,14 +175,38 @@
                             }
                         });
 
-                        scope.$watch('options.defaultExpanded', function(newValue) {
-                            scope.expandedNodes = {};
-                            if (scope.options.defaultExpanded && angular.isArray(scope.options.defaultExpanded)) {
-                                for (var i=0; i < scope.options.defaultExpanded.length; i++) {
-                                    scope.expandedNodes[""+i] = scope.options.defaultExpanded[i];
+                        scope.$watchCollection('expandedNodes', function(newValue) {
+                            var notFoundIds = 0;
+                            var newExpandedNodesMap = {};
+                            var $liElements = element.find('li');
+                            var existingScopes = [];
+                            // find all nodes visible on the tree and the scope $id of the scopes including them
+                            angular.forEach($liElements, function(liElement) {
+                                var $liElement = angular.element(liElement);
+                                var liScope = $liElement.scope();
+                                existingScopes.push(liScope);
+                            });
+                            // iterate over the newValue, the new expanded nodes, and for each find it in the existingNodesAndScopes
+                            // if found, add the mapping $id -> node into newExpandedNodesMap
+                            // if not found, add the mapping num -> node into newExpandedNodesMap
+                            angular.forEach(newValue, function(newExNode) {
+                                var found = false;
+                                for (var i=0; (i < existingScopes.length) && !found; i++) {
+                                    var existingScope = existingScopes[i];
+                                    if (scope.options.equality(newExNode, existingScope.node)) {
+                                        newExpandedNodesMap[existingScope.$id] = existingScope.node;
+                                        found = true;
+                                    }
                                 }
-                            }
+                                if (!found)
+                                    newExpandedNodesMap[notFoundIds++] = newExNode;
+                            });
+                            scope.expandedNodesMap = newExpandedNodesMap;
                         });
+
+//                        scope.$watch('expandedNodesMap', function(newValue) {
+//
+//                        });
 
                         //Rendering template for a root node
                         treemodelCntr.template( scope, function(clone) {
@@ -197,10 +235,10 @@
         .directive("treeTransclude", function() {
             return {
                 link: function(scope, element, attrs, controller) {
-                    angular.forEach(scope.expandedNodes, function (node, id) {
+                    angular.forEach(scope.expandedNodesMap, function (node, id) {
                         if (scope.options.equality(node, scope.node)) {
-                            scope.expandedNodes[scope.$id] = scope.node;
-                            scope.expandedNodes[id] = undefined;
+                            scope.expandedNodesMap[scope.$id] = scope.node;
+                            scope.expandedNodesMap[id] = undefined;
                         }
                     });
                     if (scope.options.equality(scope.node, scope.selectedNode)) {

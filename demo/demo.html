@@ -570,7 +570,7 @@
 
     <section id="defaultExpanded" ng-controller="DefaultExpanded">
         <div class="page-header">
-            <h1>Default Expanded Nodes <small>(defaultExpanded)</small></h1>
+            <h1>Expanded Nodes Binding <small>(expanded-nodes)</small></h1>
         </div>
         <div class="row">
             <div class="col-md-6 show-grid">
@@ -580,6 +580,7 @@
                         <div save-content="default-expanded-html">
                             <treecontrol class="tree-classic"
                                          tree-model="treedata"
+                                         expanded-nodes="expandedNodes"
                                          options="opts">
                                 label: {{node.label}} ({{node.id}})
                             </treecontrol>
@@ -588,9 +589,15 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <p>In order set the nodes that are expanded (opened) when the tree initially renders, use the <code>defaultExpanded</code> option.</p>
-                <p>The <code>defaultExpanded</code> is an array of the same node objects you use in the tree-model.</p>
-                <a ng-click="setExpanded()">set expanded</a>
+                <p>The <code>expanded-nodes</code> attribute of <code>treecontrol</code> is bound to the currently selected node object of the tree.
+                    Like any other Angular bound value, updating <code>expanded-nodes</code> will set the expanded nodes in the tree,
+                    and expanding or contracting nodes in the tree will update the <code>expanded-nodes</code> property.</p>
+                <p>Setting <code>expanded-nodes</code> can also be used to set the default expanded nodes of the tree.</p>
+                <p><a ng-click="setExpanded()">Expand 2, 3 and 3.3 (only)</a></p>
+                <p>The currently expanded nodes:</p>
+                <ul>
+                    <li ng-repeat="node in expandedNodes">{{node.label}}</li>
+                </ul>
             </div>
         </div>
         <div class="row">
@@ -607,18 +614,16 @@
             function DefaultExpanded($scope) {
                 $scope.treedata=createSubTree(3, 4, "");
 
-                var defExpanded = [$scope.treedata[1],
+                $scope.expandedNodes = [$scope.treedata[1],
                     $scope.treedata[3],
                     $scope.treedata[3].children[2],
                     $scope.treedata[3].children[2].children[1]];
 
                 $scope.setExpanded = function() {
-                    $scope.opts.defaultExpanded = [$scope.treedata[1],
-                        $scope.treedata[2]];
-                };
-
-                $scope.opts = {
-                    defaultExpanded: defExpanded
+                    $scope.expandedNodes = [$scope.treedata[1],
+                        $scope.treedata[2],
+                        $scope.treedata[2].children[2]
+                    ];
                 };
 
             }
@@ -679,8 +684,8 @@
         </script>
     </section>
 
-    conditional css class
     order nodes
+    conditional css class
     set expanded - expanded nodes
 </div>
 <div class="col-md-3">

@@ -104,6 +104,7 @@ Attributes of angular treecontrol
 - element content : the template to evaluate against each node (and the parent scope of the tree) for the node label.
 - `tree-model` : [Node|Array[Node]] the tree data on the `$scope`. This can be an array of nodes or a single node.
 - `selected-node` : [Node] binding for the selected node in the tree. Updating this value updates the selection displayed in the tree. Selecting a node in the tree will update this value.
+- `expanded-nodes` : [Array[Node]] binding for the expanded nodes in the tree. Updating this value updates the nodes that are expanded in the tree.
 - `on-selection` : callback called whenever selecting a node in the tree. The callback argument is the selected node.
 - `on-node-toggle` : callback called whenever a node expands or collapses in the tree. The function arguments are the toggled node and a boolean which is true for expansion, false for collapse.
 - `options` : different options to customize the tree control.
@@ -111,7 +112,6 @@ Attributes of angular treecontrol
   - `dirSelectable` : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to `true`.
   - `equality` : the function used to determine equality between old nodes and new ones when checking whether a replacement node should be expanded and/or marked as selected. Defaults to a function which uses `angular.equals()` on everything except the property indicated in `nodeChildren`.
   - `isLeaf` : function (node) -> boolean used to determine if a node is a leaf or branch. The default function checks for existence of children of the node to determine leaf or branch.
-  - `defaultExpanded` : array[node] - an array of nodes to be expanded in the tree by default
   - `injectClasses` : allows to inject additional CSS classes into the tree DOM
     - `ul` : inject classes into the ul elements
     - `li` : inject classes into the li elements
