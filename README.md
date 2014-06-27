@@ -1,5 +1,9 @@
-Angular Tree Control [![Build Status](https://travis-ci.org/wix/angular-tree-control.png)](https://travis-ci.org/wix/angular-tree-control) [![Coverage Status](https://coveralls.io/repos/wix/angular-tree-control/badge.png)](https://coveralls.io/r/wix/angular-tree-control)
+Angular Tree Control
 ================
+
+[![Bower version](https://badge.fury.io/bo/angular-tree-control.svg)](http://badge.fury.io/bo/angular-tree-control)
+[![Build Status](https://travis-ci.org/wix/angular-tree-control.png)](https://travis-ci.org/wix/angular-tree-control)
+[![Coverage Status](https://coveralls.io/repos/wix/angular-tree-control/badge.png)](https://coveralls.io/r/wix/angular-tree-control)
 
 Pure [AngularJS](http://www.angularjs.org) based tree control component.
 
