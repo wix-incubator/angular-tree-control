@@ -1,6 +1,6 @@
 {
   "name": "angular-tree-control",
-  "version": "0.1.5",
+  "version": "0.2.1",
   "main": "./angular-tree-control.js",
   "ignore": [
     "Gruntfile.js",
