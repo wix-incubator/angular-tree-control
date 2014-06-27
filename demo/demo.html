@@ -111,7 +111,7 @@
             <div class="col-md-6">
                 <p>Using the tree control as an attribute is as easy as using a div and adding a <code>treecontrol</code> attribute to it</p>
                 <p>Note that you have to include the <code>tree-control-attribute.css</code> file instead of the <code>tree-control.css</code>
-                    as the CSS selectors are quite different between the two styles of using the tree control.</p>
+                    as the CSS selectors are quite different between the two styles of usage.</p>
                 <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
             </div>
         </div>
@@ -262,10 +262,10 @@
                     Like any other Angular bound value, updating selected-node will set the tree selection, and clicking the tree (selecting a node) will
                     update back the selected-node.</p>
                 <p>Setting <code>selected-node</code> can also be used to set the default selected node of the tree.</p>
-                <a ng-click="selectNode(0)">select node 1</a>
-                <a ng-click="selectNode(1)">select node 2</a>
-                <a ng-click="selectNode(2)">select node 3</a>
-                <a ng-click="selectNode(3)">select node 4</a>
+                <p><a ng-click="selectNode(0)">select node 1</a><br>
+                <a ng-click="selectNode(1)">select node 2</a><br>
+                <a ng-click="selectNode(2)">select node 3</a><br>
+                <a ng-click="selectNode(3)">select node 4</a></p>
                 <p>Selected node: <code>{{selected.label}}</code></p>
             </div>
         </div>
@@ -288,6 +288,68 @@
                     $scope.selected = $scope.treedata[num];
                 };
 
+
+            }
+        </script>
+    </section>
+
+    <section id="expandedNodes" ng-controller="ExpandedNodes">
+        <div class="page-header">
+            <h1>Expanded Nodes Binding <small>(expanded-nodes)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="default-expanded-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         expanded-nodes="expandedNodes"
+                                         options="opts">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>The <code>expanded-nodes</code> attribute of <code>treecontrol</code> is bound to the currently selected node object of the tree.
+                    Like any other Angular bound value, updating <code>expanded-nodes</code> will set the expanded nodes in the tree,
+                    and expanding or contracting nodes in the tree will update the <code>expanded-nodes</code> property.</p>
+                <p>Setting <code>expanded-nodes</code> can also be used to set the default expanded nodes of the tree.</p>
+                <p><a ng-click="setExpanded()">Expand 2, 3 and 3.3 (only)</a></p>
+                <p>The currently expanded nodes:</p>
+                <ul>
+                    <li ng-repeat="node in expandedNodes">{{node.label}}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="default-expanded-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="default-expanded-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="default-expanded-js">
+            function ExpandedNodes($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+
+                $scope.expandedNodes = [$scope.treedata[1],
+                    $scope.treedata[3],
+                    $scope.treedata[3].children[2],
+                    $scope.treedata[3].children[2].children[1]];
+
+                $scope.setExpanded = function() {
+                    $scope.expandedNodes = [$scope.treedata[1],
+                        $scope.treedata[2],
+                        $scope.treedata[2].children[2]
+                    ];
+                };
 
             }
         </script>
@@ -568,68 +630,6 @@
         </script>
     </section>
 
-    <section id="defaultExpanded" ng-controller="DefaultExpanded">
-        <div class="page-header">
-            <h1>Expanded Nodes Binding <small>(expanded-nodes)</small></h1>
-        </div>
-        <div class="row">
-            <div class="col-md-6 show-grid">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <div class="example-caption">EXAMPLE:</div>
-                        <div save-content="default-expanded-html">
-                            <treecontrol class="tree-classic"
-                                         tree-model="treedata"
-                                         expanded-nodes="expandedNodes"
-                                         options="opts">
-                                label: {{node.label}} ({{node.id}})
-                            </treecontrol>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <p>The <code>expanded-nodes</code> attribute of <code>treecontrol</code> is bound to the currently selected node object of the tree.
-                    Like any other Angular bound value, updating <code>expanded-nodes</code> will set the expanded nodes in the tree,
-                    and expanding or contracting nodes in the tree will update the <code>expanded-nodes</code> property.</p>
-                <p>Setting <code>expanded-nodes</code> can also be used to set the default expanded nodes of the tree.</p>
-                <p><a ng-click="setExpanded()">Expand 2, 3 and 3.3 (only)</a></p>
-                <p>The currently expanded nodes:</p>
-                <ul>
-                    <li ng-repeat="node in expandedNodes">{{node.label}}</li>
-                </ul>
-            </div>
-        </div>
-        <div class="row">
-            <tabset>
-                <tab heading="Markup" >
-                    <pre class="code" apply-content="default-expanded-html" highlight-lang="html"></pre>
-                </tab>
-                <tab heading="JavaScript">
-                    <pre class="code" apply-content="default-expanded-js" highlight-lang="js"></pre>
-                </tab>
-            </tabset>
-        </div>
-        <script save-content="default-expanded-js">
-            function DefaultExpanded($scope) {
-                $scope.treedata=createSubTree(3, 4, "");
-
-                $scope.expandedNodes = [$scope.treedata[1],
-                    $scope.treedata[3],
-                    $scope.treedata[3].children[2],
-                    $scope.treedata[3].children[2].children[1]];
-
-                $scope.setExpanded = function() {
-                    $scope.expandedNodes = [$scope.treedata[1],
-                        $scope.treedata[2],
-                        $scope.treedata[2].children[2]
-                    ];
-                };
-
-            }
-        </script>
-    </section>
-
     <section id="children" ng-controller="Children">
         <div class="page-header">
             <h1>Custom Children <small>(options.nodeChildren)</small></h1>
@@ -686,7 +686,6 @@
 
     order nodes
     conditional css class
-    set expanded - expanded nodes
 </div>
 <div class="col-md-3">
     <ul nav class="nav docs-sidenav">
