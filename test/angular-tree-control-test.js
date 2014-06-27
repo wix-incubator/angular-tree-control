@@ -337,11 +337,28 @@ describe('treeControl', function() {
             $rootScope.$digest();
         });
 
-        it('should display first level parents - one expanded and one collapsed', function () {
+        it('should be used for default expansion of nodes', function () {
             expect(element.find('li:eq(0)').hasClass('tree-collapsed')).toBeTruthy();
             expect(element.find('li:eq(1)').hasClass('tree-expanded')).toBeTruthy();
             expect(element.find('li:eq(1) li:eq(0)').hasClass('tree-collapsed')).toBeTruthy();
             expect(element.find('li:eq(1) li:eq(1)').hasClass('tree-expanded')).toBeTruthy();
+        });
+
+        it('should update the tree as expandedNodes changes', function () {
+            $rootScope.expandedNodes = [$rootScope.treedata[0]];
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
+            expect(element.find('li:eq(1)').hasClass('tree-collapsed')).toBeTruthy();
+        });
+
+        it('should add to expandedNodes expanding node', function () {
+            element.find('li:eq(0) .tree-branch-head').click();
+            expect($rootScope.expandedNodes).toContain($rootScope.treedata[0]);
+        });
+
+        it('should remove from expandedNodes collapsing node', function () {
+            element.find('li:eq(1) .tree-branch-head').click();
+            expect($rootScope.expandedNodes).not.toContain($rootScope.treedata[1]);
         });
 
         it('should retain expansions after full model refresh', function () {
