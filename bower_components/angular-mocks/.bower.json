@@ -1,0 +1,18 @@
+{
+  "name": "angular-mocks",
+  "version": "1.2.11-build.2184+sha.319dd1a",
+  "main": "./angular-mocks.js",
+  "dependencies": {
+    "angular": "1.2.11-build.2184+sha.319dd1a"
+  },
+  "homepage": "https://github.com/angular/bower-angular-mocks",
+  "_release": "1.2.11-build.2184+sha.319dd1a",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.2.11-build.2184+sha.319dd1a",
+    "commit": "c6bcb1d2c45fe10d78f321008d7683579af4b5fe"
+  },
+  "_source": "git://github.com/angular/bower-angular-mocks.git",
+  "_target": "~1.2.7",
+  "_originalSource": "angular-mocks"
+}
