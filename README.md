@@ -5,7 +5,7 @@ Pure [AngularJS](http://www.angularjs.org) based tree control component.
 
 [![ScreenShot](https://raw.github.com/wix/angular-tree-control/master/images/sample.png)](http://jsfiddle.net/8ApLX/5/)
 
-Running sample on [jsFiddle](http://jsfiddle.net/8ApLX/5/)
+To get started, check out [wix.github.io/angular-tree-control](http://wix.github.io/angular-tree-control/)
 
 ## Why yet another tree control
 
