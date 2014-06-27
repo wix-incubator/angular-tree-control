@@ -1,3 +1,5 @@
 .idea
+node_modules
+coverage
 treecontrol.iml
 .DS_Store
