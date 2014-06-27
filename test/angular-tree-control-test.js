@@ -1,4 +1,4 @@
-describe('unit testing angular tree control directive', function() {
+describe('treeControl', function() {
     var $compile, $rootScope, element, num;
 
     beforeEach(function () {
@@ -18,7 +18,7 @@ describe('unit testing angular tree control directive', function() {
         return currentLevel;
     }
 
-    describe('testing that tree is rendered correctly', function () {
+    describe('rendering', function () {
         beforeEach(function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata.push({});
@@ -75,7 +75,7 @@ describe('unit testing angular tree control directive', function() {
         });
     });
 
-    describe('testing customising tree leaf / branches using options.isLeaf', function () {
+    describe('customising using options.isLeaf', function () {
         it('should display first level parents as collapsed nodes, including the leaf', function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata.push({});
@@ -98,7 +98,7 @@ describe('unit testing angular tree control directive', function() {
 
     });
 
-    describe('testing that tree label rendering uses external scope data', function () {
+    describe('rendering using external scope data', function () {
         beforeEach(function () {
             $rootScope.label = "exLabel";
             $rootScope.treedata = createSubTree(2, 2);
@@ -113,7 +113,7 @@ describe('unit testing angular tree control directive', function() {
         });
     });
 
-    describe('testing that all options are handled correctly', function () {
+    describe('selection', function() {
         it('should publish the currently selected node on scope', function () {
             $rootScope.treedata = createSubTree(2, 2);
             element = $compile('<treecontrol tree-model="treedata" selected-node="selectedItem">{{node.label}}</treecontrol>')($rootScope);
@@ -153,6 +153,23 @@ describe('unit testing angular tree control directive', function() {
             expect($rootScope.itemSelected).toHaveBeenCalledWith('node 1');
             expect($rootScope.itemSelected.calls.length).toBe(1);
         });
+
+        it('should retain selection after full model refresh', function () {
+            var testTree = createSubTree(2, 2);
+            $rootScope.treedata = angular.copy(testTree);
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            element.find('li:eq(0) div').click();
+            expect(element.find('.tree-selected').length).toBe(1);
+
+            $rootScope.treedata = angular.copy(testTree);
+            $rootScope.$digest();
+            expect(element.find('.tree-selected').length).toBe(1);
+        });
+    });
+
+    describe('options usage', function () {
 
         it('should order sibling nodes in normal order', function() {
             $rootScope.treedata = [
@@ -208,34 +225,6 @@ describe('unit testing angular tree control directive', function() {
             expect(element.find('.tree-selected').length).toBe(1);
         });
 
-        it('should retain expansions after full model refresh', function () {
-            var testTree = createSubTree(2, 2);
-            $rootScope.treedata = angular.copy(testTree);
-            element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
-            $rootScope.$digest();
-
-            element.find('li:eq(0) .tree-branch-head').click();
-            expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
-
-            $rootScope.treedata = angular.copy(testTree);
-            $rootScope.$digest();
-            expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
-        });
-
-        it('should retain selection after full model refresh', function () {
-            var testTree = createSubTree(2, 2);
-            $rootScope.treedata = angular.copy(testTree);
-            element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
-            $rootScope.$digest();
-
-            element.find('li:eq(0) div').click();
-            expect(element.find('.tree-selected').length).toBe(1);
-
-            $rootScope.treedata = angular.copy(testTree);
-            $rootScope.$digest();
-            expect(element.find('.tree-selected').length).toBe(1);
-        });
-
         it('should be able to accept alternative equality function', function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata[0].id = 'id0';
@@ -275,7 +264,7 @@ describe('unit testing angular tree control directive', function() {
         });
     });
 
-    describe('testing that tree customizations work properly', function () {
+    describe('customizations', function () {
         beforeEach(function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata.push({});
@@ -340,14 +329,11 @@ describe('unit testing angular tree control directive', function() {
         });
     });
 
-    describe('testing that tree nodes can be rendered expanded on tree creation', function () {
+    describe('expanded-nodes binding', function () {
         beforeEach(function () {
             $rootScope.treedata = createSubTree(3, 2);
-            $rootScope.treedata.push({});
-            $rootScope.treeOptions = {
-                defaultExpanded: [$rootScope.treedata[1], $rootScope.treedata[1].children[1]]
-            };
-            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.expandedNodes = [$rootScope.treedata[1], $rootScope.treedata[1].children[1]];
+            element = $compile('<treecontrol tree-model="treedata" expanded-nodes="expandedNodes" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
         });
 
@@ -356,6 +342,20 @@ describe('unit testing angular tree control directive', function() {
             expect(element.find('li:eq(1)').hasClass('tree-expanded')).toBeTruthy();
             expect(element.find('li:eq(1) li:eq(0)').hasClass('tree-collapsed')).toBeTruthy();
             expect(element.find('li:eq(1) li:eq(1)').hasClass('tree-expanded')).toBeTruthy();
+        });
+
+        it('should retain expansions after full model refresh', function () {
+            var testTree = createSubTree(2, 2);
+            $rootScope.treedata = angular.copy(testTree);
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            element.find('li:eq(0) .tree-branch-head').click();
+            expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
+
+            $rootScope.treedata = angular.copy(testTree);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
         });
 
     });
