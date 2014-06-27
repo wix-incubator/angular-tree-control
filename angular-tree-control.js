@@ -79,7 +79,7 @@
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
                         var injectSelectionClass = "";
-                        if (liSelectionClass && (this.node == $scope.selectedNode))
+                        if (liSelectionClass && ($scope.options.equality(this.node, $scope.selectedNode)))
                             injectSelectionClass = " " + liSelectionClass;
                         if ($scope.options.isLeaf(node))
                             return "tree-leaf" + injectSelectionClass;
