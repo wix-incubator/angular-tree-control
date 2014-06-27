@@ -235,12 +235,14 @@
         .directive("treeTransclude", function() {
             return {
                 link: function(scope, element, attrs, controller) {
-                    angular.forEach(scope.expandedNodesMap, function (node, id) {
-                        if (scope.options.equality(node, scope.node)) {
-                            scope.expandedNodesMap[scope.$id] = scope.node;
-                            scope.expandedNodesMap[id] = undefined;
-                        }
-                    });
+                    if (!scope.options.isLeaf(scope.node)) {
+                        angular.forEach(scope.expandedNodesMap, function (node, id) {
+                            if (scope.options.equality(node, scope.node)) {
+                                scope.expandedNodesMap[scope.$id] = scope.node;
+                                scope.expandedNodesMap[id] = undefined;
+                            }
+                        });
+                    }
                     if (scope.options.equality(scope.node, scope.selectedNode)) {
                         scope.selectNodeLabel(scope.node);
                     }
