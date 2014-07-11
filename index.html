@@ -683,6 +683,55 @@
             }
         </script>
     </section>
+
+    <section id="isleaf" ng-controller="Isleaf">
+        <div class="page-header">
+            <h1>Custom Branch / Leaf <small>(options.isLeaf)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="isleaf-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>the <code>isLeaf</code> option allows taking control of the selection if a node is a branch (folder) or a leaf (File).
+                This method returns a boolean, where <code>true</code> indicates a leaf, <code>false</code> indicates a branch.</p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="isleaf-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="isleaf-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="isleaf-js">
+            function Isleaf($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+
+                $scope.opts = {
+                    isLeaf: function(node) {
+                        return node.i % 2 == 0;
+                    }
+                };
+
+            }
+        </script>
+    </section>
+
 </div>
 <div class="col-md-3">
     <ul nav class="nav docs-sidenav">
