@@ -778,6 +778,71 @@
         </script>
     </section>
 
+    <section id="equality" ng-controller="Equality">
+        <div class="page-header">
+            <h1>Custom Equality <small>(options.equality)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="equality-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         options="opts">
+                                label: {{node.name}} ({{node.age}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>The angular tree control is using an equality function to determine if two nodes are equal,
+                    The build it function checks for equality of the node members, ignoring the children property.</p>
+                <p>In some cases, it is required to replace the equality function. Some examples include</p>
+                <ul>
+                    <li>If multiple nodes exist in the three that are identical except for their parents and children, the default function
+                    will confuse between them. In such as case, it is recommended to replace the function with the === operator (as in this example).</li>
+                    <li>If you have an id property for nodes that can be relayed on for node uniqueness and identification,
+                        using a custom equality function that checks for that id will result in better performance.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="equality-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="equality-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="equality-js">
+            function Equality($scope) {
+                $scope.treedata=[
+                    { "name" : "Joe", "age" : "21", "children" : [
+                        { "name" : "Smith", "age" : "42", "children" : [] },
+                        { "name" : "Joe", "age" : "21", "children" : [
+                            { "name" : "Jenifer", "age" : "23", "children" : [
+                                { "name" : "Dani", "age" : "32", "children" : [] },
+                                { "name" : "Max", "age" : "34", "children" : [] }
+                            ]}
+                        ]}
+                    ]},
+                    { "name" : "Albert", "age" : "33", "children" : [] },
+                    { "name" : "Ron", "age" : "29", "children" : [] }
+                ];
+                $scope.opts = {
+                    equality: function(node1, node2) {
+                        return node1 === node2;
+                    }
+                }
+            }
+        </script>
+    </section>
+
 </div>
 <div class="col-md-3">
     <ul nav class="nav docs-sidenav">
