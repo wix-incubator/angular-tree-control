@@ -732,6 +732,52 @@
         </script>
     </section>
 
+    <section id="sorting" ng-controller="Sorting">
+        <div class="page-header">
+            <h1>Sorting tree nodes <small>(order-by, reserve-order)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="sorting-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         order-by="label"
+                                         reverse-order="{{reverse}}">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>The <code>order-by</code> and <code>reverse-order</code> properties allows controlling the sorting of the tree nodes.
+                The value of those attributes is used with the <code>ng-repeat</code> orderBy filter -
+                    see more details at the <a href="https://code.angularjs.org/1.2.0-rc.3/docs/api/ng.filter:orderBy">Angular JS orderBy</a> docs.</p>
+                <p>The sorting is done for each branch individually (sorting does not change the stucture of the tree itself).</p>
+                <input type="checkbox" ng-model="reverse"/> Reverse Order
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="sorting-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="sorting-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="sorting-js">
+            function Sorting($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+                $scope.reverse = true;
+            }
+        </script>
+    </section>
+
 </div>
 <div class="col-md-3">
     <ul nav class="nav docs-sidenav">
