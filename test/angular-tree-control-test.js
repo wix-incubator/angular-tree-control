@@ -262,6 +262,21 @@ describe('treeControl', function() {
             expect(element.find('li:eq(0) .tree-branch-head').hasClass('expandcls')).toBeTruthy();
             expect(element.find('li:eq(1) .tree-branch-head').hasClass('collapsecls')).toBeTruthy();
         });
+
+        it('should be able to call an injected function from the parent scope', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.injectFunctions = {
+                testFunction: function ($event, node) {
+                    node.clickedMe = true;
+                }
+            };
+            element = $compile('<treecontrol inject-functions="injectFunctions" tree-model="treedata"><button class="test-button" ng-click="injectFunctions.testFunction($event, node)">Test</button>{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            expect($rootScope.treedata[0].clickedMe).toBeFalsy();
+            element.find('div.tree-label button.test-button').click();
+            expect($rootScope.treedata[0].clickedMe).toBeTruthy();
+        });
     });
 
     describe('customizations', function () {

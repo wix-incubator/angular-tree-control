@@ -31,6 +31,7 @@
                     treeModel: "=",
                     selectedNode: "=?",
                     expandedNodes: "=?",
+                    injectFunctions: "=?",
                     onSelection: "&",
                     onNodeToggle: "&",
                     options: "=?",

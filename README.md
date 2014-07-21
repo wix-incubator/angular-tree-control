@@ -111,6 +111,7 @@ Attributes of angular treecontrol
 - `expanded-nodes` : [Array[Node]] binding for the expanded nodes in the tree. Updating this value updates the nodes that are expanded in the tree.
 - `on-selection` : callback called whenever selecting a node in the tree. The callback argument is the selected node.
 - `on-node-toggle` : callback called whenever a node expands or collapses in the tree. The function arguments are the toggled node and a boolean which is true for expansion, false for collapse.
+- `inject-functions` : [Object] Functions to make available to the list item template. See demo.html for example.
 - `options` : different options to customize the tree control.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
   - `dirSelectable` : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to `true`.
