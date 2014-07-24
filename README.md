@@ -114,6 +114,7 @@ Attributes of angular treecontrol
 - `options` : different options to customize the tree control.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
   - `dirSelectable` : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to `true`.
+  - `dirToggleable` : function called before a node expands or collapses in the tree. The arguments are the toggled `node` and a boolean `expanding` (`true` for expansion, `false` for collapse). Defaults to `true` for all nodes.
   - `equality` : the function used to determine equality between old nodes and new ones when checking whether a replacement node should be expanded and/or marked as selected. Defaults to a function which uses `angular.equals()` on everything except the property indicated in `nodeChildren`.
   - `isLeaf` : function (node) -> boolean used to determine if a node is a leaf or branch. The default function checks for existence of children of the node to determine leaf or branch.
   - `injectClasses` : allows to inject additional CSS classes into the tree DOM
