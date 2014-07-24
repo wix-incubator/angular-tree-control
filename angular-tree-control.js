@@ -53,6 +53,10 @@
                         return angular.equals(a, b);
                     }
 
+                    function defaultDirToggleable(){
+                        return true;
+                    }
+
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "nodeChildren", "children");
                     ensureDefault($scope.options, "dirSelectable", "true");
@@ -67,6 +71,7 @@
                     ensureDefault($scope.options.injectClasses, "labelSelected", "");
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
+                    ensureDefault($scope.options, "dirToggleable", defaultDirToggleable);
 
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
@@ -102,6 +107,9 @@
 
                     $scope.selectNodeHead = function() {
                         var expanding = $scope.expandedNodesMap[this.$id] === undefined;
+                        if(!$scope.options.dirToggleable(this.node, expanding)){
+                            return;
+                        }
                         $scope.expandedNodesMap[this.$id] = (expanding ? this.node : undefined);
                         if (expanding) {
                             $scope.expandedNodes.push(this.node);
