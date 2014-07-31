@@ -188,6 +188,61 @@
         </script>
     </section>
 
+    <section id="parent" ng-controller="Parent">
+        <div class="page-header">
+            <h1>Tree Label Scope <small>(as a child of the controller scope)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="classic-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         on-selection="showSelected(node)">
+                                <button ng-click="buttonClick($event, node)">Click Me!</button> label: {{node.label}} ({{node.id}} ) {{$index}}
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>The scope used to compile the tree labels is a child scope of the controller (used to compile the tree-control directive).
+                    As such, in the tree label scope you have access to all the properties and methods defined in the controller scope.
+                    This example shows how to access a method in the parent scope from the label template.</p>
+                <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+                <p>Last clicked: <code>{{lastClicked ? lastClicked.label : "N/A"}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="classic-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="classic-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="classic-js">
+            function Parent($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+
+                $scope.lastClicked = null;
+                $scope.buttonClick = function($event, node) {
+                    $scope.lastClicked = node;
+                    $event.stopPropagation();
+                }
+
+                $scope.showSelected = function(sel) {
+                    $scope.selectedNode = sel;
+                };
+
+            }
+        </script>
+    </section>
+
     <section id="changing" ng-controller="Changing">
         <div class="page-header">
             <h1>Changing the live tree <small>(adding and removing nodes)</small></h1>
