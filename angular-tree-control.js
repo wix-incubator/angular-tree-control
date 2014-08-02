@@ -79,7 +79,7 @@
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
                         var injectSelectionClass = "";
-                        if (liSelectionClass && (this.node == $scope.selectedNode))
+                        if (liSelectionClass && ($scope.options.equality(this.node, $scope.selectedNode)))
                             injectSelectionClass = " " + liSelectionClass;
                         if ($scope.options.isLeaf(node))
                             return "tree-leaf" + injectSelectionClass;
@@ -166,6 +166,7 @@
                                 if (angular.isDefined(scope.node) && angular.equals(scope.node[scope.options.nodeChildren], newValue))
                                     return;
                                 scope.node = {};
+                                scope.synteticRoot = scope.node;
                                 scope.node[scope.options.nodeChildren] = newValue;
                             }
                             else {
@@ -235,12 +236,14 @@
         .directive("treeTransclude", function() {
             return {
                 link: function(scope, element, attrs, controller) {
-                    angular.forEach(scope.expandedNodesMap, function (node, id) {
-                        if (scope.options.equality(node, scope.node)) {
-                            scope.expandedNodesMap[scope.$id] = scope.node;
-                            scope.expandedNodesMap[id] = undefined;
-                        }
-                    });
+                    if (!scope.options.isLeaf(scope.node)) {
+                        angular.forEach(scope.expandedNodesMap, function (node, id) {
+                            if (scope.options.equality(node, scope.node)) {
+                                scope.expandedNodesMap[scope.$id] = scope.node;
+                                scope.expandedNodesMap[id] = undefined;
+                            }
+                        });
+                    }
                     if (scope.options.equality(scope.node, scope.selectedNode)) {
                         scope.selectNodeLabel(scope.node);
                     }
@@ -248,6 +251,13 @@
                     // create a scope for the transclusion, whos parent is the parent of the tree control
                     scope.transcludeScope = scope.parentScopeOfTree.$new();
                     scope.transcludeScope.node = scope.node;
+                    scope.transcludeScope.$parentNode = (scope.$parent.node === scope.synteticRoot)?null:scope.$parent.node;
+                    scope.transcludeScope.$index = scope.$index;
+                    scope.transcludeScope.$first = scope.$first;
+                    scope.transcludeScope.$middle = scope.$middle;
+                    scope.transcludeScope.$last = scope.$last;
+                    scope.transcludeScope.$odd = scope.$odd;
+                    scope.transcludeScope.$even = scope.$even;
                     scope.$on('$destroy', function() {
                         scope.transcludeScope.$destroy();
                     });
