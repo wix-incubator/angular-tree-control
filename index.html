@@ -29,6 +29,10 @@
         .docs-sidenav > li > a {display: block; font-size: 13px; font-weight: 500; color: #999; padding: 4px 20px;}
         .docs-sidenav > li.active > a {font-weight: 700; color: #563d7c; border-left: 2px solid #563d7c;padding-left: 18px;}
         .docs-sidenav > li > a:hover {background-color: transparent; color: #563d7c; border-left: 1px solid #563d7c;padding-left: 19px;}
+        .type-hint-object {background:#999;}
+        .type-hint-boolean {background:rgb(18, 131, 39);}
+        .type-hint-number {background:rgb(189, 63, 66);}
+
     </style>
 </head>
 <body ng-app="example">
@@ -151,7 +155,7 @@
                             <treecontrol class="tree-classic"
                                          tree-model="treedata"
                                          on-selection="showSelected(node)">
-                                <span style="color: {{getColor(node)}}">{{node.label}}</span>
+                                <span style="color: {{getColor(node)}}">{{node.label}} - index: {{$index}}</span>
                             </treecontrol>
                         </div>
                     </div>
@@ -159,10 +163,21 @@
             </div>
             <div class="col-md-6">
                 <p>Taking control of the tree labels is as simple as with <code>ng-repeat</code> - you include a template in the tree control tag.</p>
-                <p>The current node is ingected into that template as the <code>node</code> scope parameter.</p>
+                <p>Special properties are exposed to the local scope of each template, including the current node as <code>node</code>.</p>
                 <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
             </div>
         </div>
+        <table class="table table-bordered table-striped">
+            <thead><tr><td>Variable</td><td>Type</td><td>Details</td></tr></thead>
+            <tr><td><code>node</code></td><td><span class="label type-hint-object">Object</span></td><td>The current node the label represents.</td></tr>
+            <tr><td><code>$parentNode</code></td><td><span class="label type-hint-object">Object</span></td><td>The parent of the current node.</td></tr>
+            <tr><td><code>$index</code></td><td><span class="label type-hint-number">number</span></td><td>iterator offset of the repeated element under one parent node(0..length-1).</td></tr>
+            <tr><td><code>$first</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is first in the iterator.</td></tr>
+            <tr><td><code>$middle</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is between the first and last in the iterator.</td></tr>
+            <tr><td><code>$last</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is last in the iterator.</td></tr>
+            <tr><td><code>$odd</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is even (otherwise false).</td></tr>
+            <tr><td><code>$even</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is odd (otherwise false).</td></tr>
+        </table>
         <div class="row">
             <tabset>
                 <tab heading="Markup" >
