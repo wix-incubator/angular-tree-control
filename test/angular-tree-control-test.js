@@ -102,7 +102,6 @@ describe('treeControl', function() {
         beforeEach(function () {
             $rootScope.label = "exLabel";
             $rootScope.treedata = createSubTree(2, 2);
-            $rootScope.treedata.push({});
             element = $compile('<treecontrol tree-model="treedata">{{label}} - {{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
         });
@@ -110,6 +109,88 @@ describe('treeControl', function() {
         it('should transclude tree labels', function () {
             expect(element.find('li:eq(0) span').text()).toBe('exLabel - node 1');
             expect(element.find('li:eq(1) span').text()).toBe('exLabel - node 4');
+        });
+    });
+
+    describe('support special members in label scope', function () {
+        beforeEach(function () {
+            $rootScope.label = "exLabel";
+            $rootScope.treedata = createSubTree(2, 4);
+        });
+
+        it('should render $parentNode for a tree with multiple roots', function () {
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} parent:{{$parentNode?$parentNode.label:"N/A"}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 parent:N/A');
+            expect(element.find('li:eq(1) span').text()).toBe('node 6 parent:N/A');
+            expect(element.find('li:eq(2) span').text()).toBe('node 11 parent:N/A');
+            expect(element.find('li:eq(3) span').text()).toBe('node 16 parent:N/A');
+            element.find('li:eq(0) .tree-branch-head').click();
+            expect(element.find('li:eq(0) li:eq(0) span').text()).toBe('node 2 parent:node 1');
+        });
+
+        it('should render $parentNode for a tree with a single root', function () {
+            num = 1;
+            $rootScope.treedata = createSubTree(2, 1);
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} parent:{{$parentNode?$parentNode.label:"N/A"}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 parent:N/A');
+            element.find('li:eq(0) .tree-branch-head').click();
+            expect(element.find('li:eq(0) li:eq(0) span').text()).toBe('node 2 parent:node 1');
+        });
+
+        it('should render $index', function () {
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} index:{{$index}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 index:0');
+            expect(element.find('li:eq(1) span').text()).toBe('node 6 index:1');
+            expect(element.find('li:eq(2) span').text()).toBe('node 11 index:2');
+            expect(element.find('li:eq(3) span').text()).toBe('node 16 index:3');
+        });
+
+        it('should render $first', function () {
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} first:{{$first}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 first:true');
+            expect(element.find('li:eq(1) span').text()).toBe('node 6 first:false');
+            expect(element.find('li:eq(2) span').text()).toBe('node 11 first:false');
+            expect(element.find('li:eq(3) span').text()).toBe('node 16 first:false');
+        });
+
+        it('should render $middle', function () {
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} middle:{{$middle}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 middle:false');
+            expect(element.find('li:eq(1) span').text()).toBe('node 6 middle:true');
+            expect(element.find('li:eq(2) span').text()).toBe('node 11 middle:true');
+            expect(element.find('li:eq(3) span').text()).toBe('node 16 middle:false');
+        });
+
+        it('should render $last', function () {
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} last:{{$last}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 last:false');
+            expect(element.find('li:eq(1) span').text()).toBe('node 6 last:false');
+            expect(element.find('li:eq(2) span').text()).toBe('node 11 last:false');
+            expect(element.find('li:eq(3) span').text()).toBe('node 16 last:true');
+        });
+
+        it('should render $even', function () {
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} even:{{$even}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 even:true');
+            expect(element.find('li:eq(1) span').text()).toBe('node 6 even:false');
+            expect(element.find('li:eq(2) span').text()).toBe('node 11 even:true');
+            expect(element.find('li:eq(3) span').text()).toBe('node 16 even:false');
+        });
+
+        it('should render $odd', function () {
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} odd:{{$odd}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 odd:false');
+            expect(element.find('li:eq(1) span').text()).toBe('node 6 odd:true');
+            expect(element.find('li:eq(2) span').text()).toBe('node 11 odd:false');
+            expect(element.find('li:eq(3) span').text()).toBe('node 16 odd:true');
         });
     });
 
