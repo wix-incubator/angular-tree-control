@@ -55,6 +55,7 @@
 
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "nodeChildren", "children");
+                    //ensureDefault($scope.options, "nodeId", "");
                     ensureDefault($scope.options, "dirSelectable", true);
                     ensureDefault($scope.options, "multiSelectable", false);
                     ensureDefault($scope.options, "injectClasses", {});
@@ -121,8 +122,8 @@
                             $scope.onNodeToggle({node: this.node, expanded: expanding});
                     };
 
-                    $scope.selectNodeLabel = function (selectedNode) {
-                        if (selectedNode[$scope.options.nodeChildren] && selectedNode[$scope.options.nodeChildren].length > 0 && !$scope.options.dirSelectable) {
+                    $scope.selectNodeLabel = function (clickedNode) {
+                        if (clickedNode[$scope.options.nodeChildren] && clickedNode[$scope.options.nodeChildren].length > 0 && !$scope.options.dirSelectable) {
                             this.selectNodeHead();
                         }
                         else {
@@ -131,32 +132,35 @@
                                 if (!$scope.selectedNode) {
                                     $scope.selectedNode = {};
                                 }
-                                if ($scope.selectedNode[this.$id] !== undefined) {
-                                    delete $scope.selectedNode[this.$id]
+                                var index =  ($scope.options.nodeId) ? clickedNode[$scope.options.nodeId] : this.$id;
+                                if ($scope.selectedNode[index] !== undefined) {
+                                    delete $scope.selectedNode[index]
                                 }
                                 else {
-                                    $scope.selectedNode[this.$id] = selectedNode;
+                                    $scope.selectedNode[index] = clickedNode;
                                     if ($scope.onSelection) {
-                                        $scope.onSelection({node: selectedNode});
+                                        $scope.onSelection({node: clickedNode});
                                     }
                                 }
                             }
                             else
                                 {
-                                    if ($scope.selectedNode != selectedNode) {
-                                        $scope.selectedNode = selectedNode;
+                                    if ($scope.selectedNode != clickedNode) {
+                                        $scope.selectedNode = clickedNode;
                                         if ($scope.onSelection) {
-                                            $scope.onSelection({node: selectedNode});
+                                            $scope.onSelection({node: clickedNode});
                                         }
                                     }
                                 }
                             }
                         };
 
-                        $scope.selectedClass = function () {
+                        $scope.selectedClass = function (node) {
+                            var index =  ($scope.options.multiSelectable && $scope.options.nodeId) ? node[$scope.options.nodeId] : this.$id;
+
                             var labelSelectionClass = classIfDefined($scope.options.injectClasses.labelSelected, false);
                             var injectSelectionClass = "";
-                            var isSelected = (($scope.options.multiSelectable && $scope.selectedNode && $scope.selectedNode[this.$id] != undefined ) || (!($scope.options.multiSelectable) && this.node === $scope.selectedNode));
+                            var isSelected = (($scope.options.multiSelectable && $scope.selectedNode && $scope.selectedNode[index] != undefined ) || (!($scope.options.multiSelectable) && this.node === $scope.selectedNode));
 
                             if (isSelected) {
                                 injectSelectionClass = "tree-selected";
@@ -173,7 +177,7 @@
                             '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | orderBy:orderBy:reverseOrder" ng-class="headClass(node)" ' + classIfDefined($scope.options.injectClasses.li, true) + '>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head ' + classIfDefined($scope.options.injectClasses.iLeaf, false) + '"></i>' +
-                            '<div class="tree-label ' + classIfDefined($scope.options.injectClasses.label, false) + '" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label ' + classIfDefined($scope.options.injectClasses.label, false) + '" ng-class="selectedClass(node)" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';

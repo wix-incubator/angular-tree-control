@@ -15,22 +15,22 @@
 <div ng-controller="Controller">
     <div style="display: flex; flex-direction: row">
         <div class="tree-border">
-            <h3>Classic Tree</h3>
-            <div>Selected: {{node1.label?node1.label:"N/A"}}</div>
+            <h3>Classic Tree : multi-select</h3>
+            <div>{{ node1 ? countSelected(node1) : 0 }} Nodes Selected</div>
             <treecontrol class="tree-classic" tree-model="treedata" options="opt1" on-selection="showSelected(node)" selected-node="node1">
                 label: {{node.label}} ({{node.id}})
             </treecontrol>
         </div>
         <div class="tree-border">
             <h3>Light Tree</h3>
-            <div>Selected: {{node2.label?node2.label:"N/A"}}</div>
+            <div>Selected: {{node2.label ? node2.label : "N/A"}}</div>
             <treecontrol class="tree-light" tree-model="treedata" options="opt2" on-selection="showSelected(node)" selected-node="node2">
                 label: {{node.label}} ({{node.id}})
             </treecontrol>
         </div>
         <div class="tree-border" style=" background: #555;">
             <h3 style="color: white">Dark Tree</h3>
-            <div style="color: white">Selected: {{node3.label?node3.label:"N/A"}}</div>
+            <div style="color: white">Selected: {{node3.label ? node3.label : "N/A"}}</div>
             <treecontrol class="tree-dark" tree-model="treedata" options="opt3" on-selection="showSelected(node)" selected-node="node3">
                 label: {{node.label}} ({{node.id}})  [{{label}}]
             </treecontrol>
@@ -67,6 +67,10 @@
                 $scope.selected = sel.label;
             };
 
+            $scope.countSelected = function(tree){
+                return Object.keys(tree).length;
+            };
+
             $scope.addRoot = function() {
                 $scope.treedata.push({ "label" : "New Node A", "id" : "id A", "children": [] });
             };
@@ -83,11 +87,13 @@
             $scope.opt1 = {
                 nodeChildren: "children",
                 dirSelectable: true,
-                multiSelectable: true
+                multiSelectable: true,
+                nodeId: "id"
             };
 
             $scope.opt2 = {
                 nodeChildren: "children",
+                nodeId: "id",
                 dirSelectable: false
             };
 
