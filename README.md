@@ -72,6 +72,7 @@ and add the data for the tree
 $scope.treeOptions = {
     nodeChildren: "children",
     dirSelectable: true,
+    multiSelectable: true,
     injectClasses: {
         ul: "a1",
         li: "a2",
@@ -114,6 +115,7 @@ Attributes of angular treecontrol
 - `options` : different options to customize the tree control.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
   - `dirSelectable` : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to `true`.
+  - `multiSelectable` : can select multiple items, with deselection on click of selected item. This changes the scope variable `selected-node` into a map of selected nodes.
   - `equality` : the function used to determine equality between old nodes and new ones when checking whether a replacement node should be expanded and/or marked as selected. Defaults to a function which uses `angular.equals()` on everything except the property indicated in `nodeChildren`.
   - `isLeaf` : function (node) -> boolean used to determine if a node is a leaf or branch. The default function checks for existence of children of the node to determine leaf or branch.
   - `injectClasses` : allows to inject additional CSS classes into the tree DOM
