@@ -142,6 +142,9 @@
                                         $scope.onSelection({node: clickedNode});
                                     }
                                 }
+                                if ($scope.onSelection) {
+                                    $scope.onSelection({node: clickedNode});
+                                }
                             }
                             else
                                 {
