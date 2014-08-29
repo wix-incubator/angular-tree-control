@@ -32,6 +32,7 @@
                     selectedNode: "=?",
                     expandedNodes: "=?",
                     onSelection: "&",
+                    onToggleSelection: "&",
                     onNodeToggle: "&",
                     options: "=?",
                     orderBy: "@",
@@ -55,7 +56,7 @@
 
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "nodeChildren", "children");
-                    //ensureDefault($scope.options, "nodeId", "");
+                    //ensureDefault($scope.options, "nodeId", ""); // default to current scope.$id for clicked node
                     ensureDefault($scope.options, "dirSelectable", true);
                     ensureDefault($scope.options, "multiSelectable", false);
                     ensureDefault($scope.options, "injectClasses", {});
@@ -127,23 +128,24 @@
                             this.selectNodeHead();
                         }
                         else {
-
                             if ($scope.options.multiSelectable) {
+                                var selected = false;
                                 if (!$scope.selectedNode) {
                                     $scope.selectedNode = {};
                                 }
                                 var index =  ($scope.options.nodeId) ? clickedNode[$scope.options.nodeId] : this.$id;
                                 if ($scope.selectedNode[index] !== undefined) {
-                                    delete $scope.selectedNode[index]
+                                    delete $scope.selectedNode[index];
                                 }
                                 else {
+                                    selected = true;
                                     $scope.selectedNode[index] = clickedNode;
                                     if ($scope.onSelection) {
-                                        $scope.onSelection({node: clickedNode});
+                                        $scope.onSelection({node: clickedNode, selected: true});
                                     }
                                 }
-                                if ($scope.onSelection) {
-                                    $scope.onSelection({node: clickedNode});
+                                if ($scope.onToggleSelection) {
+                                    $scope.onToggleSelection({node: clickedNode, selected: selected});
                                 }
                             }
                             else
@@ -151,7 +153,7 @@
                                     if ($scope.selectedNode != clickedNode) {
                                         $scope.selectedNode = clickedNode;
                                         if ($scope.onSelection) {
-                                            $scope.onSelection({node: clickedNode});
+                                            $scope.onSelection({node: clickedNode, selected: true});
                                         }
                                     }
                                 }

@@ -442,6 +442,48 @@ describe('treeControl', function() {
         });
     });
 
+    describe('onToggleSelection', function () {
+        var currentlySelectedCount = 0;
+
+        var countToggles = function (toggledNode, selected) {
+            if(selected){
+                currentlySelectedCount++;
+            }
+            else{
+                currentlySelectedCount--;
+            }
+        };
+
+        beforeEach(function () {
+            currentlySelectedCount = 0;
+            $rootScope.countToggles = countToggles;
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treedata.push({});
+            $rootScope.treeOptions = {
+                multiSelectable: true
+            };
+
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions" on-toggle-selection="countToggles(node, selected)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+        });
+
+        it('should increment currentlySelectedCount when a list item is clicked', function () {
+            element.find('li:eq(0) div').click();
+            expect(currentlySelectedCount).toBe(1);
+        });
+
+        it('should decrement currentlySelectedCount when a previously selected list item is clicked', function () {
+            element.find('li:eq(0) div').click();
+            expect(currentlySelectedCount).toBe(1);
+            element.find('li:eq(1) div').click();
+            expect(currentlySelectedCount).toBe(2);
+            element.find('li:eq(1) div').click();
+            expect(currentlySelectedCount).toBe(1);
+        });
+
+
+    });
+
     describe('expanded-nodes binding', function () {
         beforeEach(function () {
             $rootScope.treedata = createSubTree(3, 2);
