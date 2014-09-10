@@ -23,6 +23,10 @@
                     obj[prop] = value;
             }
 
+            function findMapIndex(nodeId, node, scopeId) {
+                return nodeId ? node[nodeId] : scopeId;
+            }
+
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -74,38 +78,55 @@
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
                     for (var i = 0; i < $scope.expandedNodes.length; i++) {
-                        $scope.expandedNodesMap["" + i] = $scope.expandedNodes[i];
+                        var expandedNode = $scope.expandedNodes[i];
+                        var index = $scope.options.nodeId ? expandedNode[$scope.options.nodeId] : "" + i;
+                        $scope.expandedNodesMap[index] = expandedNode;
                     }
                     $scope.parentScopeOfTree = $scope.$parent;
-
 
                     $scope.headClass = function (node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
                         var injectSelectionClass = "";
-                        if (liSelectionClass && ($scope.options.equality(this.node, $scope.selectedNode)))
+
+                        var index = findMapIndex($scope.options.nodeId, node, this.$id);
+                        var isSelected = (
+                            ($scope.options.multiSelectable && $scope.selectedNode && $scope.selectedNode[index] !== undefined ) ||
+                            (!($scope.options.multiSelectable) && $scope.options.equality(node, $scope.selectedNode))
+                            );
+
+                        if (liSelectionClass && isSelected) {
                             injectSelectionClass = " " + liSelectionClass;
-                        if ($scope.options.isLeaf(node))
+                        }
+
+                        if ($scope.options.isLeaf(node)) {
                             return "tree-leaf" + injectSelectionClass;
-                        if ($scope.expandedNodesMap[this.$id])
+                        }
+
+
+                        if ($scope.expandedNodesMap[index] !== undefined ) {
                             return "tree-expanded" + injectSelectionClass;
-                        else
+                        } else {
                             return "tree-collapsed" + injectSelectionClass;
+                        }
                     };
 
-                    $scope.iBranchClass = function () {
-                        if ($scope.expandedNodesMap[this.$id])
+                    $scope.iBranchClass = function (node) {
+                        var index = findMapIndex($scope.options.nodeId, node, this.$id);
+                        if ($scope.expandedNodesMap[index])
                             return classIfDefined($scope.options.injectClasses.iExpanded);
                         else
                             return classIfDefined($scope.options.injectClasses.iCollapsed);
                     };
 
-                    $scope.nodeExpanded = function () {
-                        return !!$scope.expandedNodesMap[this.$id];
+                    $scope.nodeExpanded = function (node) {
+                        var index = findMapIndex($scope.options.nodeId, node, this.$id);
+                        return !!$scope.expandedNodesMap[index];
                     };
 
-                    $scope.selectNodeHead = function () {
-                        var expanding = $scope.expandedNodesMap[this.$id] === undefined;
-                        $scope.expandedNodesMap[this.$id] = (expanding ? this.node : undefined);
+                    $scope.selectNodeHead = function (node) {
+                        var mapIndex = findMapIndex($scope.options.nodeId, node, this.$id);
+                        var expanding = $scope.expandedNodesMap[mapIndex] === undefined;
+                        $scope.expandedNodesMap[mapIndex] = (expanding ? this.node : undefined);
                         if (expanding) {
                             $scope.expandedNodes.push(this.node);
                         }
@@ -161,11 +182,12 @@
                         };
 
                         $scope.selectedClass = function (node) {
-                            var index =  ($scope.options.multiSelectable && $scope.options.nodeId) ? node[$scope.options.nodeId] : this.$id;
 
                             var labelSelectionClass = classIfDefined($scope.options.injectClasses.labelSelected, false);
                             var injectSelectionClass = "";
-                            var isSelected = (($scope.options.multiSelectable && $scope.selectedNode && $scope.selectedNode[index] != undefined ) || (!($scope.options.multiSelectable) && this.node === $scope.selectedNode));
+
+                            var index =  ($scope.options.multiSelectable && $scope.options.nodeId) ? node[$scope.options.nodeId] : this.$id;
+                            var isSelected = (($scope.options.multiSelectable && $scope.selectedNode && $scope.selectedNode[index] != undefined ) || (!($scope.options.multiSelectable) && node === $scope.selectedNode));
 
                             if (isSelected) {
                                 injectSelectionClass = "tree-selected";
@@ -179,12 +201,12 @@
                         //tree template
                         var template =
                             '<ul ' + classIfDefined($scope.options.injectClasses.ul, true) + '>' +
-                            '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | orderBy:orderBy:reverseOrder" ng-class="headClass(node)" ' + classIfDefined($scope.options.injectClasses.li, true) + '>' +
-                            '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
-                            '<i class="tree-leaf-head ' + classIfDefined($scope.options.injectClasses.iLeaf, false) + '"></i>' +
-                            '<div class="tree-label ' + classIfDefined($scope.options.injectClasses.label, false) + '" ng-class="selectedClass(node)" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
-                            '<treeitem ng-if="nodeExpanded()"></treeitem>' +
-                            '</li>' +
+                                '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | orderBy:orderBy:reverseOrder" ng-class="headClass(node)" ' + classIfDefined($scope.options.injectClasses.li, true) + '>' +
+                                    '<i class="tree-branch-head" ng-class="iBranchClass(node)" ng-click="selectNodeHead(node)"></i>' +
+                                    '<i class="tree-leaf-head ' + classIfDefined($scope.options.injectClasses.iLeaf, false) + '"></i>' +
+                                    '<div class="tree-label ' + classIfDefined($scope.options.injectClasses.label, false) + '" ng-class="selectedClass(node)" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                                    '<treeitem ng-if="nodeExpanded(node)"></treeitem>' +
+                                '</li>' +
                             '</ul>';
 
                         return {
@@ -229,7 +251,8 @@
                                     for (var i = 0; (i < existingScopes.length) && !found; i++) {
                                         var existingScope = existingScopes[i];
                                         if (scope.options.equality(newExNode, existingScope.node)) {
-                                            newExpandedNodesMap[existingScope.$id] = existingScope.node;
+                                            var index = findMapIndex(scope.options.nodeId, existingScope.node, existingScope.$id);
+                                            newExpandedNodesMap[index /*existingScope.$id*/] = existingScope.node;
                                             found = true;
                                         }
                                     }
