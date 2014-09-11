@@ -109,6 +109,7 @@ Attributes of angular treecontrol
 - element content : the template to evaluate against each node (and the parent scope of the tree) for the node label.
 - `tree-model` : [Node|Array[Node]] the tree data on the `$scope`. This can be an array of nodes or a single node.
 - `selected-node` : [Node] binding for the selected node in the tree. Updating this value updates the selection displayed in the tree. Selecting a node in the tree will update this value.
+- `selected-nodes` : [Array[Node]] [Only used when multiSelectable option is true] binding for the selected nodes in the tree. Updating this value updates the nodes that are selected in the tree.
 - `expanded-nodes` : [Array[Node]] binding for the expanded nodes in the tree. Updating this value updates the nodes that are expanded in the tree.
 - `on-selection` : callback called whenever selecting a node in the tree. The callback argument is the selected node.
 - `on-toggle-select` : callback called whenever selecting or deselecting (in multi-select mode) a node in the tree. The callback argument is the clicked node and selected state.
@@ -116,7 +117,7 @@ Attributes of angular treecontrol
 - `options` : different options to customize the tree control.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
   - `dirSelectable` : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to `true`.
-  - `multiSelectable` : can select multiple items, with deselection on click of selected item. This changes the scope variable `selected-node` into a map of selected nodes.
+  - `multiSelectable` : can select multiple items, with deselection on click of selected item. If true then any value assigned to selected-node will be ignored and the selected-nodes attribute will be referenced instead.
   - `equality` : the function used to determine equality between old nodes and new ones when checking whether a replacement node should be expanded and/or marked as selected. Defaults to a function which uses `angular.equals()` on everything except the property indicated in `nodeChildren`.
   - `isLeaf` : function (node) -> boolean used to determine if a node is a leaf or branch. The default function checks for existence of children of the node to determine leaf or branch.
   - `injectClasses` : allows to inject additional CSS classes into the tree DOM

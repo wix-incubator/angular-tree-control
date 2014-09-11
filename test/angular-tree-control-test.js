@@ -258,11 +258,11 @@ describe('treeControl', function() {
             $rootScope.treeOptions = {
                 multiSelectable: true
             };
-            $rootScope.selectedNodes ={};
+            $rootScope.selectedNodes = [];
         });
 
         it('should retain array of selected nodes', function() {
-            element = $compile('<treecontrol tree-model="treedata" options="treeOptions" selected-node="selectedNodes">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions" selected-nodes="selectedNodes">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
 
 
