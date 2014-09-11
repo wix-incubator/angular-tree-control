@@ -195,6 +195,7 @@ describe('treeControl', function() {
     });
 
     describe('selection', function() {
+
         it('should publish the currently selected node on scope', function () {
             $rootScope.treedata = createSubTree(2, 2);
             element = $compile('<treecontrol tree-model="treedata" selected-node="selectedItem">{{node.label}}</treecontrol>')($rootScope);
@@ -248,6 +249,37 @@ describe('treeControl', function() {
             $rootScope.$digest();
             expect(element.find('.tree-selected').length).toBe(1);
         });
+    });
+
+    describe('multi-selection', function() {
+
+        beforeEach(function() {
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treeOptions = {
+                multiSelectable: true
+            };
+            $rootScope.selectedNodes = [];
+        });
+
+        it('should retain array of selected nodes', function() {
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions" selected-nodes="selectedNodes">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+
+            expect(Object.keys($rootScope.selectedNodes).length).toBe(0);
+
+            element.find('li:eq(0) div').click();
+            expect(element.find('.tree-selected').length).toBe(1);
+
+            expect(Object.keys($rootScope.selectedNodes).length).toBe(1);
+
+            element.find('li:eq(1) div').click();
+            expect(element.find('.tree-selected').length).toBe(2);
+
+            expect(Object.keys($rootScope.selectedNodes).length).toBe(2);
+
+        });
+
     });
 
     describe('options usage', function () {
@@ -408,6 +440,48 @@ describe('treeControl', function() {
             element.find('li:eq(0) div').click();
             expect(element.find('li:eq(0) div').hasClass('labelSelectedClass')).toBeTruthy();
         });
+    });
+
+    describe('onToggleSelection', function () {
+        var currentlySelectedCount = 0;
+
+        var countToggles = function (toggledNode, selected) {
+            if(selected){
+                currentlySelectedCount++;
+            }
+            else{
+                currentlySelectedCount--;
+            }
+        };
+
+        beforeEach(function () {
+            currentlySelectedCount = 0;
+            $rootScope.countToggles = countToggles;
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treedata.push({});
+            $rootScope.treeOptions = {
+                multiSelectable: true
+            };
+
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions" on-toggle-selection="countToggles(node, selected)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+        });
+
+        it('should increment currentlySelectedCount when a list item is clicked', function () {
+            element.find('li:eq(0) div').click();
+            expect(currentlySelectedCount).toBe(1);
+        });
+
+        it('should decrement currentlySelectedCount when a previously selected list item is clicked', function () {
+            element.find('li:eq(0) div').click();
+            expect(currentlySelectedCount).toBe(1);
+            element.find('li:eq(1) div').click();
+            expect(currentlySelectedCount).toBe(2);
+            element.find('li:eq(1) div').click();
+            expect(currentlySelectedCount).toBe(1);
+        });
+
+
     });
 
     describe('expanded-nodes binding', function () {
