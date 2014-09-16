@@ -71,7 +71,7 @@ and add the data for the tree
 ```javascript
 $scope.treeOptions = {
     nodeChildren: "children",
-    dirSelectable: true,
+    onLabelClick: "both",
     injectClasses: {
         ul: "a1",
         li: "a2",
@@ -113,7 +113,7 @@ Attributes of angular treecontrol
 - `on-node-toggle` : callback called whenever a node expands or collapses in the tree. The function arguments are the toggled node and a boolean which is true for expansion, false for collapse.
 - `options` : different options to customize the tree control.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
-  - `dirSelectable` : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to `true`.
+  - `onLabelClick` : decide what to do when label is clicked.  Options are `select`, `expand`, or `both`. Defaults to `select`.
   - `equality` : the function used to determine equality between old nodes and new ones when checking whether a replacement node should be expanded and/or marked as selected. Defaults to a function which uses `angular.equals()` on everything except the property indicated in `nodeChildren`.
   - `isLeaf` : function (node) -> boolean used to determine if a node is a leaf or branch. The default function checks for existence of children of the node to determine leaf or branch.
   - `injectClasses` : allows to inject additional CSS classes into the tree DOM
