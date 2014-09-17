@@ -28,6 +28,7 @@
         .docs-sidenav > li > a {display: block; font-size: 13px; font-weight: 500; color: #999; padding: 4px 20px;}
         .docs-sidenav > li.active > a {font-weight: 700; color: #563d7c; border-left: 2px solid #563d7c;padding-left: 18px;}
         .docs-sidenav > li > a:hover {background-color: transparent; color: #563d7c; border-left: 1px solid #563d7c;padding-left: 19px;}
+        .bm10 {margin-bottom: 10px;}
     </style>
 </head>
 <body ng-app="example">
@@ -684,6 +685,74 @@
                     nodeChildren: "links"
                 };
 
+            }
+        </script>
+    </section>
+
+    <section id="multi-select" ng-controller="MultiSelect">
+        <div class="page-header">
+            <h1>Multiple Selection <small>(Select multiple items)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="classic-html">
+                            <button class="bm10 pull-right" ng-click="clearAll()">Clear Selections</button>
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         selected-nodes="selectedNodes"
+                                         on-selection="printNumSelected()">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>Enable multiple selection by setting the selected-nodes attribute to an array. Populating the array with individual nodes will select them when the tree loads.</p>
+                <p>The selected-node attribute can be used at the same time, but has undefined behavior.</p>
+                <p>Selected nodes: <code>{{selectedNodesString?selectedNodesString:"N/A"}}</code></p>
+                <p>Number selected: <code>{{numSelected}}</code></p>
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="classic-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="classic-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="classic-js">
+            function MultiSelect($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+
+                var getLabels = function () {
+                    var len = $scope.selectedNodes.length;
+                    var selectedLabels = [];
+                    for (var i = 0; i < len; i++) {
+                        selectedLabels.push($scope.selectedNodes[i].label);
+                    }
+                    return selectedLabels.join(', ');
+                };
+
+                $scope.clearAll = function() {
+                    $scope.selectedNodes = [];
+                    $scope.numSelected = $scope.selectedNodes.length;
+                    $scope.selectedNodesString = getLabels();
+                };
+
+                $scope.selectedNodes = [$scope.treedata[0]];
+                $scope.numSelected = $scope.selectedNodes.length;
+                $scope.selectedNodesString = getLabels();
+                $scope.printNumSelected = function() {
+                    $scope.numSelected = $scope.selectedNodes.length;
+                    $scope.selectedNodesString = getLabels();
+                };
             }
         </script>
     </section>

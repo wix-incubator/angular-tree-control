@@ -343,6 +343,34 @@ describe('treeControl', function() {
             expect(element.find('li:eq(0) .tree-branch-head').hasClass('expandcls')).toBeTruthy();
             expect(element.find('li:eq(1) .tree-branch-head').hasClass('collapsecls')).toBeTruthy();
         });
+
+        it('should be able to allow for multiple selection when flag set', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.selectedNodes = [];
+            $rootScope.treeOptions = {
+                multiSelect: true
+            };
+            element = $compile('<treecontrol selected-nodes="selectedNodes" options="treeOptions" tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect($rootScope.selectedNodes.length).toBe(0);
+            element.find('li:eq(0) div').click();
+            element.find('li:eq(1) div').click();
+            expect($rootScope.selectedNodes.length).toBe(2);
+        });
+        it('should toggle the selected item if multiple select is on', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.selectedNodes = [];
+            $rootScope.treeOptions = {
+                multiSelect: true
+            };
+            element = $compile('<treecontrol selected-nodes="selectedNodes" options="treeOptions" tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect($rootScope.selectedNodes.length).toBe(0);
+            element.find('li:eq(0) div').click();
+            expect($rootScope.selectedNodes.length).toBe(1);
+            element.find('li:eq(0) div').click();
+            expect($rootScope.selectedNodes.length).toBe(0);
+        });
     });
 
     describe('customizations', function () {
