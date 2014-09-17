@@ -265,7 +265,8 @@
                 <p><a ng-click="selectNode(0)">select node 1</a><br>
                 <a ng-click="selectNode(1)">select node 2</a><br>
                 <a ng-click="selectNode(2)">select node 3</a><br>
-                <a ng-click="selectNode(3)">select node 4</a></p>
+                <a ng-click="selectNode(3)">select node 4</a><br>
+                <a ng-click="clearSelected()">clear Selected</a></p>
                 <p>Selected node: <code>{{selected.label}}</code></p>
             </div>
         </div>
@@ -287,6 +288,9 @@
                 $scope.selectNode = function(num) {
                     $scope.selected = $scope.treedata[num];
                 };
+                $scope.clearSelected = function() {
+                    $scope.selected = undefined;
+                }
 
 
             }
