@@ -1,6 +1,6 @@
 (function ( angular ) {
     'use strict';
-    
+
     angular.module( 'treeControl', [] )
         .directive( 'treecontrol', ['$compile', function( $compile ) {
             /**
@@ -17,12 +17,12 @@
                 else
                     return "";
             }
-            
+
             function ensureDefault(obj, prop, value) {
                 if (!obj.hasOwnProperty(prop))
                     obj[prop] = value;
             }
-            
+
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -128,9 +128,12 @@
                         else {
                             if ($scope.selectedNode != selectedNode) {
                                 $scope.selectedNode = selectedNode;
-                                if ($scope.onSelection)
-                                    $scope.onSelection({node: selectedNode});
                             }
+                            else {
+                                $scope.selectedNode = undefined;
+                            }
+                            if ($scope.onSelection)
+                                $scope.onSelection({node: $scope.selectedNode});
                         }
                     };
 
