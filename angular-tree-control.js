@@ -128,9 +128,12 @@
                         else {
                             if ($scope.selectedNode != selectedNode) {
                                 $scope.selectedNode = selectedNode;
-                                if ($scope.onSelection)
-                                    $scope.onSelection({node: selectedNode});
                             }
+                            else {
+                                $scope.selectedNode = undefined;
+                            }
+                            if ($scope.onSelection)
+                                $scope.onSelection({node: $scope.selectedNode});
                         }
                     };
 
