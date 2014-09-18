@@ -75,6 +75,24 @@
                     }
                     $scope.parentScopeOfTree = $scope.$parent;
 
+                    $scope.collapseNode = function(node) {
+                        var index;
+                        for (var i=0; (i < $scope.expandedNodes.length) && !index; i++) {
+                            if ($scope.options.equality($scope.expandedNodes[i], node)) {
+                                index = i;
+                            }
+                        }
+                        if (index != undefined)
+                            $scope.expandedNodes.splice(index, 1);
+                        if($scope.onNodeToggle)
+                            $scope.onNodeToggle({node: node, expanded: false});
+                    };
+
+                    $scope.expandNode = function(node) {
+                        $scope.expandedNodes.push(node);
+                        if($scope.onNodeToggle)
+                            $scope.onNodeToggle({node: node, expanded: true});
+                    };
 
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
@@ -104,20 +122,11 @@
                         var expanding = $scope.expandedNodesMap[this.$id] === undefined;
                         $scope.expandedNodesMap[this.$id] = (expanding ? this.node : undefined);
                         if (expanding) {
-                            $scope.expandedNodes.push(this.node);
+                            $scope.expandNode(this.node);
                         }
                         else {
-                            var index;
-                            for (var i=0; (i < $scope.expandedNodes.length) && !index; i++) {
-                                if ($scope.options.equality($scope.expandedNodes[i], this.node)) {
-                                    index = i;
-                                }
-                            }
-                            if (index != undefined)
-                                $scope.expandedNodes.splice(index, 1);
+                            $scope.collapseNode(this.node)
                         }
-                        if ($scope.onNodeToggle)
-                            $scope.onNodeToggle({node: this.node, expanded: expanding});
                     };
 
                     $scope.selectNodeLabel = function( selectedNode ){
