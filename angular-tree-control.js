@@ -23,6 +23,22 @@
                     obj[prop] = value;
             }
 
+            function openSiblings(el) {
+                var parent = angular.element(el).parent(),
+                    opened = [];
+                function isSiblingOpen(node, direction) {
+                    var currentNode = angular.element(node[0][direction + 'ElementSibling']);
+                    if(!currentNode.length) return;
+                    if(currentNode.hasClass('tree-expanded')){
+                        opened.push(currentNode.scope().$id)
+                     }
+                    isSiblingOpen(currentNode, direction);
+                }
+                isSiblingOpen(parent, 'previous');
+                isSiblingOpen(parent, 'next');
+                return opened;
+            }
+
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -67,6 +83,7 @@
                     ensureDefault($scope.options.injectClasses, "labelSelected", "");
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
+                    ensureDefault($scope.options, "allowMultiple", true);
 
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
@@ -122,6 +139,12 @@
                         var expanding = $scope.expandedNodesMap[this.$id] === undefined;
                         $scope.expandedNodesMap[this.$id] = (expanding ? this.node : undefined);
                         if (expanding) {
+                            if(!$scope.options.allowMultiple){
+                                var openedSiblings  = openSiblings(event.currentTarget);
+                                openedSiblings.forEach(function (sibling) {
+                                    $scope.collapseNode($scope.expandedNodesMap[sibling]);
+                                })
+                            }
                             $scope.expandNode(this.node);
                         }
                         else {
