@@ -354,6 +354,82 @@ describe('treeControl', function() {
             expect(element.find('li:eq(0) .tree-branch-head').hasClass('expandcls')).toBeTruthy();
             expect(element.find('li:eq(1) .tree-branch-head').hasClass('collapsecls')).toBeTruthy();
         });
+
+        it('should filter sibling nodes based on filter expression which is a string', function() {
+            $rootScope.treedata = [
+                { label: "a", children: [] },
+                { label: "c", children: [] },
+                { label: "b", children: [] }
+            ];
+            $rootScope.predicate = 'b';
+            element = $compile('<treecontrol tree-model="treedata" filter-expression="predicate">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('b');
+            expect(element.find('li').length).toBe(1);
+        });
+
+        it('should filter sibling nodes based on filter expression which is an object', function() {
+            $rootScope.treedata = [
+                { label: "a", age: 12, children: [] },
+                { label: "c", age: 12, children: [] },
+                { label: "b", age: 14, children: [] }
+            ];
+            $rootScope.predicate = {age:12};
+            element = $compile('<treecontrol tree-model="treedata" filter-expression="predicate">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('a');
+            expect(element.find('li:eq(1)').text()).toBe('c');
+            expect(element.find('li').length).toBe(2);
+        });
+
+        it('should filter sibling nodes based on filter expression which is a function', function() {
+            $rootScope.treedata = [
+                { label: "a", age: 12, children: [] },
+                { label: "c", age: 12, children: [] },
+                { label: "b", age: 14, children: [] }
+            ];
+            $rootScope.predicate = function(node) {
+                return node.age == 12;
+            };
+            element = $compile('<treecontrol tree-model="treedata" filter-expression="predicate">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('a');
+            expect(element.find('li:eq(1)').text()).toBe('c');
+            expect(element.find('li').length).toBe(2);
+        });
+
+        it('should filter sibling nodes based on filter expression in non prefix match', function() {
+            $rootScope.treedata = [
+                { label: "abcd", age: 12, children: [] },
+                { label: "abef", age: 12, children: [] },
+                { label: "bcde", age: 14, children: [] }
+            ];
+            $rootScope.predicate = "ab";
+            $rootScope.comparator = false;
+            element = $compile('<treecontrol tree-model="treedata" filter-expression="predicate" filter-comparator="comparator">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('abcd');
+            expect(element.find('li:eq(1)').text()).toBe('abef');
+            expect(element.find('li').length).toBe(2);
+        });
+
+        it('should filter sibling nodes based on filter expression in non prefix match', function() {
+            $rootScope.treedata = [
+                { label: "abcd", age: 12, children: [] },
+                { label: "abef", age: 12, children: [] },
+                { label: "bcde", age: 14, children: [] }
+            ];
+            $rootScope.predicate = "ab";
+            $rootScope.comparator = true;
+            element = $compile('<treecontrol tree-model="treedata" filter-expression="predicate" filter-comparator="comparator">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li').length).toBe(0);
+
+            $rootScope.predicate = "abcd";
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('abcd');
+            expect(element.find('li').length).toBe(1);
+        });
     });
 
     describe('customizations', function () {
