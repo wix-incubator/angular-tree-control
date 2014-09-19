@@ -850,6 +850,62 @@
         </script>
     </section>
 
+
+    <section id="filtering" ng-controller="Filtering">
+        <div class="page-header">
+            <h1>Filtering tree nodes <small>(filter-expression, filter-comparator)</small></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 show-grid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="example-caption">EXAMPLE:</div>
+                        <div save-content="filtering-html">
+                            <treecontrol class="tree-classic"
+                                         tree-model="treedata"
+                                         filter-expression="predicate"
+                                         filter-comparator="comparator">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p>The <code>filter-expression</code> and <code>filter-comparator</code> properties allows filtering the nodes of the tree.
+                    The value of those attributes is used with the <code>ng-repeat</code> Filter filter -
+                    see more details at the <a href="https://code.angularjs.org/1.2.25/docs/api/ng/filter/filter">Angular JS Filter</a> docs.</p>
+                <p>The filter is done for each branch individually.</p>
+                <p>The filter expression (predicate) is used for selecting nodes from the tree to display.
+                    It can be a string, object or a function. If a string, it is used to match values of the node properties.
+                    If an object, each property of the expression object is used to match values of the node properties with the same name.
+                    A function can be used to write arbitrary filters, and will be invoked for each node of the tree.</p>
+                <p>The filter comparator is used in determining if the expected value (from the filter expression) and actual value (from the object in the array) should be considered a match.
+                If false, it looks for substring match in a case insensitive way (the default).
+                If true, it looks for exact match.
+                If a function, the function will be given the object value and the predicate value to compare and should return true if the item should be included in filtered result.</p>
+                <input type="text" ng-model="predicate"/> Filter expression (string)<br>
+                <input type="checkbox" ng-model="comparator"/> Filter comparator (true or false)
+            </div>
+        </div>
+        <div class="row">
+            <tabset>
+                <tab heading="Markup" >
+                    <pre class="code" apply-content="filtering-html" highlight-lang="html"></pre>
+                </tab>
+                <tab heading="JavaScript">
+                    <pre class="code" apply-content="filtering-js" highlight-lang="js"></pre>
+                </tab>
+            </tabset>
+        </div>
+        <script save-content="filtering-js">
+            function Filtering($scope) {
+                $scope.treedata=createSubTree(3, 4, "");
+                $scope.predicate = "Node 1";
+                $scope.comparator = false;
+            }
+        </script>
+    </section>
     <section id="equality" ng-controller="Equality">
         <div class="page-header">
             <h1>Custom Equality <small>(options.equality)</small></h1>
