@@ -354,6 +354,19 @@ describe('treeControl', function() {
             expect(element.find('li:eq(0) .tree-branch-head').hasClass('expandcls')).toBeTruthy();
             expect(element.find('li:eq(1) .tree-branch-head').hasClass('collapsecls')).toBeTruthy();
         });
+
+        xit('should be able to optionally close siblings when a node is opened', function() {
+            $rootScope.treeOptions = { allowMultiple: false }
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            element.find('li:eq(0) .tree-branch-head').click();
+            expect(element.find('.tree-expanded').length).toBe(1);
+
+            element.find('li:eq(1) .tree-branch-head').click();
+            expect(element.find('.tree-expanded').length).toBe(1);
+        });
     });
 
     describe('customizations', function () {

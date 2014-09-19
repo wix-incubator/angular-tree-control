@@ -1,6 +1,6 @@
 (function ( angular ) {
     'use strict';
-    
+
     angular.module( 'treeControl', [] )
         .directive( 'treecontrol', ['$compile', function( $compile ) {
             /**
@@ -17,12 +17,28 @@
                 else
                     return "";
             }
-            
+
             function ensureDefault(obj, prop, value) {
                 if (!obj.hasOwnProperty(prop))
                     obj[prop] = value;
             }
-            
+
+            function openSiblings(el) {
+                var parent = angular.element(el).parent(),
+                    opened = [];
+                function isSiblingOpen(node, direction) {
+                    var currentNode = angular.element(node[0][direction + 'ElementSibling']);
+                    if(!currentNode.length) return;
+                    if(currentNode.hasClass('tree-expanded')){
+                        opened.push(currentNode.scope().$id)
+                     }
+                    isSiblingOpen(currentNode, direction);
+                }
+                isSiblingOpen(parent, 'previous');
+                isSiblingOpen(parent, 'next');
+                return opened;
+            }
+
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -67,6 +83,7 @@
                     ensureDefault($scope.options.injectClasses, "labelSelected", "");
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
+                    ensureDefault($scope.options, "allowMultiple", true);
 
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
@@ -75,6 +92,24 @@
                     }
                     $scope.parentScopeOfTree = $scope.$parent;
 
+                    $scope.collapseNode = function(node) {
+                        var index;
+                        for (var i=0; (i < $scope.expandedNodes.length) && !index; i++) {
+                            if ($scope.options.equality($scope.expandedNodes[i], node)) {
+                                index = i;
+                            }
+                        }
+                        if (index != undefined)
+                            $scope.expandedNodes.splice(index, 1);
+                        if($scope.onNodeToggle)
+                            $scope.onNodeToggle({node: node, expanded: false});
+                    };
+
+                    $scope.expandNode = function(node) {
+                        $scope.expandedNodes.push(node);
+                        if($scope.onNodeToggle)
+                            $scope.onNodeToggle({node: node, expanded: true});
+                    };
 
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
@@ -104,20 +139,17 @@
                         var expanding = $scope.expandedNodesMap[this.$id] === undefined;
                         $scope.expandedNodesMap[this.$id] = (expanding ? this.node : undefined);
                         if (expanding) {
-                            $scope.expandedNodes.push(this.node);
+                            if(!$scope.options.allowMultiple){
+                                var openedSiblings  = openSiblings(event.currentTarget);
+                                openedSiblings.forEach(function (sibling) {
+                                    $scope.collapseNode($scope.expandedNodesMap[sibling]);
+                                })
+                            }
+                            $scope.expandNode(this.node);
                         }
                         else {
-                            var index;
-                            for (var i=0; (i < $scope.expandedNodes.length) && !index; i++) {
-                                if ($scope.options.equality($scope.expandedNodes[i], this.node)) {
-                                    index = i;
-                                }
-                            }
-                            if (index != undefined)
-                                $scope.expandedNodes.splice(index, 1);
+                            $scope.collapseNode(this.node)
                         }
-                        if ($scope.onNodeToggle)
-                            $scope.onNodeToggle({node: this.node, expanded: expanding});
                     };
 
                     $scope.selectNodeLabel = function( selectedNode ){
