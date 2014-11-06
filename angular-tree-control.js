@@ -32,6 +32,7 @@
                     selectedNode: "=?",
                     expandedNodes: "=?",
                     onSelection: "&",
+                    onRightClick: "&",
                     onNodeToggle: "&",
                     options: "=?",
                     orderBy: "@",
@@ -81,7 +82,7 @@
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
                         var injectSelectionClass = "";
-                        if (liSelectionClass && ($scope.options.equality(this.node, $scope.selectedNode)))
+                        if (liSelectionClass && (this.node == $scope.selectedNode))
                             injectSelectionClass = " " + liSelectionClass;
                         if ($scope.options.isLeaf(node))
                             return "tree-leaf" + injectSelectionClass;
@@ -139,6 +140,20 @@
                         }
                     };
 
+                    $scope.rightClickNodeLabel = function( selectedNode ){
+                        if (selectedNode[$scope.options.nodeChildren] && selectedNode[$scope.options.nodeChildren].length > 0 &&
+                            !$scope.options.dirSelectable) {
+                            this.selectNodeHead();
+                        }
+                        else {
+                            if ($scope.selectedNode != selectedNode) {
+                                $scope.selectedNode = selectedNode;
+                                if ($scope.onRightClick)
+                                    $scope.onRightClick({node: selectedNode});
+                            }
+                        }
+                    };
+
                     $scope.selectedClass = function() {
                         var labelSelectionClass = classIfDefined($scope.options.injectClasses.labelSelected, false);
                         var injectSelectionClass = "";
@@ -154,7 +169,7 @@
                             '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator | orderBy:orderBy:reverseOrder" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
-                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" ng-right-click="rightClickNodeLabel(node)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
@@ -169,7 +184,6 @@
                                 if (angular.isDefined(scope.node) && angular.equals(scope.node[scope.options.nodeChildren], newValue))
                                     return;
                                 scope.node = {};
-                                scope.synteticRoot = scope.node;
                                 scope.node[scope.options.nodeChildren] = newValue;
                             }
                             else {
@@ -224,6 +238,17 @@
                 }
             };
         }])
+        .directive('ngRightClick', function($parse) {
+            return function(scope, element, attrs) {
+                var fn = $parse(attrs.ngRightClick);
+                element.bind('contextmenu', function(event) {
+                    scope.$apply(function() {
+                        event.preventDefault();
+                        fn(scope, {$event:event});
+                    });
+                });
+            };
+        })
         .directive("treeitem", function() {
             return {
                 restrict: 'E',
@@ -254,13 +279,6 @@
                     // create a scope for the transclusion, whos parent is the parent of the tree control
                     scope.transcludeScope = scope.parentScopeOfTree.$new();
                     scope.transcludeScope.node = scope.node;
-                    scope.transcludeScope.$parentNode = (scope.$parent.node === scope.synteticRoot)?null:scope.$parent.node;
-                    scope.transcludeScope.$index = scope.$index;
-                    scope.transcludeScope.$first = scope.$first;
-                    scope.transcludeScope.$middle = scope.$middle;
-                    scope.transcludeScope.$last = scope.$last;
-                    scope.transcludeScope.$odd = scope.$odd;
-                    scope.transcludeScope.$even = scope.$even;
                     scope.$on('$destroy', function() {
                         scope.transcludeScope.$destroy();
                     });
