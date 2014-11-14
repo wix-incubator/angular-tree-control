@@ -1,6 +1,6 @@
 (function ( angular ) {
     'use strict';
-    
+
     angular.module( 'treeControl', [] )
         .directive( 'treecontrol', ['$compile', function( $compile ) {
             /**
@@ -17,12 +17,12 @@
                 else
                     return "";
             }
-            
+
             function ensureDefault(obj, prop, value) {
                 if (!obj.hasOwnProperty(prop))
                     obj[prop] = value;
             }
-            
+
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -57,7 +57,7 @@
 
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "nodeChildren", "children");
-                    ensureDefault($scope.options, "dirSelectable", "true");
+                    ensureDefault($scope.options, "onLabelClick", "select");
                     ensureDefault($scope.options, "injectClasses", {});
                     ensureDefault($scope.options.injectClasses, "ul", "");
                     ensureDefault($scope.options.injectClasses, "li", "");
@@ -123,11 +123,15 @@
                     };
 
                     $scope.selectNodeLabel = function( selectedNode ){
-                        if (selectedNode[$scope.options.nodeChildren] && selectedNode[$scope.options.nodeChildren].length > 0 &&
-                            !$scope.options.dirSelectable) {
+                        if ( $scope.options.onLabelClick.match("expand|both") &&
+                            !$scope.expandedNodesMap[this.$id] &&
+                            selectedNode[$scope.options.nodeChildren] &&
+                            selectedNode[$scope.options.nodeChildren].length > 0) {
                             this.selectNodeHead();
                         }
-                        else {
+                        if ($scope.options.onLabelClick.match("select|both") ||
+                            (selectedNode[$scope.options.nodeChildren] &&
+                            selectedNode[$scope.options.nodeChildren].length <= 0)){
                             if ($scope.selectedNode != selectedNode) {
                                 $scope.selectedNode = selectedNode;
                             }
