@@ -317,6 +317,15 @@ describe('treeControl', function() {
             expect(element.find('.tree-selected').length).toBe(1);
         });
 
+        it('should be able to have guidelines turned on', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" indent-guides="true">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            element.find('li:eq(0) .tree-branch-head').click();
+            expect(element.find('ul:eq(1)').hasClass('guidelines')).toBeTruthy();
+        });
+
         it('should be able to accept alternative equality function', function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata[0].id = 'id0';

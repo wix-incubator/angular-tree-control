@@ -24,7 +24,7 @@
         <div class="tree-border">
             <h3>Light Tree</h3>
             <div>Selected: {{node2.label?node2.label:"N/A"}}</div>
-            <treecontrol class="tree-light" tree-model="treedata" options="opt2" on-selection="showSelected(node)" selected-node="node2">
+            <treecontrol class="tree-light" tree-model="treedata" options="opt2" on-selection="showSelected(node)" indent-guides="true" selected-node="node2">
                 label: {{node.label}} ({{node.id}})
             </treecontrol>
         </div>

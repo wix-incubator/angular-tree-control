@@ -41,6 +41,12 @@ treecontrol li .tree-label {
     display: inline;
 }
 
+/* Ignore the first ul */
+treecontrol ul ul.guidelines {
+    margin:0 6px;
+    border-left:1px dashed black;
+    padding-left:0px;
+}
 
 treecontrol.tree-classic li.tree-expanded i {
     padding: 1px 10px;
@@ -61,7 +67,6 @@ treecontrol.tree-classic li .tree-selected {
     background-color: #aaddff;
     font-weight: bold;
 }
-
 
 treecontrol.tree-light li.tree-expanded i {
     padding: 1px 10px;
