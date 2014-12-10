@@ -64,6 +64,7 @@
             }
 
             $scope.showSelected = function(sel) {
+                if(!sel) return;
                 $scope.selected = sel.label;
             };
 
