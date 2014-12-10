@@ -229,6 +229,16 @@ describe('treeControl', function() {
             expect($rootScope.itemSelected).toHaveBeenCalledWith('node 1');
         });
 
+        it('should invoke on-dbl-click callback when item is selected', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" on-dbl-click="itemSelected(node.label)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            $rootScope.itemSelected = jasmine.createSpy('itemSelected');
+            element.find('li:eq(0) div').dblclick();
+            expect($rootScope.itemSelected).toHaveBeenCalledWith('node 1');
+        });
+
         it('should call on-selection callback on item unselection with undefined node', function () {
             $rootScope.treedata = createSubTree(2, 2);
             element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node)">{{node.label}}</treecontrol>')($rootScope);
