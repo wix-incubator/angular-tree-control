@@ -33,6 +33,7 @@
                     expandedNodes: "=?",
                     onSelection: "&",
                     onNodeToggle: "&",
+                    bindFunctionsTo: "=?",
                     options: "=?",
                     orderBy: "@",
                     reverseOrder: "@",
@@ -40,6 +41,40 @@
                     filterComparator: "=?"
                 },
                 controller: ['$scope', function( $scope ) {
+
+                    $scope.visibleNodes = [];
+                    $scope.nodeIdMap = {};
+
+                    if($scope.bindFunctionsTo) {
+                        $scope.bindFunctionsTo = {
+                            selectFirst: function() {
+                                if($scope.selectedIndex() === 0) return;
+                                $scope.selectNodeLabel($scope.visibleNodes[0]);
+                            },
+                            selectPrevious: function() {
+                                if($scope.selectedIndex() === 0) return;
+                                $scope.selectNodeLabel($scope.visibleNodes[$scope.selectedIndex()-1]);
+                            },
+                            selectNext: function() {
+                                if($scope.selectedIndex() === $scope.visibleNodes.length-1) return;
+                                $scope.selectNodeLabel($scope.visibleNodes[$scope.selectedIndex()+1]);
+                            },
+                            selectLast: function() {
+                                if($scope.selectedIndex() === $scope.visibleNodes.length-1) return;
+                                $scope.selectNodeLabel($scope.visibleNodes[$scope.visibleNodes.length-1]);
+                            },
+                            expandNode: function() {
+                                var nodeObj = {$id: $scope.nodeIdMap[$scope.selectedNode.id], node: $scope.selectedNode};
+                                if(!$scope.selectedNode || $scope.nodeExpanded.call(nodeObj)) return;
+                                $scope.selectNodeHead.call(nodeObj);
+                            },
+                            collapseNode: function() {
+                                var nodeObj = {$id: $scope.nodeIdMap[$scope.selectedNode.id], node: $scope.selectedNode};
+                                if(!$scope.selectedNode || !$scope.nodeExpanded.call(nodeObj)) return;
+                                $scope.selectNodeHead.call(nodeObj);
+                            }
+                        };
+                    }
 
                     function defaultIsLeaf(node) {
                         return !node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0;
@@ -103,6 +138,7 @@
                     };
 
                     $scope.selectNodeHead = function() {
+                        console.log('called', this, $scope.expandedNodesMap);
                         var expanding = $scope.expandedNodesMap[this.$id] === undefined;
                         $scope.expandedNodesMap[this.$id] = (expanding ? this.node : undefined);
                         if (expanding) {
@@ -118,6 +154,7 @@
                             if (index != undefined)
                                 $scope.expandedNodes.splice(index, 1);
                         }
+
                         if ($scope.onNodeToggle)
                             $scope.onNodeToggle({node: this.node, expanded: expanding});
                     };
@@ -137,6 +174,10 @@
                             if ($scope.onSelection)
                                 $scope.onSelection({node: $scope.selectedNode});
                         }
+                    };
+
+                    $scope.selectedIndex = function() {
+                        return $scope.visibleNodes.indexOf($scope.selectedNode);
                     };
 
                     $scope.selectedClass = function() {
@@ -165,6 +206,7 @@
                     return function ( scope, element, attrs, treemodelCntr ) {
 
                         scope.$watch("treeModel", function updateNodeOnRootScope(newValue) {
+
                             if (angular.isArray(newValue)) {
                                 if (angular.isDefined(scope.node) && angular.equals(scope.node[scope.options.nodeChildren], newValue))
                                     return;
@@ -239,6 +281,10 @@
         .directive("treeTransclude", function() {
             return {
                 link: function(scope, element, attrs, controller) {
+
+                    scope.$parent.nodeIdMap[scope.node.id] = scope.$id;
+                    console.log(scope.$parent.nodeIdMap);
+
                     if (!scope.options.isLeaf(scope.node)) {
                         angular.forEach(scope.expandedNodesMap, function (node, id) {
                             if (scope.options.equality(node, scope.node)) {
@@ -262,6 +308,8 @@
                     scope.transcludeScope.$odd = scope.$odd;
                     scope.transcludeScope.$even = scope.$even;
                     scope.$on('$destroy', function() {
+                        scope.$parent.visibleNodes.splice(scope.$parent.visibleNodes.indexOf(scope.node), 1);
+                        scope.$parent.nodeIdMap[scope.node.id] = null;
                         scope.transcludeScope.$destroy();
                     });
 
@@ -269,6 +317,15 @@
                         element.empty();
                         element.append(clone);
                     });
+
+                    var parentIndex = scope.$parent.visibleNodes.indexOf(scope.$parent.node);
+                    if(parentIndex !== -1) {
+                        var myIndex = 1 + scope.transcludeScope.$parentNode.children.indexOf(scope.node);
+                        scope.$parent.visibleNodes.splice(parentIndex+myIndex, 0, scope.node);
+                    } else {
+                        scope.$parent.visibleNodes.push(scope.node);
+                    }
+                    console.log(scope.node.id, scope.$id)
                 }
             }
         });

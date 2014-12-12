@@ -17,14 +17,14 @@
         <div class="tree-border">
             <h3>Classic Tree</h3>
             <div>Selected: {{node1.label?node1.label:"N/A"}}</div>
-            <treecontrol class="tree-classic" tree-model="treedata" options="opt1" on-selection="showSelected(node)" selected-node="node1">
+            <treecontrol class="tree-classic" tree-model="treedata" options="opt1" on-selection="showSelected(node)" selected-node="node1" bind-functions-to="bindTest">
                 label: {{node.label}} ({{node.id}})
             </treecontrol>
         </div>
         <div class="tree-border">
             <h3>Light Tree</h3>
             <div>Selected: {{node2.label?node2.label:"N/A"}}</div>
-            <treecontrol class="tree-light" tree-model="treedata" options="opt2" on-selection="showSelected(node)" selected-node="node2">
+            <treecontrol class="tree-light" tree-model="treedata" options="opt2" on-selection="showSelected(node)" indent-guides="true" selected-node="node2">
                 label: {{node.label}} ({{node.id}})
             </treecontrol>
         </div>
@@ -44,6 +44,12 @@
     <a class="fake-link" ng-click="addChild()">add child (to node 1)</a></br>
     <a class="fake-link" ng-click="addDeepChild()">add child (to node 1.1.1)</a></br>
     <a class="fake-link" ng-click="replaceData()">Replace tree data</a></br>
+    <a class="fake-link" ng-click="bindTest.selectFirst()">Select first node</a><br>
+    <a class="fake-link" ng-click="bindTest.selectPrevious()">Select previous node</a><br>
+    <a class="fake-link" ng-click="bindTest.selectNext()">Select next node</a><br>
+    <a class="fake-link" ng-click="bindTest.selectLast()">Select last node</a><br>
+    <a class="fake-link" ng-click="bindTest.expandNode()">Expand current node</a><br>
+    <a class="fake-link" ng-click="bindTest.collapseNode()">Collapse current node</a><br>
     External Scope Label: <input ng-model="label"></br>
     Bind to tree label of node 1.1 <input ng-model="treedata[0].children[0].label"></br>
     <script>
@@ -79,6 +85,8 @@
             $scope.replaceData = function() {
                 $scope.treedata = createSubTree(4, 5, "");
             };
+
+            $scope.bindTest = {};
 
             $scope.opt1 = {
                 nodeChildren: "children",
