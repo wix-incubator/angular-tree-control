@@ -263,6 +263,20 @@ describe('treeControl', function() {
 
     describe('options usage', function () {
 
+        it('should not reorder nodes if no order-by is provided', function() {
+            $rootScope.treedata = [
+                { label: "a", children: [] },
+                { label: "c", children: [] },
+                { label: "b", children: [] }
+            ];
+
+            element = $compile('<treecontrol tree-model="treedata" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('a');
+            expect(element.find('li:eq(1)').text()).toBe('c');
+            expect(element.find('li:eq(2)').text()).toBe('b');
+        });
+
         it('should order sibling nodes in normal order', function() {
             $rootScope.treedata = [
                 { label: "a", children: [] },
