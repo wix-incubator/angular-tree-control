@@ -137,7 +137,7 @@
                         return !!$scope.expandedNodesMap[this.$id];
                     };
 
-                    $scope.selectNodeHead = function() {
+                    $scope.selectNodeHead = function(event) {
                         var expanding = $scope.expandedNodesMap[this.$id] === undefined;
                         $scope.expandedNodesMap[this.$id] = (expanding ? this.node : undefined);
                         if (expanding) {
@@ -154,12 +154,12 @@
                         }
                     };
 
-                    $scope.selectNodeLabel = function( selectedNode ){
+                    $scope.selectNodeLabel = function( event, selectedNode ){
                         if ( $scope.options.onLabelClick.match("expand|both") &&
                             !$scope.expandedNodesMap[this.$id] &&
                             selectedNode[$scope.options.nodeChildren] &&
                             selectedNode[$scope.options.nodeChildren].length > 0) {
-                            this.selectNodeHead();
+                            this.selectNodeHead(event);
                         }
                         if ($scope.options.onLabelClick.match("select|both") ||
                             (selectedNode[$scope.options.nodeChildren] &&
@@ -185,9 +185,9 @@
                     var template =
                         '<ul '+classIfDefined($scope.options.injectClasses.ul, true)+'>' +
                             '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | orderBy:orderBy:reverseOrder" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
-                            '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
+                            '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead($event, node)"></i>' +
                             '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
-                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel($event, node)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
@@ -283,7 +283,7 @@
                         });
                     }
                     if (scope.options.equality(scope.node, scope.selectedNode)) {
-                        scope.selectNodeLabel(scope.node);
+                        scope.selectNodeLabel("", scope.node);
                     }
 
                     // create a scope for the transclusion, whos parent is the parent of the tree control
