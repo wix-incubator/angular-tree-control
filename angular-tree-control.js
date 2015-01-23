@@ -96,9 +96,8 @@
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
                         var injectSelectionClass = "";
-                        if (liSelectionClass && selectionEquals(this.node)) {
+                        if (liSelectionClass && selectionEquals(this.node))
                             injectSelectionClass = " " + liSelectionClass;
-                        }
                         if ($scope.options.isLeaf(node))
                             return "tree-leaf" + injectSelectionClass;
                         if ($scope.expandedNodesMap[this.$id])
@@ -163,7 +162,7 @@
                                 }
                             }
                             if ($scope.onSelection)
-                                $scope.onSelection({node: selected ? selectedNode : null});
+                                $scope.onSelection({node: selected ? selectedNode : undefined});
                         }
                     };
 
@@ -274,9 +273,6 @@
                                 scope.expandedNodesMap[id] = undefined;
                             }
                         });
-                    }
-                    if (scope.options.equality(scope.node, scope.selectedNode)) {
-                        scope.selectedNode = scope.node;
                     }
                     if (!scope.options.multiple && scope.options.equality(scope.node, scope.selectedNode)) {
                         scope.selectedNode = scope.node;
