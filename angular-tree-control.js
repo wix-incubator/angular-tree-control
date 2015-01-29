@@ -47,13 +47,11 @@
                     }
 
                     function defaultEquality(a, b) {
-                        if (a === undefined || b === undefined)
+                        if ( !a || !b ) {
                             return false;
-                        a = angular.copy(a);
-                        a[$scope.options.nodeChildren] = [];
-                        b = angular.copy(b);
-                        b[$scope.options.nodeChildren] = [];
-                        return angular.equals(a, b);
+                        }
+
+                        return a.$$hashKey == b.$$hashKey;
                     }
 
                     $scope.options = $scope.options || {};
