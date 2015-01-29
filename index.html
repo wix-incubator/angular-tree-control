@@ -427,7 +427,7 @@
                     <div save-content="events-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
-                                     on-selection="showSelected(node)"
+                                     on-selection="showSelected(node, selected)"
                                      on-node-toggle="showToggle(node, expanded)">
                             label: {{node.label}} ({{node.id}})
                         </treecontrol>
@@ -436,6 +436,11 @@
             </div>
         </div>
         <div class="col-md-6">
+            <P>The tree supports events for selection and expansion of nodes. The events are set using the <code>on-selection</code> and <code>on-node-toggle</code> attributes
+            which values are evaluated as angular expressions (like `ng-click` value). The expression can use the `node` and `selected` variables (for on-selection) or
+                the `node` and `expanded` variables (for on-node-toggle) for context of the clicked node and if it was selected / deselected or expanded / collapsed.</P>
+            <p>Note the events are fired only on the clicked node. If using the tree in single selection mode and one node is selected, when selecting a different node
+            only one on-selection event will be fired for the newly selected node. The old selected node will not be selected anymore without an on-selected event.</p>
             <p>In order to prevent selection of branches (folders) in the tree, set the <code>options.dirSelectable</code> to <code>false</code>.
                 Clicking folder labels at this point will expand and contract the node.</p>
             <p>Events fired:</p>
@@ -460,12 +465,76 @@
             $scope.showToggle = function(node, expanded) {
                 $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") + "</li>");
             };
-            $scope.showSelected = function(node) {
-                $("#events-listing").append("<li>"+node.label+" selected</li>");
+            $scope.showSelected = function(node, selected) {
+                $("#events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") + "</li>");
             };
         }
     </script>
 </section>
+
+<section id="multi-selection" ng-controller="MultiSelection">
+    <div class="page-header">
+        <h1>Multi Selection <small>(options.multiSelect & selected-nodes)</small></h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6 show-grid">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="example-caption">EXAMPLE:</div>
+                    <div save-content="events-html">
+                        <treecontrol class="tree-classic"
+                                     tree-model="treedata"
+                                     selected-nodes="selectedNodes"
+                                     on-selection="showSelected(node, selected)"
+                                     options="treeOptions">
+                            label: {{node.label}} ({{node.id}})
+                        </treecontrol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <P>The tree control supports multi-selection using the `options.multiSelect` option and the `selected-nodes` attribute (instead of the `selected-node` attribute in single selection mode).
+                `selected-nodes` is expected to be an Array which will contain the selected nodes.
+            When using multi-selection, selecting a node adds it to the selected-nodes array and a second click remove it from the array.</p>
+            <div class="row">
+                <div class="col-md-6">
+                    <p>Selected Nodes:</p>
+                    <ul id="multi-selection-listing">
+                        <li ng-repeat="node in selectedNodes">{{node.label}}</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <p>Selection Events:</p>
+                    <ul id="multi-selection-events-listing">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <tabset>
+            <tab heading="Markup" >
+                <pre class="code" apply-content="events-html" highlight-lang="html"></pre>
+            </tab>
+            <tab heading="JavaScript">
+                <pre class="code" apply-content="events-js" highlight-lang="js"></pre>
+            </tab>
+        </tabset>
+    </div>
+    <script save-content="multi-selection-js">
+        function MultiSelection($scope) {
+            $scope.treeOptions = {multiSelection: true};
+            $scope.treedata=createSubTree(3, 4, "");
+            $scope.selectedNodes = [];
+            $scope.showSelected = function(node, selected) {
+                $("#multi-selection-events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") + "</li>");
+            };
+        }
+    </script>
+</section>
+
 
 <section id="dirSelection" ng-controller="DirSelection">
     <div class="page-header">

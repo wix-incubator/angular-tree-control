@@ -107,11 +107,13 @@ Attributes of angular treecontrol
 - `treecontrol` : the treeview element.
 - element content : the template to evaluate against each node (and the parent scope of the tree) for the node label.
 - `tree-model` : [Node|Array[Node]] the tree data on the `$scope`. This can be an array of nodes or a single node.
-- `selected-node` : [Node] binding for the selected node in the tree. Updating this value updates the selection displayed in the tree. Selecting a node in the tree will update this value.
+- `selected-node` : [Node], used when `multiSelection=false`. Binding for the selected node in the tree. Updating this value updates the selection displayed in the tree. Selecting a node in the tree will update this value.
+- `selected-nodes` : [Array[Node]], used when `multiSelection=true`. Binding for the selected nodes in the tree. Updating this value updates the selection displayed in the tree. Selecting a node in the tree will update this value.
 - `expanded-nodes` : [Array[Node]] binding for the expanded nodes in the tree. Updating this value updates the nodes that are expanded in the tree.
-- `on-selection` : callback called whenever selecting a node in the tree. The callback argument is the selected node.
-- `on-node-toggle` : callback called whenever a node expands or collapses in the tree. The function arguments are the toggled node and a boolean which is true for expansion, false for collapse.
+- `on-selection` : `(node, selected)` callback called whenever selecting a node in the tree. The callback expression can use the selected node (`node`) and a boolean which indicates if the node was selected or deselected (`selected`).
+- `on-node-toggle` : `(node, expanded)` callback called whenever a node expands or collapses in the tree. The callback expression can use the toggled node (`node`) and a boolean which indicates expansion or collapse (`expanded`).
 - `options` : different options to customize the tree control.
+  - `multiSelection` : [Boolean] enable multiple nodes selection in the tree.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
   - `dirSelectable` : are directories (nodes with children) selectable? If not, clicking on the dir label will expand and contact the dir. Defaults to `true`.
   - `equality` : the function used to determine equality between old nodes and new ones when checking whether a replacement node should be expanded and/or marked as selected. Defaults to a function which uses `angular.equals()` on everything except the property indicated in `nodeChildren`.
