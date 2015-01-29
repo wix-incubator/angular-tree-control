@@ -30,6 +30,7 @@
                 scope: {
                     treeModel: "=",
                     selectedNode: "=?",
+                    selectedNodes: "=?",
                     expandedNodes: "=?",
                     onSelection: "&",
                     onNodeToggle: "&",
@@ -56,6 +57,7 @@
                     }
 
                     $scope.options = $scope.options || {};
+                    ensureDefault($scope.options, "multiSelection", false);
                     ensureDefault($scope.options, "nodeChildren", "children");
                     ensureDefault($scope.options, "dirSelectable", "true");
                     ensureDefault($scope.options, "injectClasses", {});
@@ -70,6 +72,7 @@
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
 
+                    $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
                     for (var i=0; i < $scope.expandedNodes.length; i++) {
@@ -78,10 +81,23 @@
                     $scope.parentScopeOfTree = $scope.$parent;
 
 
+                    function isSelectedNode(node) {
+                        if (!$scope.options.multiSelection && ($scope.options.equality(node, $scope.selectedNode)))
+                            return true;
+                        else if ($scope.options.multiSelection && $scope.selectedNodes) {
+                            for (var i = 0; (i < $scope.selectedNodes.length); i++) {
+                                if ($scope.options.equality(node, $scope.selectedNodes[i])) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                    }
+
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
                         var injectSelectionClass = "";
-                        if (liSelectionClass && ($scope.options.equality(this.node, $scope.selectedNode)))
+                        if (liSelectionClass && isSelectedNode(node))
                             injectSelectionClass = " " + liSelectionClass;
                         if ($scope.options.isLeaf(node))
                             return "tree-leaf" + injectSelectionClass;
@@ -128,24 +144,37 @@
                             this.selectNodeHead();
                         }
                         else {
-                            if ($scope.selectedNode != selectedNode) {
-                                $scope.selectedNode = selectedNode;
-                            }
-                            else {
-                                $scope.selectedNode = undefined;
+                            var selected = false;
+                            if ($scope.options.multiSelection) {
+                                var pos = $scope.selectedNodes.indexOf(selectedNode);
+                                if (pos === -1) {
+                                    $scope.selectedNodes.push(selectedNode);
+                                    selected = true;
+                                } else {
+                                    $scope.selectedNodes.splice(pos, 1);
+                                }
+                            } else {
+                                if ($scope.selectedNode != selectedNode) {
+                                    $scope.selectedNode = selectedNode;
+                                    selected = true;
+                                }
+                                else {
+                                    $scope.selectedNode = undefined;
+                                }
                             }
                             if ($scope.onSelection)
-                                $scope.onSelection({node: $scope.selectedNode});
+                                $scope.onSelection({node: selected? selectedNode : undefined});
                         }
                     };
 
                     $scope.selectedClass = function() {
+                        var isThisNodeSelected = isSelectedNode(this.node);
                         var labelSelectionClass = classIfDefined($scope.options.injectClasses.labelSelected, false);
                         var injectSelectionClass = "";
-                        if (labelSelectionClass && (this.node == $scope.selectedNode))
+                        if (labelSelectionClass && isThisNodeSelected)
                             injectSelectionClass = " " + labelSelectionClass;
 
-                        return (this.node == $scope.selectedNode)?"tree-selected" + injectSelectionClass:"";
+                        return isThisNodeSelected?"tree-selected" + injectSelectionClass:"";
                     };
 
                     //tree template
@@ -248,8 +277,16 @@
                             }
                         });
                     }
-                    if (scope.options.equality(scope.node, scope.selectedNode)) {
+                    if (!scope.options.multiSelection && scope.options.equality(scope.node, scope.selectedNode)) {
                         scope.selectedNode = scope.node;
+                    } else if (scope.options.multiSelection) {
+                        var newSelectedNodes = [];
+                        for (var i = 0; (i < scope.selectedNodes.length); i++) {
+                            if (scope.options.equality(scope.node, scope.selectedNodes[i])) {
+                                newSelectedNodes.push(scope.node);
+                            }
+                        }
+                        scope.selectedNodes = newSelectedNodes;
                     }
 
                     // create a scope for the transclusion, whos parent is the parent of the tree control
