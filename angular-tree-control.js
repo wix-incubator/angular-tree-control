@@ -163,7 +163,7 @@
                                 }
                             }
                             if ($scope.onSelection)
-                                $scope.onSelection({node: selected? selectedNode : undefined});
+                                $scope.onSelection({node: selectedNode, selected: selected});
                         }
                     };
 

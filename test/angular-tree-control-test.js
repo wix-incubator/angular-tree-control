@@ -213,26 +213,26 @@ describe('treeControl', function() {
             expect(element.find('li:eq(1) div.tree-selected').length).toBe(1);
         });
 
-        it('should invoke on-selection callback when item is selected', function () {
+        it('should invoke on-selection callback when item is selected and selected==true', function () {
             $rootScope.treedata = createSubTree(2, 2);
-            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label)">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label, selected)">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
 
             $rootScope.itemSelected = jasmine.createSpy('itemSelected');
             element.find('li:eq(0) div').click();
-            expect($rootScope.itemSelected).toHaveBeenCalledWith('node 1');
+            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, true);
         });
 
-        it('should call on-selection callback on item unselection with undefined node', function () {
+        it('should call on-selection callback on item unselection with the node and selected==false', function () {
             $rootScope.treedata = createSubTree(2, 2);
-            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node)">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label, selected)">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
 
             $rootScope.itemSelected = jasmine.createSpy('itemSelected');
             element.find('li:eq(0) div').click();
             element.find('li:eq(0) div').click();
-            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0]);
-            expect($rootScope.itemSelected).toHaveBeenCalledWith(undefined);
+            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, true);
+            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, false);
             expect($rootScope.itemSelected.calls.length).toBe(2);
         });
 
@@ -287,52 +287,57 @@ describe('treeControl', function() {
             expect(element.find('li:eq(1) li:eq(0) div.tree-selected').length).toBe(1);
         });
 
-        it('should invoke on-selection callback when item is selected', function () {
+        it('should invoke on-selection callback when item is selected and selected==true', function () {
             $rootScope.treeOptions = {multiSelection: true};
             $rootScope.treedata = createSubTree(2, 2);
-            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label)" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label, selected)" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
 
             $rootScope.itemSelected = jasmine.createSpy('itemSelected');
             element.find('li:eq(0) div').click();
-            expect($rootScope.itemSelected).toHaveBeenCalledWith('node 1');
+            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, true);
         });
 
-        xit('should call on-selection callback on item unselection with undefined node', function () {
+        it('should call on-selection callback on item unselection with the node and selected==false', function () {
+            $rootScope.treeOptions = {multiSelection: true};
             $rootScope.treedata = createSubTree(2, 2);
-            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node)">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label, selected)" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
 
             $rootScope.itemSelected = jasmine.createSpy('itemSelected');
             element.find('li:eq(0) div').click();
             element.find('li:eq(0) div').click();
-            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0]);
-            expect($rootScope.itemSelected).toHaveBeenCalledWith(undefined);
+            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, true);
+            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, false);
             expect($rootScope.itemSelected.calls.length).toBe(2);
         });
 
-        xit('should un-select a node after second click', function () {
+        it('should un-select a node after second click', function () {
+            $rootScope.treeOptions = {multiSelection: true};
             $rootScope.treedata = createSubTree(2, 2);
-            $rootScope.selectedItem = $rootScope.treedata[0];
-            element = $compile('<treecontrol tree-model="treedata" selected-node="selectedItem">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.selectedItems = [$rootScope.treedata[0]];
+            element = $compile('<treecontrol tree-model="treedata" selected-nodes="selectedItems" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
 
             element.find('li:eq(0) div').click();
-            expect($rootScope.selectedItem).toBeUndefined()
+            expect($rootScope.selectedItems.length).toBe(0);
         });
 
-        xit('should retain selection after full model refresh', function () {
+        it('should retain selection after full model refresh', function () {
+            $rootScope.treeOptions = {multiSelection: true};
             var testTree = createSubTree(2, 2);
             $rootScope.treedata = angular.copy(testTree);
-            element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
 
             element.find('li:eq(0) div').click();
-            expect(element.find('.tree-selected').length).toBe(1);
+            element.find('li:eq(1) .tree-branch-head').click();
+            element.find('li:eq(1) li:eq(0) div').click();
+            expect(element.find('.tree-selected').length).toBe(2);
 
             $rootScope.treedata = angular.copy(testTree);
             $rootScope.$digest();
-            expect(element.find('.tree-selected').length).toBe(1);
+            expect(element.find('.tree-selected').length).toBe(2);
         });
     });
 
