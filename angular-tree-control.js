@@ -46,12 +46,31 @@
                         return !node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0;
                     }
 
+                    function shallowCopy(src, dst) {
+                        if (angular.isArray(src)) {
+                            dst = dst || [];
+
+                            for ( var i = 0; i < src.length; i++) {
+                                dst[i] = src[i];
+                            }
+                        } else if (angular.isObject(src)) {
+                            dst = dst || {};
+
+                            for (var key in src) {
+                                if (hasOwnProperty.call(src, key) && !(key.charAt(0) === '$' && key.charAt(1) === '$')) {
+                                    dst[key] = src[key];
+                                }
+                            }
+                        }
+
+                        return dst || src;
+                    }
                     function defaultEquality(a, b) {
                         if (a === undefined || b === undefined)
                             return false;
-                        a = angular.copy(a);
+                        a = shallowCopy(a);
                         a[$scope.options.nodeChildren] = [];
-                        b = angular.copy(b);
+                        b = shallowCopy(b);
                         b[$scope.options.nodeChildren] = [];
                         return angular.equals(a, b);
                     }
