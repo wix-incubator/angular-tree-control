@@ -73,6 +73,10 @@ describe('treeControl', function() {
             $rootScope.$digest();
             expect(element.find('li.tree-leaf').length).toBe(0);
         });
+
+        it('should not render dropdown', function () {
+            expect(element.find('.dropdown').length).toBe(0);
+        });
     });
 
     describe('customising using options.isLeaf', function () {
@@ -636,7 +640,55 @@ describe('treeControl', function() {
             $rootScope.$digest();
             expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
         });
+    });
 
+    describe('treenode-contextmenu', function () {
+        beforeEach(function () {
+            $rootScope.treedata = createSubTree(3, 2);
+            $rootScope.menuModel = [{
+                label: 'menu_1',
+                value: 1
+            }, {
+                label: 'menu_2',
+                value: 2
+            }]
+            $rootScope.clickMenu = function (node, item) {
+
+            };
+            element = $compile('<treecontrol tree-model="treedata" tree-menu-model="menuModel" on-click-menu="clickMenu(node, item)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+        });
+
+        it('should render dropmenu', function () {
+            expect(element.find('.dropdown .dropdown-menu li').length).toBe(2);
+        });
+
+        it('should show dropmenu', function () {
+            element.find('.tree-label:eq(0)').trigger('contextmenu');
+            expect(element.find('.dropdown').hasClass('open')).toBeTruthy();
+        });
+
+        it('should hide dropmenu after document click', function () {
+            $('html').click();
+            expect(element.find('.dropdown').hasClass('open')).toBeFalsy();
+        });
+
+        it('should fix dropmenu position', function () {
+            element.find('.tree-label:eq(0)').trigger({type: 'contextmenu', pageX: 231, pageY: 398});
+            dropdown = element.find('.dropdown');
+
+            expect(dropdown.css('top')).toBe('398px');
+            expect(dropdown.css('left')).toBe('231px');
+        });
+
+        it('should can click menu item', function () {
+            $rootScope.clickMenu = jasmine.createSpy('clickMenu');
+
+            element.find('.tree-label:eq(0)').trigger('contextmenu');
+            element.find('.dropdown .dropdown-menu li:eq(1)').click();
+
+            expect($rootScope.clickMenu).toHaveBeenCalledWith($rootScope.treedata[0], $rootScope.menuModel[1]);
+        });
     });
 
 });

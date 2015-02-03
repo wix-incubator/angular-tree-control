@@ -2,7 +2,7 @@
     'use strict';
     
     angular.module( 'treeControl', [] )
-        .directive( 'treecontrol', ['$compile', function( $compile ) {
+        .directive( 'treecontrol', ['$compile', '$document', function( $compile, $document ) {
             /**
              * @param cssClass - the css class
              * @param addClassProperty - should we wrap the class name with class=""
@@ -38,7 +38,9 @@
                     orderBy: "@",
                     reverseOrder: "@",
                     filterExpression: "=?",
-                    filterComparator: "=?"
+                    filterComparator: "=?",
+                    treeMenuModel: "=",
+                    onClickMenu: "&"
                 },
                 controller: ['$scope', function( $scope ) {
 
@@ -98,7 +100,6 @@
                         $scope.expandedNodesMap[""+i] = $scope.expandedNodes[i];
                     }
                     $scope.parentScopeOfTree = $scope.$parent;
-
 
                     function isSelectedNode(node) {
                         if (!$scope.options.multiSelection && ($scope.options.equality(node, $scope.selectedNode)))
@@ -203,12 +204,23 @@
                             '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator ' + orderBy + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
-                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div treenode-contextmenu="contextMenuNode($event, node)" class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
 
+                    var menuTemplate =
+                        '<div class="dropdown position-fixed" id="menu_{{$id}}">' +
+                            '<ul class="dropdown-menu" role="menu">' +
+                                '<li ng-repeat="item in treeMenuModel track by $index" ng-click="clickMenu(item)">' +
+                                '<a class="pointer" role="menuitem">{{item.label}}' +
+                                '</a>' +
+                                '</li>' +        
+                            '</ul>' +
+                        '</div>'
+
                     this.template = $compile(template);
+                    this.menuTemplate = $compile(menuTemplate);
                 }],
                 compile: function(element, attrs, childTranscludeFn) {
                     return function ( scope, element, attrs, treemodelCntr ) {
@@ -256,15 +268,44 @@
                             });
                             scope.expandedNodesMap = newExpandedNodesMap;
                         });
+                        
+                        // scope.$watch('expandedNodesMap', function(newValue) {
 
-//                        scope.$watch('expandedNodesMap', function(newValue) {
-//
-//                        });
+                        // }
+
+                        $document.bind('click', function() {
+                            var dropdown = element.find('.dropdown');
+                            dropdown.removeClass('open');
+                            scope.currentContextNode = {}
+                        });
+
+                        scope.clickMenu = function(item) {
+                            if (scope.onClickMenu)
+                                scope.onClickMenu({item: item, node: scope.currentContextNode});
+                        };
+
+                        scope.contextMenuNode = function ( event, node ) {
+                            var dropdown = element.find('.dropdown');
+                            dropdown.addClass('open');
+
+                            scope.currentContextNode = node;
+                            dropdown.offset({
+                                top: event.pageY,
+                                left: event.pageX
+                            });
+                        };
 
                         //Rendering template for a root node
                         treemodelCntr.template( scope, function(clone) {
                             element.html('').append( clone );
                         });
+
+                        if (scope.treeMenuModel) {
+                            treemodelCntr.menuTemplate( scope, function(clone) {
+                                element.append( clone );
+                            });                            
+                        }
+
                         // save the transclude function from compile (which is not bound to a scope as apposed to the one from link)
                         // we can fix this to work with the link transclude function with angular 1.2.6. as for angular 1.2.0 we need
                         // to keep using the compile function
@@ -273,6 +314,28 @@
                 }
             };
         }])
+        // treenode contextmenu
+        .directive("treenodeContextmenu", function() {
+            return {
+                restrict: 'A',
+                require: '^treecontrol',
+                scope: {
+                    contextMenu: '&treenodeContextmenu'
+                },
+                link: function( scope, element, attrs, treemodelCntr) {
+                    element.on('contextmenu', function (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        scope.$apply(function() {
+                            scope.contextMenu({
+                                $event: event
+                            });                        
+                        });
+                    });
+                }
+            }
+        })
         .directive("treeitem", function() {
             return {
                 restrict: 'E',
