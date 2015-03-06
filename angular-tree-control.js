@@ -35,7 +35,7 @@
                     onSelection: "&",
                     onNodeToggle: "&",
                     options: "=?",
-                    orderBy: "@",
+                    orderBy: "=?",
                     reverseOrder: "@",
                     filterExpression: "=?",
                     filterComparator: "=?"
