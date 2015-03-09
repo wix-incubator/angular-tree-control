@@ -83,7 +83,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="classic-js">
+    <script save-content="classic-js" register-controller="Classic">
         function Classic($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.showSelected = function(sel) {
@@ -129,7 +129,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="as-attribute-js">
+    <script save-content="as-attribute-js" register-controller="AsAttribute">
         function AsAttribute($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.showSelected = function(sel) {
@@ -185,7 +185,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="labels-template-js">
+    <script save-content="labels-template-js" register-controller="LabelsTemplate">
         function LabelsTemplate($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.getColor = function(node) {
@@ -235,7 +235,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="classic-js">
+    <script save-content="classic-js" register-controller="Parent">
         function Parent($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.lastClicked = null;
@@ -287,7 +287,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="changing-js">
+    <script save-content="changing-js" register-controller="Changing">
         function Changing($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.addRoot = function() {
@@ -343,7 +343,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="selected-js">
+    <script save-content="selected-js" register-controller="Selected">
         function Selected($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.selected = $scope.treedata[2];
@@ -399,7 +399,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="default-expanded-js">
+    <script save-content="default-expanded-js" register-controller="ExpandedNodes">
         function ExpandedNodes($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.expandedNodes = [$scope.treedata[1],
@@ -460,7 +460,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="events-js">
+    <script save-content="events-js" register-controller="Events">
         function Events($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.showToggle = function(node, expanded) {
@@ -524,7 +524,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="multi-selection-js">
+    <script save-content="multi-selection-js" register-controller="MultiSelection">
         function MultiSelection($scope) {
             $scope.treeOptions = {multiSelection: true};
             $scope.treedata=createSubTree(3, 4, "");
@@ -573,7 +573,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="dir-selection-js">
+    <script save-content="dir-selection-js" register-controller="DirSelection">
         function DirSelection($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.opts = {
@@ -621,7 +621,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="light-js">
+    <script save-content="light-js" register-controller="Light">
         function Light($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.showSelected = function(sel) {
@@ -670,7 +670,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="dark-js">
+    <script save-content="dark-js" register-controller="Dark">
         function Dark($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.showSelected = function(sel) {
@@ -733,7 +733,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="custom-css-js">
+    <script save-content="custom-css-js" register-controller="CustomCss">
         function CustomCss($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.opts = {
@@ -786,7 +786,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="children-js">
+    <script save-content="children-js" register-controller="Children">
         function Children($scope) {
             $scope.treedata=[
                 {id:"id1", label: "Node 1", links: [
@@ -838,7 +838,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="isleaf-js">
+    <script save-content="isleaf-js" register-controller="Isleaf">
         function Isleaf($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.opts = {
@@ -863,7 +863,7 @@
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
                                      order-by="label"
-                                     reverse-order="{{reverse}}">
+                                     reverse-order="reverse">
                             label: {{node.label}} ({{node.id}})
                         </treecontrol>
                     </div>
@@ -888,7 +888,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="sorting-js">
+    <script save-content="sorting-js" register-controller="Sorting">
         function Sorting($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.reverse = true;
@@ -944,7 +944,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="filtering-js">
+    <script save-content="filtering-js" register-controller="Filtering">
         function Filtering($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.predicate = "Node 1";
@@ -993,7 +993,7 @@
             </tab>
         </tabset>
     </div>
-    <script save-content="equality-js">
+    <script save-content="equality-js" register-controller="Equality">
         function Equality($scope) {
             $scope.treedata=[
                 { "name" : "Joe", "age" : "21", "children" : [
@@ -1061,7 +1061,9 @@
         }
         return formatted;
     }
-    var example = angular.module("example", ["treeControl", "ui.bootstrap", "template/tabs/tab.html", "template/tabs/tabset.html"])
+    var example = angular.module("example", ["treeControl", "ui.bootstrap", "template/tabs/tab.html", "template/tabs/tabset.html", function($controllerProvider) {
+                controllerProvider = $controllerProvider;
+            }])
                     .factory("$savedContent", function() {
                         return [];
                     })
@@ -1090,6 +1092,15 @@
                             }
                         }
                     })
+                    .directive("registerController", ['$controller', function($controller) {
+                        return {
+                            restrict: "A",
+                            compile: function($element, $attrs) {
+                                var name = $attrs.registerController;
+                                controllerProvider.register(name, ['$scope', window[name]]);
+                            }
+                        }
+                    }])
                     .directive("nav", function() {
                         return {
                             restrict: "A",
