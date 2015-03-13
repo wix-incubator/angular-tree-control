@@ -165,7 +165,13 @@
                         else {
                             var selected = false;
                             if ($scope.options.multiSelection) {
-                                var pos = $scope.selectedNodes.indexOf(selectedNode);
+                                var pos = -1;
+                                for (var i=0; i < $scope.selectedNodes.length; i++) {
+                                    if($scope.options.equality(selectedNode, $scope.selectedNodes[i])) {
+                                        pos = i;
+                                        break;
+                                    }
+                                }
                                 if (pos === -1) {
                                     $scope.selectedNodes.push(selectedNode);
                                     selected = true;
@@ -173,7 +179,7 @@
                                     $scope.selectedNodes.splice(pos, 1);
                                 }
                             } else {
-                                if ($scope.selectedNode != selectedNode) {
+                                if (!$scope.options.equality(selectedNode, $scope.selectedNode)) {
                                     $scope.selectedNode = selectedNode;
                                     selected = true;
                                 }
