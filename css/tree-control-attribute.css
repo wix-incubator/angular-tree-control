@@ -32,7 +32,7 @@
 [treecontrol] li.tree-leaf i.tree-branch-head {display:none;}
 [treecontrol] li.tree-leaf i.tree-leaf-head {display:inline;}
 
-[treecontrol] li i {
+[treecontrol] li i.tree-branch-head {
     cursor: pointer;
 }
 
@@ -42,17 +42,17 @@
 }
 
 
-[treecontrol].tree-classic li.tree-expanded i {
+[treecontrol].tree-classic li.tree-expanded i.tree-branch-head {
     padding: 1px 10px;
     background: url("../images/folder.png") no-repeat;
 }
 
-[treecontrol].tree-classic li.tree-collapsed i {
+[treecontrol].tree-classic li.tree-collapsed i.tree-branch-head {
     padding: 1px 10px;
     background: url("../images/folder-closed.png") no-repeat;
 }
 
-[treecontrol].tree-classic li.tree-leaf i {
+[treecontrol].tree-classic li.tree-leaf i.tree-branch-head {
     padding: 1px 10px;
     background: url("../images/file.png") no-repeat;
 }
@@ -63,17 +63,17 @@
 }
 
 
-[treecontrol].tree-light li.tree-expanded i {
+[treecontrol].tree-light li.tree-expanded i.tree-branch-head {
     padding: 1px 10px;
     background: url("../images/node-opened-2.png") no-repeat;
 }
 
-[treecontrol].tree-light li.tree-collapsed i {
+[treecontrol].tree-light li.tree-collapsed i.tree-branch-head {
     padding: 1px 10px;
     background: url("../images/node-closed-2.png") no-repeat;
 }
 
-[treecontrol].tree-light li.tree-leaf i {
+[treecontrol].tree-light li.tree-leaf i.tree-branch-head {
     padding: 1px 10px;
     width: 16px; height: 16px;
     background: none no-repeat;
@@ -84,17 +84,17 @@
 }
 
 
-[treecontrol].tree-dark li.tree-expanded i {
+[treecontrol].tree-dark li.tree-expanded i.tree-branch-head {
     padding: 1px 10px;
     background: url("../images/node-opened-light.png") no-repeat;
 }
 
-[treecontrol].tree-dark li.tree-collapsed i {
+[treecontrol].tree-dark li.tree-collapsed i.tree-branch-head {
     padding: 1px 10px;
     background: url("../images/node-closed-light.png") no-repeat;
 }
 
-[treecontrol].tree-dark li.tree-leaf i {
+[treecontrol].tree-dark li.tree-leaf i.tree-branch-head {
     padding: 1px 10px;
     width: 16px; height: 16px;
     background: none no-repeat;
