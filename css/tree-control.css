@@ -52,7 +52,7 @@ treecontrol.tree-classic li.tree-collapsed i.tree-branch-head {
     background: url("../images/folder-closed.png") no-repeat;
 }
 
-treecontrol.tree-classic li.tree-leaf i.tree-branch-head {
+treecontrol.tree-classic li.tree-leaf i.tree-leaf-head {
     padding: 1px 10px;
     background: url("../images/file.png") no-repeat;
 }
@@ -73,7 +73,7 @@ treecontrol.tree-light li.tree-collapsed i.tree-branch-head {
     background: url("../images/node-closed-2.png") no-repeat;
 }
 
-treecontrol.tree-light li.tree-leaf i.tree-branch-head {
+treecontrol.tree-light li.tree-leaf i.tree-leaf-head {
     padding: 1px 10px;
     width: 16px; height: 16px;
     background: none no-repeat;
@@ -94,7 +94,7 @@ treecontrol.tree-dark li.tree-collapsed i.tree-branch-head {
     background: url("../images/node-closed-light.png") no-repeat;
 }
 
-treecontrol.tree-dark li.tree-leaf i.tree-branch-head {
+treecontrol.tree-dark li.tree-leaf i.tree-leaf-head {
     padding: 1px 10px;
     width: 16px; height: 16px;
     background: none no-repeat;
