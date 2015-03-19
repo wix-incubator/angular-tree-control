@@ -1,6 +1,6 @@
 {
   "name": "angular-tree-control",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "main": [
     "./angular-tree-control.js",
     "./css/tree-control.css"
