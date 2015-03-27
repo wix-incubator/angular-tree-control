@@ -1,5 +1,5 @@
 {
-  "name": "angular-tree-control",
+  "name": "angular-tree-control-djmatty",
   "version": "0.2.9",
   "main": [
     "./angular-tree-control.js",
