@@ -90,7 +90,7 @@
                     ensureDefault($scope.options.injectClasses, "labelSelected", "");
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
-                    ensureDefault($scope.options, "trackBy", 'id');
+                    ensureDefault($scope.options, "trackBy", 'node.id');
 
                     $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
