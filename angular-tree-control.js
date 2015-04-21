@@ -90,6 +90,7 @@
                     ensureDefault($scope.options.injectClasses, "labelSelected", "");
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
+                    ensureDefault($scope.options, "trackBy", 'id');
 
                     $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
@@ -206,7 +207,7 @@
                     var orderBy = $scope.orderBy ? ' | orderBy:orderBy:reverseOrder' : '';
                     var template =
                       '<ul '+classIfDefined($scope.options.injectClasses.ul, true)+'>' +
-                          '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator ' + orderBy + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
+                          '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' track by ' + $scope.options.trackBy + ' | filter:filterExpression:filterComparator ' + orderBy + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
                               '<div class="tree-label-container">' +
                                   '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                                   '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
