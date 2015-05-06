@@ -2,7 +2,7 @@
     'use strict';
     
     angular.module( 'treeControl', [] )
-        .directive( 'treecontrol', ['$compile', function( $compile ) {
+        .directive( 'treecontrol', ['$compile', '$timeout', function( $compile, $timeout) {
             /**
              * @param cssClass - the css class
              * @param addClassProperty - should we wrap the class name with class=""
@@ -90,6 +90,9 @@
                     ensureDefault($scope.options.injectClasses, "labelSelected", "");
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
+                    ensureDefault($scope.options, "enableIntervalToggle", false);
+                    ensureDefault($scope.options, "childrenLimitInterval", 10);
+                    ensureDefault($scope.options, "childrenTimeInterval", 10);
 
                     $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
@@ -202,11 +205,25 @@
                         return isThisNodeSelected?"tree-selected" + injectSelectionClass:"";
                     };
 
+                    $scope.enableIntervalToggleOnScope = function(scope){
+                      var limitInterval = $scope.options.childrenLimitInterval*1;
+                      var timeInterval = $scope.options.childrenTimeInterval*1;
+                      
+                      scope.childrenLimit = limitInterval;
+                      $timeout(function addChildren(){
+                          if(scope.childrenLimit < (scope.node.children || []).length){
+                              scope.childrenLimit = scope.childrenLimit + limitInterval;
+                              $timeout(addChildren, timeInterval);
+                          }
+                      }, timeInterval); 
+                    };
+                    
                     //tree template
                     var orderBy = $scope.orderBy ? ' | orderBy:orderBy:reverseOrder' : '';
+                    var limitTo = $scope.options.enableIntervalToggle ? ' | limitTo:childrenLimit' : '';
                     var template =
                         '<ul '+classIfDefined($scope.options.injectClasses.ul, true)+'>' +
-                            '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator ' + orderBy + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
+                            '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator ' + orderBy + limitTo + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
                             '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
@@ -270,6 +287,7 @@
                         //Rendering template for a root node
                         treemodelCntr.template( scope, function(clone) {
                             element.html('').append( clone );
+                            if(scope.options.enableIntervalToggle) scope.enableIntervalToggleOnScope(scope);
                         });
                         // save the transclude function from compile (which is not bound to a scope as apposed to the one from link)
                         // we can fix this to work with the link transclude function with angular 1.2.6. as for angular 1.2.0 we need
@@ -285,8 +303,9 @@
                 require: "^treecontrol",
                 link: function( scope, element, attrs, treemodelCntr) {
                     // Rendering template for the current node
-                    treemodelCntr.template(scope, function(clone) {
+                    treemodelCntr.template(scope, function(clone) { 
                         element.html('').append(clone);
+                        if(scope.options.enableIntervalToggle) scope.enableIntervalToggleOnScope(scope);
                     });
                 }
             }
