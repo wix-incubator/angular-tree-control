@@ -107,3 +107,6 @@ treecontrol.tree-dark li .tree-selected {
 treecontrol.tree-dark {
     color: #ddd;
 }
+treecontrol.tree-label-container {
+  display: block;
+}
