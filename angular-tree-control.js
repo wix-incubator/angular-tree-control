@@ -158,8 +158,7 @@
                     };
 
                     $scope.selectNodeLabel = function( selectedNode ){
-                        if (selectedNode[$scope.options.nodeChildren] && selectedNode[$scope.options.nodeChildren].length > 0 &&
-                            !$scope.options.dirSelectable) {
+                        if(!$scope.options.isLeaf(selectedNode) && !$scope.options.dirSelectable) {
                             this.selectNodeHead();
                         }
                         else {
