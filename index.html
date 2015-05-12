@@ -57,6 +57,8 @@
                     <div save-content="classic-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
+                                     tree-menu-model="menuModel"
+                                     on-click-menu="clickMenu(node, item)"
                                      on-selection="showSelected(node)">
                             label: {{node.label}} ({{node.id}})
                         </treecontrol>
@@ -89,6 +91,18 @@
             $scope.showSelected = function(sel) {
                 $scope.selectedNode = sel;
             };
+
+            $scope.menuModel = [{
+                label: '测试1',
+                value: 1
+            }, {
+                label: '测试2',
+                value: 2
+            }]
+
+            $scope.clickMenu = function(node, item) {
+                console.log(node, item);
+            }
         }
     </script>
 </section>
