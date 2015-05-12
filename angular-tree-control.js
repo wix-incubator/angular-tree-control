@@ -79,6 +79,7 @@
                     ensureDefault($scope.options, "multiSelection", false);
                     ensureDefault($scope.options, "nodeChildren", "children");
                     ensureDefault($scope.options, "dirSelectable", "true");
+                    ensureDefault($scope.options, "expandOnFilter", "true");
                     ensureDefault($scope.options, "injectClasses", {});
                     ensureDefault($scope.options.injectClasses, "ul", "");
                     ensureDefault($scope.options.injectClasses, "li", "");
@@ -134,6 +135,9 @@
                     };
 
                     $scope.nodeExpanded = function() {
+                        if ($scope.options.expandOnFilter && !angular.isUndefined($scope.filterExpression) && angular.isString($scope.filterExpression) && $scope.filterExpression.length > 0) {
+                            return true;
+                        }
                         return !!$scope.expandedNodesMap[this.$id];
                     };
 
