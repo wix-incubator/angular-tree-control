@@ -1,6 +1,6 @@
 {
-  "name": "angular-tree-control",
-  "version": "0.2.9",
+  "name": "angular-tree-control-smooth-expand",
+  "version": "0.3.0",
   "main": [
     "./angular-tree-control.js",
     "./css/tree-control.css"
