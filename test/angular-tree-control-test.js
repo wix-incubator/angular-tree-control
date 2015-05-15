@@ -6,6 +6,7 @@ describe('treeControl', function() {
         inject(function ($injector) {
             $compile = $injector.get('$compile');
             $rootScope = $injector.get('$rootScope');
+						$timeout = $injector.get('$timeout');
         });
         num = 1;
     });
@@ -639,4 +640,122 @@ describe('treeControl', function() {
 
     });
 
+		describe('gradual children expanding', function(){
+				it('should add 20 children per 25 ms', function(){
+						var TIME_INTERVAL = 25, 
+							LIMIT_INTERVAL = 20, 
+							MAX_NODES = 100;
+						$rootScope.treedata = createSubTree(1, MAX_NODES);
+						$rootScope.treeOptions = {
+								enableIntervalToggle: true,
+								childrenLimitInterval: LIMIT_INTERVAL,
+								childrenTimeInterval: TIME_INTERVAL
+						};
+						element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+						$rootScope.$digest();
+						
+						var expectedChildCount = LIMIT_INTERVAL, flag = false;
+						runs(function(){
+							setTimeout(function checkChildCount(){
+									if(expectedChildCount<=MAX_NODES){ 
+											expect(element.find('li').length).toBe(expectedChildCount);
+											expectedChildCount += LIMIT_INTERVAL;
+											$timeout.flush();
+											setTimeout(checkChildCount, TIME_INTERVAL);
+									}
+									else flag = true; 
+							}, TIME_INTERVAL/2);
+						});
+						waitsFor(function(){ return flag;}, 'Timeouts finished', TIME_INTERVAL*(MAX_NODES/LIMIT_INTERVAL*2));
+				});
+				it('should default childrenTimeInterval to 10 ms', function(){
+						var TIME_INTERVAL = 10, 
+							LIMIT_INTERVAL = 20, 
+							MAX_NODES = 100;
+						$rootScope.treedata = createSubTree(1, MAX_NODES);
+						$rootScope.treeOptions = {
+								enableIntervalToggle: true,
+								childrenLimitInterval: LIMIT_INTERVAL,
+						};
+						element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+						$rootScope.$digest();
+						var expectedChildCount = LIMIT_INTERVAL, flag = false;
+						runs(function(){
+							setTimeout(function checkChildCount(){
+									if(expectedChildCount<=MAX_NODES){ 
+											expect(element.find('li').length).toBe(expectedChildCount);
+											expectedChildCount += LIMIT_INTERVAL;
+											$timeout.flush();
+											setTimeout(checkChildCount, TIME_INTERVAL);
+									}
+									else flag = true; 
+							}, TIME_INTERVAL/2);
+						});
+						waitsFor(function(){ return flag;}, 'Timeouts finished', TIME_INTERVAL*(MAX_NODES/LIMIT_INTERVAL*2));
+				});
+				it('should default childrenLimitInterval to 10', function(){
+						var TIME_INTERVAL = 20, 
+							LIMIT_INTERVAL = 10, 
+							MAX_NODES = 50;
+						$rootScope.treedata = createSubTree(1, MAX_NODES);
+						$rootScope.treeOptions = {
+								enableIntervalToggle: true,
+								childrenTimeInterval: TIME_INTERVAL
+						};
+						element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+						$rootScope.$digest();
+						var expectedChildCount = LIMIT_INTERVAL, flag = false;
+						runs(function(){
+							setTimeout(function checkChildCount(){
+									if(expectedChildCount<=MAX_NODES){ 
+											expect(element.find('li').length).toBe(expectedChildCount);
+											expectedChildCount += LIMIT_INTERVAL;
+											$timeout.flush();
+											setTimeout(checkChildCount, TIME_INTERVAL);
+									}
+									else flag = true; 
+							}, TIME_INTERVAL/2);
+						});
+						waitsFor(function(){ return flag;}, 'Timeouts finished', TIME_INTERVAL*(MAX_NODES/LIMIT_INTERVAL*2));
+				});
+				it('should handle nested expansion properly', function(){
+						var TIME_INTERVAL = 10, 
+							LIMIT_INTERVAL = 10, 
+							MAX_NODES = 50;
+						$rootScope.treedata = createSubTree(2, MAX_NODES);
+						$rootScope.treeOptions = {
+								enableIntervalToggle: true
+						};
+						element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+						$rootScope.$digest();
+						var expectedChildCount = LIMIT_INTERVAL, subTreeExpectedChildCount = LIMIT_INTERVAL, flag = false;
+						runs(function(){
+							setTimeout(function checkChildCount(){
+									if(expectedChildCount<=MAX_NODES){ 
+											expect(element.find('li').length).toBe(expectedChildCount);
+											expectedChildCount += LIMIT_INTERVAL;
+											$timeout.flush();
+											setTimeout(checkChildCount, TIME_INTERVAL);
+									}
+									else {
+										element.find('li:eq(0) .tree-branch-head').click()
+										testSubTree();
+									}
+							}, TIME_INTERVAL/2);
+							
+							function testSubTree(){
+								setTimeout(function checkChildCount(){
+									if(subTreeExpectedChildCount<=MAX_NODES){ 
+											expect(element.find('li:eq(0) li').length).toBe(subTreeExpectedChildCount);
+											subTreeExpectedChildCount += LIMIT_INTERVAL;
+											$timeout.flush();
+											setTimeout(checkChildCount, TIME_INTERVAL);
+									}
+									else flag = true;
+								}, TIME_INTERVAL/2);
+							}
+						});
+						waitsFor(function(){ return flag;}, 'Timeouts finished', 2*TIME_INTERVAL*(MAX_NODES/LIMIT_INTERVAL*2));
+				});
+		});
 });

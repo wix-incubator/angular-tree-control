@@ -1,6 +1,6 @@
 {
-  "name": "angular-tree-control",
-  "version": "0.2.0",
+  "name": "angular-tree-control-smooth-expand",
+  "version": "0.3.0",
   "description": "Angular Tree Control",
   "main": "angular-tree-control.js",
   "scripts": {
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/wix/angular-tree-control.git"
+    "url": "git://github.com/ssteffl/angular-tree-control.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/wix/angular-tree-control/issues"
+    "url": "https://github.com/ssteffl/angular-tree-control-smooth-expand/issues"
   },
-  "homepage": "https://github.com/wix/angular-tree-control",
+  "homepage": "https://github.com/ssteffl/angular-tree-control-smooth-expand",
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-release": "~0.6.0",
