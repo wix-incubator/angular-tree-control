@@ -1,6 +1,6 @@
 (function ( angular ) {
     'use strict';
-    
+
     angular.module( 'treeControl', [] )
         .directive( 'treecontrol', ['$compile', function( $compile ) {
             /**
@@ -17,12 +17,12 @@
                 else
                     return "";
             }
-            
+
             function ensureDefault(obj, prop, value) {
                 if (!obj.hasOwnProperty(prop))
                     obj[prop] = value;
             }
-            
+
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -34,13 +34,15 @@
                     expandedNodes: "=?",
                     onSelection: "&",
                     onNodeToggle: "&",
+                    onRightClick: "&",
+                    contextMenuId: "@",
                     options: "=?",
                     orderBy: "@",
                     reverseOrder: "@",
                     filterExpression: "=?",
                     filterComparator: "=?"
                 },
-                controller: ['$scope', function( $scope ) {
+                controller: ['$scope', '$attrs', function( $scope, $attrs) {
 
                     function defaultIsLeaf(node) {
                         return !node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0;
@@ -150,7 +152,7 @@
                                     index = i;
                                 }
                             }
-                            if (index != undefined)
+                            if (index !== undefined)
                                 $scope.expandedNodes.splice(index, 1);
                         }
                         if ($scope.onNodeToggle)
@@ -191,6 +193,19 @@
                         }
                     };
 
+                    $scope.rightClickNodeLabel = function( targetNode ) {
+
+                        // Are are we changing the 'selected' node (as well)?
+                        if ($scope.selectedNode != targetNode) {
+                            this.selectNodeLabel( targetNode);
+                        }
+
+                        // ...and do the rightClick
+                        if($scope.onRightClick) {
+                            $scope.onRightClick({node: targetNode});
+                        }
+                    };
+
                     $scope.selectedClass = function() {
                         var isThisNodeSelected = isSelectedNode(this.node);
                         var labelSelectionClass = classIfDefined($scope.options.injectClasses.labelSelected, false);
@@ -203,18 +218,27 @@
 
                     //tree template
                     var orderBy = $scope.orderBy ? ' | orderBy:orderBy:reverseOrder' : '';
+                    var rcLabel = $attrs.onRightClick ? ' ng-right-click="rightClickNodeLabel(node)"' : '';
+                    var ctxMenuId = $attrs.contextMenuId ? ' ng-context-menu="'+ $attrs.contextMenuId+'"' : '';
+
                     var template =
                         '<ul '+classIfDefined($scope.options.injectClasses.ul, true)+'>' +
                             '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator ' + orderBy + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
-                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'"' +
+                                   ' ng-class="selectedClass()"' +
+                                   ' ng-click="selectNodeLabel(node)"' + rcLabel + ctxMenuId +
+
+                                   ' tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
 
                     this.template = $compile(template);
                 }],
+
+
                 compile: function(element, attrs, childTranscludeFn) {
                     return function ( scope, element, attrs, treemodelCntr ) {
 
@@ -274,10 +298,116 @@
                         // we can fix this to work with the link transclude function with angular 1.2.6. as for angular 1.2.0 we need
                         // to keep using the compile function
                         scope.$treeTransclude = childTranscludeFn;
-                    }
+                    };
                 }
             };
         }])
+
+        .directive('ngRightClick', function($parse) {
+            return function(scope, element, attrs) {
+                var fn = $parse(attrs.ngRightClick);
+                element.bind('contextmenu', function(event) {
+                    scope.$apply(function() {
+                        event.preventDefault();     // Don't show the browser's normal context menu
+                        fn(scope, {$event:event});  // call the function inside the ng-right-click attribute
+                    });
+                });
+            };
+        })
+
+        .directive('ngContextMenu', ['$document', '$parse', function($document, $parse) {
+            return {
+                restrict    : 'A',
+                scope       : '@&',
+                compile: function compile(tElement, tAttrs, transclude) {
+                    return {
+                        post: function postLink(scope, iElement, iAttrs, controller) {
+
+
+                            var ul = angular.element(document.querySelector('#' + iAttrs.ngContextMenu));
+
+                            ul.css({ 'display' : 'none'});
+
+                            // right-click on ng-context-menu will show the menu
+                            iElement.bind('contextmenu', function showContextMenu(event) {
+
+                                // don't do the normal browser right-click context menu
+                                event.preventDefault();
+
+                                // use CSS to move and show the dropdown-menu
+                                ul.css({
+                                    position: "fixed",
+                                    display: "block",
+                                    left: event.clientX + 'px',
+                                    top:  event.clientY + 'px'
+                                });
+
+                                // setup a one-time click event on the document to hide the dropdown-menu
+                                $document.one('click', function hideContextMenu(event) {
+                                    ul.css({
+                                        'display' : 'none'
+                                    });
+                                });
+                            });
+                        }
+                    };
+                }
+            };
+        }])
+
+        .directive('ngContextSubmenu', ['$document', function($document) {
+            return {
+                restrict    : 'A',
+                scope       : '@&',
+                compile: function compile(tElement, tAttrs, transclude) {
+                    return {
+                        post: function postLink(scope, iElement, iAttrs, controller) {
+
+                            var ul = angular.element(document.querySelector('#' + iAttrs.ngContextSubmenu));
+
+                            ul.css({ 'display' : 'none'});
+
+
+                            iElement.bind('mouseover', function showContextMenu(event) {
+                                // use CSS to move and show the sub dropdown-menu
+                                if(ul.css("display") == 'none') {
+
+                                    ul.css({
+                                        position: "fixed",
+                                        display: "block",
+                                        left: event.target.offsetLeft + event.target.offsetWidth + 'px',
+                                        top:  event.clientY + 'px'
+                                    });
+
+                                    // Each uncle/aunt menu item needs a mouseover event to make the subContext menu disappear
+                                    angular.forEach(iElement[0].parentElement.parentElement.children, function(child, ndx) {
+                                        if(child !== iElement[0].parentElement) {
+                                            angular.element(child).one('mouseover', function(event) {
+                                                if(ul.css("display") == 'block') {
+                                                    ul.css({
+                                                        'display' : 'none'
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+
+                                // setup a one-time click event on the document to hide the sub dropdown-menu
+                                $document.one('click', function hideContextMenu(event) {
+                                    if(ul.css("display") == 'block') {
+                                        ul.css({
+                                            'display' : 'none'
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                    };
+                }
+            };
+        }])
+
         .directive("treeitem", function() {
             return {
                 restrict: 'E',
@@ -288,7 +418,7 @@
                         element.html('').append(clone);
                     });
                 }
-            }
+            };
         })
         .directive("treeTransclude", function() {
             return {
@@ -332,6 +462,6 @@
                         element.append(clone);
                     });
                 }
-            }
+            };
         });
 })( angular );

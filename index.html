@@ -1017,6 +1017,82 @@
     </script>
 </section>
 
+
+<section id="rightclick" ng-controller="RightClick">
+    <div class="page-header">
+        <h1>Right Click &amp; Context Menu</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6 show-grid">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="example-caption">EXAMPLE:</div>
+                    <div save-content="rightclick-html">
+                        <treecontrol class="tree-classic"
+                                     tree-model="treedata"
+				     on-right-click="doRightClick(node)"
+				     context-menu-id="ctxMenu">
+                            {{node.label}}
+                        </treecontrol>	
+                        <ul id="ctxMenu" class="dropdown-menu">
+                          <li><a ng-click="color(false)">No Color</a></li>
+                          <li class="divider"></li>  
+                          <li><a ng-context-submenu="ctxSubMenuColor">color...</a></li>
+                          <li><a ng-context-submenu="ctxSubMenuOrderBy">select...</a></li>
+                        </ul>
+                        <ul id="ctxSubMenuColor" class="dropdown-menu">
+                          <li><a ng-click="color('Fruit')">Color Fruit</a></li>
+                          <li><a ng-click="color('Vegetable')">Color Veges</a></li>
+                        </ul>
+                        <ul id="ctxSubMenuSelect" class="dropdown-menu">
+                          <li><a ng-click="select('Fruit')">Select orange food</a></li>
+                          <li><a ng-click="select('Vegetable')">Select green food</a></li>
+                          <li><a ng-click="select('Orange')">Select orange food</a></li>
+                          <li><a ng-click="select('Green')">Select green food</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <p>The angular tree control provides for right-click and context menu functionality</p>
+	    <p>The last right-click was on the <code>{{lastRightClickNode}}</code></p>
+        </div>
+    </div>
+    <div class="row">
+        <tabset>
+            <tab heading="Markup" >
+                <pre class="code" apply-content="rightclick-html" highlight-lang="html"></pre>
+            </tab>
+            <tab heading="JavaScript">
+                <pre class="code" apply-content="rightclick-js" highlight-lang="js"></pre>
+            </tab>
+        </tabset>
+    </div>
+
+    <script save-content="rightclick-js">
+      function RightClick($scope) {
+        $scope.treedata=[
+          { "label" : "Food", "children" : [
+            { "label" : "Vegetables", "children" : [
+              { "label": "Vegetable:Carrot (Orange)",  "name" : "Carrot",  "color" : "Orange", "class" : "Vegetable", "children" : [] },
+              { "label": "Vegetable:Cabbbage (Green)", "name" : "Cabbage", "color" : "Green",  "class" : "Vegetable", "children" : [] },
+              { "label": "Vegetable:Potato (Brown)",   "name" : "Potato",  "color" : "Brown",  "class" : "Vegetable", "children" : [] } 
+            ]},
+            { "label" : "Fruit", "children" : [
+              { "label": "Fruit:Apple (Red)",      "name" : "Apple",   "color" : "Red",    "class" : "Fruit", "children" : [] },
+              { "label": "Fruit:Apricot (Orange)", "name" : "Apricot", "color" : "Orange", "class" : "Fruit", "children" : [] },
+              { "label": "Fruit:Grape (Green)",    "name" : "Grape",   "color" : "Green",  "class" : "Fruit", "children" : [] }
+            ]}
+          ]}
+        ];
+        $scope.lastRightClickNode = null;
+        $scope.doRightClick = function(node) { $scope.lastRightClickNode = node.label; }
+      }
+    </script>
+</section>
+
+
 </div>
 <div class="col-md-3">
     <ul nav class="nav docs-sidenav">
