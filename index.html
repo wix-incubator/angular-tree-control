@@ -20,7 +20,7 @@
         .header h1 {color: #fffffa; font-size: 60px}
         .header h2 {color: #fffffa; font-size: 24px; font-style: normal}
         .example-caption {color: #bbb; font-size: 12px}
-        .docs-body{width: 1140px; margin: auto auto 50px; }
+        .docs-body{width: 1140x; margin: auto auto 50px; }
         .docs-footer{background-color: #F5F5F5; text-align: center; padding: 30px 0; border-top: #e5e5e5}
         .tab-pane{background-color: #f8f8f8; border-right: 1px solid #ccc;border-left: 1px solid #ccc;border-bottom: 1px solid #ccc; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px }
         .nav li.active a{background-color: #f8f8f8}
@@ -32,6 +32,7 @@
         .type-hint-object {background:#999;}
         .type-hint-boolean {background:rgb(18, 131, 39);}
         .type-hint-number {background:rgb(189, 63, 66);}
+	.dropdown-menu li a.disabled { pointer-events: none; cursor: default; color:#bbb; }
     </style>
 </head>
 <body ng-app="example">
@@ -1020,7 +1021,7 @@
 
 <section id="rightclick" ng-controller="RightClick">
     <div class="page-header">
-        <h1>Right Click &amp; Context Menu</h1>
+        <h1>Right Click &amp; Context Menu <small>(on-right-click &amp; context-menu-id)</small></h1>
     </div>
     <div class="row">
         <div class="col-md-6 show-grid">
@@ -1030,33 +1031,63 @@
                     <div save-content="rightclick-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
+				     expanded-nodes="expandedNodes"
+                                     on-selection="doSelect(node)"
 				     on-right-click="doRightClick(node)"
 				     context-menu-id="ctxMenu">
                             {{node.label}}
                         </treecontrol>	
+
+			
                         <ul id="ctxMenu" class="dropdown-menu">
-                          <li><a ng-click="color(false)">No Color</a></li>
+                          <li><a ng-click="doCook()" 
+                                 ng-class="isLeaf() ? '' : 'disabled'">Cook {{selectedFood.name}}</a></li>
                           <li class="divider"></li>  
-                          <li><a ng-context-submenu="ctxSubMenuColor">color...</a></li>
-                          <li><a ng-context-submenu="ctxSubMenuOrderBy">select...</a></li>
+                          <li><a context-submenu-id="ctxSubMenuOrange"
+				 ng-class="selectedFood.color == 'Orange' ? '' : 'disabled'">Orange...</a></li>
+                          <li><a context-submenu-id="ctxSubMenuGreen"
+				 ng-class="selectedFood.color == 'Green' ? '' : 'disabled'">Green...</a></li>
                         </ul>
-                        <ul id="ctxSubMenuColor" class="dropdown-menu">
-                          <li><a ng-click="color('Fruit')">Color Fruit</a></li>
-                          <li><a ng-click="color('Vegetable')">Color Veges</a></li>
+
+
+                        <ul id="ctxSubMenuOrange" class="dropdown-menu">
+                          <li><a ng-click="doAction('juice' + selectedFood.name)">Juice {{selectedFood.name}}</a></li>
+                          <li><a ng-click="doAction('peel orange food')">Peel Orange Food</a></li>
                         </ul>
-                        <ul id="ctxSubMenuSelect" class="dropdown-menu">
-                          <li><a ng-click="select('Fruit')">Select orange food</a></li>
-                          <li><a ng-click="select('Vegetable')">Select green food</a></li>
-                          <li><a ng-click="select('Orange')">Select orange food</a></li>
-                          <li><a ng-click="select('Green')">Select green food</a></li>
+
+
+                        <ul id="ctxSubMenuGreen" class="dropdown-menu">
+                          <li><a ng-click="doAction('chop' + selectedFood.name)">Chop {{selectedFood.name}}</a></li>
+                          <li><a ng-click="doAction('shred green food')">Shred Green Food</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <p>The angular tree control provides for right-click and context menu functionality</p>
-	    <p>The last right-click was on the <code>{{lastRightClickNode}}</code></p>
+            <p>The angular tree control provides right-click and context menu functionality:
+	      <ul>
+		<li>
+		  <code>on-right-click</code> 
+		  is evaluated as an angular expression (like <code>ng-click</code> value) when
+		  a right-click event is detected.  If context menu is enabled, then this will be
+		  evaluated before the context menu is opened.
+		</li>
+		<li>
+		  <code>context-menu-id</code> is the <strong>id</strong> for an <code>&lt;ul&gt;</code>
+		  element which will be displayed after a right-click has been detected.
+		</li>
+		<li>
+		  <code>context-submenu-id</code> is the <strong>id</strong> for an <code>&lt;ul&gt;</code>
+		  which is a sub-menu within the context menu. It does <strong>NOT</strong> go on the
+		  angular tree control, rather it goes on the <code>&lt;li&gt;</code> element which
+		  is the parent menu item that opens the sub-menu.
+		</li>
+	      </ul>
+	    </p>
+	    <p>The last right-click was on the <code>{{lastRightClickNode}}</code> node </p>
+	    <p>The last food to be cooked was <code>{{lastCookedFood}}</code></p>
+	    <p>The last context menu action was <code>{{lastAction}}</code></p>
         </div>
     </div>
     <div class="row">
@@ -1073,7 +1104,6 @@
     <script save-content="rightclick-js">
       function RightClick($scope) {
         $scope.treedata=[
-          { "label" : "Food", "children" : [
             { "label" : "Vegetables", "children" : [
               { "label": "Vegetable:Carrot (Orange)",  "name" : "Carrot",  "color" : "Orange", "class" : "Vegetable", "children" : [] },
               { "label": "Vegetable:Cabbbage (Green)", "name" : "Cabbage", "color" : "Green",  "class" : "Vegetable", "children" : [] },
@@ -1084,11 +1114,23 @@
               { "label": "Fruit:Apricot (Orange)", "name" : "Apricot", "color" : "Orange", "class" : "Fruit", "children" : [] },
               { "label": "Fruit:Grape (Green)",    "name" : "Grape",   "color" : "Green",  "class" : "Fruit", "children" : [] }
             ]}
-          ]}
         ];
+        $scope.expandedNodes=[$scope.treedata[0], $scope.treedata[1]];
+
+        $scope.selectedFood = null;
+        $scope.doSelect = function(node) { $scope.selectedFood = node;};
+
         $scope.lastRightClickNode = null;
         $scope.doRightClick = function(node) { $scope.lastRightClickNode = node.label; }
-      }
+
+        $scope.lastCookedFood = null;
+        $scope.doCook = function() { $scope.lastCookedFood = $scope.selectedFood.name; };
+      
+        $scope.lastAction = null;
+        $scope.doAction = function(cmd) { $scope.lastAction = cmd; };
+
+        $scope.isLeaf = function() { return $scope.selectedFood && $scope.selectedFood.children.length == 0;};
+     }
     </script>
 </section>
 
