@@ -425,6 +425,40 @@ describe('treeControl', function() {
             expect(element.find('.tree-selected').length).toBe(1);
         });
 
+        it('should style unselectable nodes', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treeOptions = {isSelectable: function(node) {return false;}};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            expect(element.find('.tree-unselectable').length).toBe(2);
+
+            element.find('li:eq(0) div').click();
+            expect(element.find('.tree-unselectable').length).toBe(4);
+
+            element.find('li:eq(0) li:eq(0) div').click();
+            expect(element.find('.tree-unselectable').length).toBe(4);
+        });
+
+        it('should not allow selection of unselectable nodes', function () {
+            $rootScope.treedata = createSubTree(2, 2, "");
+            $rootScope.treeOptions = {
+                isSelectable: function(node) {
+                    return node.label !== "node 1";
+                }
+            };
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions" selected-node="selected">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            expect($rootScope.selected).toBeUndefined('No selection initially');
+
+            element.find('li:eq(0) div').click();
+            expect($rootScope.selected).toBeUndefined('Clicking "node 1" should NOT change selection');
+
+            element.find('li:eq(1) div').click();
+            expect($rootScope.selected).toBeDefined('Clicking "node 2" should change selection');
+        });
+
         it('should be able to accept alternative equality function', function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata[0].id = 'id0';
