@@ -245,6 +245,20 @@ describe('treeControl', function() {
             element.find('li:eq(0) div').click();
             expect($rootScope.selectedItem).toBeUndefined()
         });
+        
+        it('should not un-select a node after second click when allowDeselect==false', function () {
+            $rootScope.treeOptions = {allowDeselect: false};
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions" on-selection="itemSelected(node.label, selected)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            $rootScope.itemSelected = jasmine.createSpy('itemSelected');
+            element.find('li:eq(0) div').click();
+            element.find('li:eq(0) div').click();
+            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, true);
+            expect($rootScope.itemSelected).not.toHaveBeenCalledWith($rootScope.treedata[0].label, false);
+            expect($rootScope.itemSelected.calls.length).toBe(2);
+        });
 
         it('should retain selection after full model refresh', function () {
             var testTree = createSubTree(2, 2);

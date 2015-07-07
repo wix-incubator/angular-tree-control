@@ -90,6 +90,7 @@
                     ensureDefault($scope.options.injectClasses, "labelSelected", "");
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
+                    ensureDefault($scope.options, "allowDeselect", true);
 
                     $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
@@ -183,7 +184,12 @@
                                     selected = true;
                                 }
                                 else {
-                                    $scope.selectedNode = undefined;
+                                    if ($scope.options.allowDeselect) {
+                                        $scope.selectedNode = undefined;
+                                    } else {
+                                        $scope.selectedNode = selectedNode;
+                                        selected = true;
+                                    }
                                 }
                             }
                             if ($scope.onSelection)
