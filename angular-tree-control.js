@@ -75,6 +75,10 @@
                         return angular.equals(a, b);
                     }
 
+                    function defaultIsSelectable() {
+                        return true;
+                    }
+
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "multiSelection", false);
                     ensureDefault($scope.options, "nodeChildren", "children");
@@ -91,7 +95,8 @@
                     ensureDefault($scope.options, "equality", defaultEquality);
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
                     ensureDefault($scope.options, "allowDeselect", true);
-
+                    ensureDefault($scope.options, "isSelectable", defaultIsSelectable);
+                  
                     $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
@@ -159,8 +164,13 @@
                     };
 
                     $scope.selectNodeLabel = function( selectedNode ){
-                        if(!$scope.options.isLeaf(selectedNode) && !$scope.options.dirSelectable) {
+                        if(!$scope.options.isLeaf(selectedNode) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
+                            // Branch node is not selectable, expand
                             this.selectNodeHead();
+                        }
+                        else if($scope.options.isLeaf(selectedNode) && (!$scope.options.isSelectable(selectedNode))) {
+                            // Leaf node is not selectable
+                            return;
                         }
                         else {
                             var selected = false;
@@ -204,7 +214,13 @@
                         if (labelSelectionClass && isThisNodeSelected)
                             injectSelectionClass = " " + labelSelectionClass;
 
-                        return isThisNodeSelected?"tree-selected" + injectSelectionClass:"";
+                        return isThisNodeSelected ? "tree-selected" + injectSelectionClass : "";
+                    };
+
+                    $scope.unselectableClass = function() {
+                        var isThisNodeUnselectable = !$scope.options.isSelectable(this.node);
+                        var labelUnselectableClass = classIfDefined($scope.options.injectClasses.labelUnselectable, false);
+                        return isThisNodeUnselectable ? "tree-unselectable " + labelUnselectableClass : "";
                     };
 
                     //tree template
@@ -214,7 +230,7 @@
                             '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator ' + orderBy + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
-                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="selectedClass()" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';

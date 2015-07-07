@@ -586,6 +586,57 @@
     </script>
 </section>
 
+<section id="isSelectable" ng-controller="IsSelectable">
+    <div class="page-header">
+        <h1>Disabling Selection of Nodes <small>(options.isSelectable)</small></h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6 show-grid">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="example-caption">EXAMPLE:</div>
+                    <div save-content="dir-selection-html">
+                        <treecontrol class="tree-classic"
+                                     tree-model="treedata"
+                                     options="opts"
+                                     on-selection="showSelected(node)">
+                            label: {{node.label}} ({{node.id}})
+                        </treecontrol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <p>To restrict which nodes are selectable on the tree, define the <code>options.isSelectable(node)</code> function.</p>
+            <p>Example disables the selection of any node on or under the <code>Node 1</code> node</p>
+            <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+        </div>
+    </div>
+    <div class="row">
+        <tabset>
+            <tab heading="Markup" >
+                <pre class="code" apply-content="dir-selection-html" highlight-lang="html"></pre>
+            </tab>
+            <tab heading="JavaScript">
+                <pre class="code" apply-content="dir-selection-js" highlight-lang="js"></pre>
+            </tab>
+        </tabset>
+    </div>
+    <script save-content="dir-selection-js">
+        function IsSelectable($scope) {
+            $scope.treedata=createSubTree(3, 4, "");
+            $scope.opts = {
+                isSelectable: function(node) {
+                    return node.label.indexOf("Node 1") !== 0;
+                }
+            };
+            $scope.showSelected = function(sel) {
+                $scope.selectedNode = sel;
+            };
+        }
+    </script>
+</section>
+
 <section id="light" ng-controller="Light">
     <div class="page-header">
         <h1>Light Style <small>(Basic style, default configuration)</small></h1>

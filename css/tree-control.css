@@ -41,6 +41,9 @@ treecontrol li .tree-label {
     display: inline;
 }
 
+treecontrol li .tree-unselectable {
+    cursor: not-allowed;
+}
 
 treecontrol.tree-classic li.tree-expanded i.tree-branch-head {
     padding: 1px 10px;
@@ -62,6 +65,9 @@ treecontrol.tree-classic li .tree-selected {
     font-weight: bold;
 }
 
+treecontrol.tree-classic li .tree-unselectable {
+    color: #ddd;
+}
 
 treecontrol.tree-light li.tree-expanded i.tree-branch-head {
     padding: 1px 10px;
@@ -83,6 +89,9 @@ treecontrol.tree-light li .tree-selected {
     font-weight: bold;
 }
 
+treecontrol.tree-light li .tree-unselectable {
+    color: #ddd;
+}
 
 treecontrol.tree-dark li.tree-expanded i.tree-branch-head {
     padding: 1px 10px;
@@ -102,6 +111,10 @@ treecontrol.tree-dark li.tree-leaf i.tree-leaf-head {
 
 treecontrol.tree-dark li .tree-selected {
     font-weight: bold;
+}
+
+treecontrol.tree-dark li .tree-unselectable {
+    color: #777;
 }
 
 treecontrol.tree-dark {
