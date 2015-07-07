@@ -25,6 +25,18 @@ module.exports = function(grunt) {
             },
             dev: {
                 background: true
+            },
+            angular3: {
+                background: true,
+                options: {
+                    files: [
+                        'bower_components/jquery/jquery.js',
+                        'demo/angular.1.3.12.js',
+                        'demo/angular-mocks.1.3.12.js',
+                        'angular-tree-control.js',
+                        'test/**/*.js'
+                    ]
+                }
             }
         },
         connect: {
@@ -43,6 +55,10 @@ module.exports = function(grunt) {
             tests: {
                 files: ['*.js', 'test/**/*.js', '{demo,css,images}/*.*'],
                 tasks: ['karma:dev:run']
+            },
+            angular3: {
+                files: ['*.js', 'test/**/*.js', '{demo,css,images}/*.*'],
+                tasks: ['karma:angular3:run']
             }
         },
         release: {
@@ -67,4 +83,5 @@ module.exports = function(grunt) {
 
     //to debug tests during 'grunt serve', open: http://localhost:8880/debug.html
     grunt.registerTask('serve', ['karma:dev', 'connect', 'watch']);
+    grunt.registerTask('angular3', ['karma:angular3', 'watch:angular3']);
 };
