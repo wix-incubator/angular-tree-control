@@ -236,6 +236,17 @@ describe('treeControl', function() {
             expect($rootScope.itemSelected.calls.length).toBe(2);
         });
 
+        it('should invoke on-selection callback with all the scope variables ($parentNode, $index, $first, $middle, $last, $odd, $even)', function () {
+          $rootScope.treedata = createSubTree(2, 2);
+          element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label, ($parentNode?$parentNode.label:null), $index, $first, $middle, $last, $odd, $even)">{{node.label}}</treecontrol>')($rootScope);
+          $rootScope.$digest();
+
+          $rootScope.itemSelected = jasmine.createSpy('itemSelected');
+          element.find('li:eq(1) .tree-branch-head').click();
+          element.find('li:eq(1) li:eq(0) div').click();
+          expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
+        });
+
         it('should un-select a node after second click', function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.selectedItem = $rootScope.treedata[0];

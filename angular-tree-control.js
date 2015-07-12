@@ -163,7 +163,8 @@
                             $scope.onNodeToggle({node: this.node, expanded: expanding});
                     };
 
-                    $scope.selectNodeLabel = function( selectedNode ){
+                    $scope.selectNodeLabel = function( selectedNode){
+                        var transcludedScope = this;
                         if(!$scope.options.isLeaf(selectedNode) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
                             // Branch node is not selectable, expand
                             this.selectNodeHead();
@@ -202,8 +203,12 @@
                                     }
                                 }
                             }
-                            if ($scope.onSelection)
-                                $scope.onSelection({node: selectedNode, selected: selected});
+                            if ($scope.onSelection) {
+                                var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
+                                $scope.onSelection({node: selectedNode, selected: selected, $parentNode: parentNode,
+                                  $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
+                                  $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even});
+                            }
                         }
                     };
 
