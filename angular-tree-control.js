@@ -144,23 +144,29 @@
                     };
 
                     $scope.selectNodeHead = function() {
-                        var expanding = $scope.expandedNodesMap[this.$id] === undefined;
-                        $scope.expandedNodesMap[this.$id] = (expanding ? this.node : undefined);
+                        var transcludedScope = this;
+                        var expanding = $scope.expandedNodesMap[transcludedScope.$id] === undefined;
+                        $scope.expandedNodesMap[transcludedScope.$id] = (expanding ? transcludedScope.node : undefined);
                         if (expanding) {
-                            $scope.expandedNodes.push(this.node);
+                            $scope.expandedNodes.push(transcludedScope.node);
                         }
                         else {
                             var index;
                             for (var i=0; (i < $scope.expandedNodes.length) && !index; i++) {
-                                if ($scope.options.equality($scope.expandedNodes[i], this.node)) {
+                                if ($scope.options.equality($scope.expandedNodes[i], transcludedScope.node)) {
                                     index = i;
                                 }
                             }
                             if (index != undefined)
                                 $scope.expandedNodes.splice(index, 1);
                         }
-                        if ($scope.onNodeToggle)
-                            $scope.onNodeToggle({node: this.node, expanded: expanding});
+                        if ($scope.onNodeToggle) {
+                            var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
+                            $scope.onNodeToggle({node: transcludedScope.node, $parentNode: parentNode,
+                              $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
+                              $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even, expanded: expanding});
+
+                        }
                     };
 
                     $scope.selectNodeLabel = function( selectedNode){

@@ -428,8 +428,8 @@
                     <div save-content="events-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
-                                     on-selection="showSelected(node, selected)"
-                                     on-node-toggle="showToggle(node, expanded)">
+                                     on-selection="showSelected(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even)"
+                                     on-node-toggle="showToggle(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even)">
                             label: {{node.label}} ({{node.id}})
                         </treecontrol>
                     </div>
@@ -450,6 +450,19 @@
             </ul>
         </div>
     </div>
+    <table class="table table-bordered table-striped">
+        <thead><tr><td>Variable</td><td>Type</td><td>Details</td></tr></thead>
+        <tr><td><code>node</code></td><td><span class="label type-hint-object">Object</span></td><td>The current node the label represents.</td></tr>
+        <tr><td><code>$parentNode</code></td><td><span class="label type-hint-object">Object</span></td><td>The parent of the current node.</td></tr>
+        <tr><td><code>$index</code></td><td><span class="label type-hint-number">number</span></td><td>iterator offset of the repeated element under one parent node(0..length-1).</td></tr>
+        <tr><td><code>$first</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is first in the iterator.</td></tr>
+        <tr><td><code>$middle</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is between the first and last in the iterator.</td></tr>
+        <tr><td><code>$last</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is last in the iterator.</td></tr>
+        <tr><td><code>$odd</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is even (otherwise false).</td></tr>
+        <tr><td><code>$even</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is odd (otherwise false).</td></tr>
+        <tr><td><code>selected</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the node is selected, false if it is de-selected. Only applies to the on-selection event.</td></tr>
+        <tr><td><code>expanded</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the is expanding, false if the node is contracting. Only applies to the on-node-toggle event.</td></tr>
+    </table>
     <div class="row">
         <tabset>
             <tab heading="Markup" >
@@ -463,11 +476,17 @@
     <script save-content="events-js">
         function Events($scope) {
             $scope.treedata=createSubTree(3, 4, "");
-            $scope.showToggle = function(node, expanded) {
-                $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") + "</li>");
+            $scope.showToggle = function(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even) {
+                var parent = $parentNode?("child of: " + $parentNode.label):"root node";
+                var location = $first?"first":($last?"last":("middle node at index " + $index));
+                var oddEven = $odd?"odd":"even";
+                $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") +" (" + parent + ", " + location +", " + oddEven + ")</li>");
             };
-            $scope.showSelected = function(node, selected) {
-                $("#events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") + "</li>");
+            $scope.showSelected = function(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even) {
+                var parent = $parentNode?("child of: " + $parentNode.label):"root node";
+                var location = $first?"first":($last?"last":("middle node at index " + $index));
+                var oddEven = $odd?"odd":"even";
+                $("#events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") +" (" + parent + ", " + location +", " + oddEven + ")</li>");
             };
         }
     </script>
@@ -482,7 +501,7 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="example-caption">EXAMPLE:</div>
-                    <div save-content="events-html">
+                    <div save-content="multi-selection-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
                                      selected-nodes="selectedNodes"
@@ -517,10 +536,10 @@
     <div class="row">
         <tabset>
             <tab heading="Markup" >
-                <pre class="code" apply-content="events-html" highlight-lang="html"></pre>
+                <pre class="code" apply-content="multi-selection-html" highlight-lang="html"></pre>
             </tab>
             <tab heading="JavaScript">
-                <pre class="code" apply-content="events-js" highlight-lang="js"></pre>
+                <pre class="code" apply-content="multi-selection-js" highlight-lang="js"></pre>
             </tab>
         </tabset>
     </div>

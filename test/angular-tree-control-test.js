@@ -286,6 +286,48 @@ describe('treeControl', function() {
         });
     });
 
+    describe('toggle', function() {
+      it('should call on-node-toggle when node head is clicked with the expanding node and expanding indication', function () {
+        $rootScope.treedata = createSubTree(2, 2);
+        element = $compile('<treecontrol tree-model="treedata" on-node-toggle="nodeToggle(node.label, expanded)">{{node.label}}</treecontrol>')($rootScope);
+        $rootScope.$digest();
+
+        $rootScope.nodeToggle = jasmine.createSpy('nodeToggle');
+        element.find('li:eq(1) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) .tree-branch-head').click(); // contracting
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].label, true);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].label, false);
+      });
+
+      it('should call toggle for a child node', function () {
+        $rootScope.treedata = createSubTree(3, 2);
+        element = $compile('<treecontrol tree-model="treedata" on-node-toggle="nodeToggle(node.label, expanded)">{{node.label}}</treecontrol>')($rootScope);
+        $rootScope.$digest();
+
+        $rootScope.nodeToggle = jasmine.createSpy('nodeToggle');
+        element.find('li:eq(1) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // contracting
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].label, true);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, false);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, false);
+      });
+
+      it('should support $parentNode, $first, $last, $middle, $index, $odd, $even', function () {
+        $rootScope.treedata = createSubTree(2, 2);
+        element = $compile('<treecontrol tree-model="treedata" on-node-toggle="nodeToggle(node.label, ($parentNode?$parentNode.label:null), $index, $first, $middle, $last, $odd, $even)">{{node.label}}</treecontrol>')($rootScope);
+        $rootScope.$digest();
+
+        $rootScope.nodeToggle = jasmine.createSpy('nodeToggle');
+        element.find('li:eq(1) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // contracting
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].label, null, 1, false, false, true, true, false);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
+      });
+    })
+
     describe('multi-selection', function() {
         it('should publish the currently selected nodes on scope', function () {
             $rootScope.treeOptions = {multiSelection: true};
