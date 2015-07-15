@@ -43,7 +43,7 @@
                     filterExpression: "=?",
                     filterComparator: "=?"
                 },
-                controller: ['$scope', '$attrs', function( $scope, $attrs) {
+                controller: ['$scope', function( $scope ) {
 
                     function defaultIsLeaf(node) {
                         return !node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0;
