@@ -1,7 +1,7 @@
-.idea
+.*
 node_modules
 bower_components
 coverage
 treecontrol.iml
-.DS_Store
-.tern-port
+
+

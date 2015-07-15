@@ -12,6 +12,7 @@
     <link  href="demo/prettify-style.css" rel="stylesheet" type="text/css">
 
     <script src="angular-tree-control.js"></script>
+    <script src="context-menu.js"></script>
     <link rel="stylesheet" type="text/css" href="css/tree-control.css">
     <link rel="stylesheet" type="text/css" href="css/tree-control-attribute.css">
     <style>
@@ -853,7 +854,7 @@
 
 <section id="sorting" ng-controller="Sorting">
     <div class="page-header">
-        <h1>Sorting tree nodes <small>(order-by, reserve-order)</small></h1>
+        <h1>Sorting tree nodes <small>(order-by, reverse-order)</small></h1>
     </div>
     <div class="row">
         <div class="col-md-6 show-grid">
@@ -872,7 +873,8 @@
             </div>
         </div>
         <div class="col-md-6">
-            <p>The <code>order-by</code> and <code>reverse-order</code> properties allows controlling the sorting of the tree nodes.
+            <p>The <code>order-by</code>, <code>order-by-expression</code> and <code>reverse-order</code> properties allows
+	      controlling the sorting of the tree nodes.
                 The value of those attributes is used with the <code>ng-repeat</code> orderBy filter -
                 see more details at the <a href="https://code.angularjs.org/1.2.0-rc.3/docs/api/ng.filter:orderBy">Angular JS orderBy</a> docs.</p>
             <p>The sorting is done for each branch individually (sorting does not change the stucture of the tree itself).</p>
@@ -1021,7 +1023,7 @@
 
 <section id="rightclick" ng-controller="RightClick">
     <div class="page-header">
-        <h1>Right Click &amp; Context Menu <small>(on-right-click &amp; context-menu-id)</small></h1>
+        <h1>Right Click &amp; Context Menu <small>(on-right-click &amp; menu-id)</small></h1>
     </div>
     <div class="row">
         <div class="col-md-6 show-grid">
@@ -1034,7 +1036,7 @@
 				     expanded-nodes="expandedNodes"
                                      on-selection="doSelect(node)"
 				     on-right-click="doRightClick(node)"
-				     context-menu-id="ctxMenu">
+				     menu-id="ctxMenu">
                             {{node.label}}
                         </treecontrol>	
 
@@ -1074,14 +1076,8 @@
 		  evaluated before the context menu is opened.
 		</li>
 		<li>
-		  <code>context-menu-id</code> is the <strong>id</strong> for an <code>&lt;ul&gt;</code>
+		  <code>menu-id</code> is the <strong>id</strong> for an <code>&lt;ul&gt;</code>
 		  element which will be displayed after a right-click has been detected.
-		</li>
-		<li>
-		  <code>context-submenu-id</code> is the <strong>id</strong> for an <code>&lt;ul&gt;</code>
-		  which is a sub-menu within the context menu. It does <strong>NOT</strong> go on the
-		  angular tree control, rather it goes on the <code>&lt;li&gt;</code> element which
-		  is the parent menu item that opens the sub-menu.
 		</li>
 	      </ul>
 	    </p>
