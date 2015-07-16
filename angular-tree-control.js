@@ -38,7 +38,6 @@
                     menuId: "@",
                     options: "=?",
                     orderBy: "@",
-                    orderByExpression: "@",
                     reverseOrder: "@",
                     filterExpression: "=?",
                     filterComparator: "=?"
@@ -251,12 +250,7 @@
                     };
 
                     //tree template
-                    var orderBy = '';
-                    if ($scope.orderByExpression) {
-                        orderBy = ' | orderBy:' + $scope.orderByExpression + ':reverseOrder';
-                    } else if ($scope.orderBy) {
-                        orderBy = ' | orderBy:orderBy:reverseOrder';
-                    }
+                    var orderBy = $scope.orderBy ? ' | orderBy:orderBy:reverseOrder' : '';
                     var rcLabel = $scope.onRightClick ? ' tree-right-click="rightClickNodeLabel(node)"' : '';
                     var ctxMenuId = $scope.menuId ? ' context-menu-id="'+ $scope.menuId+'"' : '';
 
