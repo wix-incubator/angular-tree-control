@@ -70,7 +70,7 @@
             <p>Classic style of the tree control, set using the class <code>tree-classic</code>.</p>
             <p>Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree. A Second click on the node label will unselect the node.</p>
             <p>The tree data is set using the <code>tree-model</code> attribute, which accepts either a node object or an array of node objects.
-                A Node object is a regular javascript object which has a <code>children</code> array property (children is the defuault name,
+                A Node object is a regular javascript object which has a <code>children</code> array property (children is the default name,
                 it can be overridden using the tree options). </p>
             <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
         </div>
@@ -430,8 +430,8 @@
                     <div save-content="events-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
-                                     on-selection="showSelected(node, selected)"
-                                     on-node-toggle="showToggle(node, expanded)">
+                                     on-selection="showSelected(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even)"
+                                     on-node-toggle="showToggle(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even)">
                             label: {{node.label}} ({{node.id}})
                         </treecontrol>
                     </div>
@@ -452,6 +452,19 @@
             </ul>
         </div>
     </div>
+    <table class="table table-bordered table-striped">
+        <thead><tr><td>Variable</td><td>Type</td><td>Details</td></tr></thead>
+        <tr><td><code>node</code></td><td><span class="label type-hint-object">Object</span></td><td>The current node the label represents.</td></tr>
+        <tr><td><code>$parentNode</code></td><td><span class="label type-hint-object">Object</span></td><td>The parent of the current node.</td></tr>
+        <tr><td><code>$index</code></td><td><span class="label type-hint-number">number</span></td><td>iterator offset of the repeated element under one parent node(0..length-1).</td></tr>
+        <tr><td><code>$first</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is first in the iterator.</td></tr>
+        <tr><td><code>$middle</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is between the first and last in the iterator.</td></tr>
+        <tr><td><code>$last</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is last in the iterator.</td></tr>
+        <tr><td><code>$odd</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is even (otherwise false).</td></tr>
+        <tr><td><code>$even</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is odd (otherwise false).</td></tr>
+        <tr><td><code>selected</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the node is selected, false if it is de-selected. Only applies to the on-selection event.</td></tr>
+        <tr><td><code>expanded</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the node is expanding, false if the node is contracting. Only applies to the on-node-toggle event.</td></tr>
+    </table>
     <div class="row">
         <tabset>
             <tab heading="Markup" >
@@ -465,11 +478,17 @@
     <script save-content="events-js">
         function Events($scope) {
             $scope.treedata=createSubTree(3, 4, "");
-            $scope.showToggle = function(node, expanded) {
-                $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") + "</li>");
+            $scope.showToggle = function(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even) {
+                var parent = $parentNode?("child of: " + $parentNode.label):"root node";
+                var location = $first?"first":($last?"last":("middle node at index " + $index));
+                var oddEven = $odd?"odd":"even";
+                $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") +" (" + parent + ", " + location +", " + oddEven + ")</li>");
             };
-            $scope.showSelected = function(node, selected) {
-                $("#events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") + "</li>");
+            $scope.showSelected = function(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even) {
+                var parent = $parentNode?("child of: " + $parentNode.label):"root node";
+                var location = $first?"first":($last?"last":("middle node at index " + $index));
+                var oddEven = $odd?"odd":"even";
+                $("#events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") +" (" + parent + ", " + location +", " + oddEven + ")</li>");
             };
         }
     </script>
@@ -484,7 +503,7 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="example-caption">EXAMPLE:</div>
-                    <div save-content="events-html">
+                    <div save-content="multi-selection-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
                                      selected-nodes="selectedNodes"
@@ -519,10 +538,10 @@
     <div class="row">
         <tabset>
             <tab heading="Markup" >
-                <pre class="code" apply-content="events-html" highlight-lang="html"></pre>
+                <pre class="code" apply-content="multi-selection-html" highlight-lang="html"></pre>
             </tab>
             <tab heading="JavaScript">
-                <pre class="code" apply-content="events-js" highlight-lang="js"></pre>
+                <pre class="code" apply-content="multi-selection-js" highlight-lang="js"></pre>
             </tab>
         </tabset>
     </div>
@@ -580,6 +599,57 @@
             $scope.treedata=createSubTree(3, 4, "");
             $scope.opts = {
                 dirSelectable: false
+            };
+            $scope.showSelected = function(sel) {
+                $scope.selectedNode = sel;
+            };
+        }
+    </script>
+</section>
+
+<section id="isSelectable" ng-controller="IsSelectable">
+    <div class="page-header">
+        <h1>Disabling Selection of Nodes <small>(options.isSelectable)</small></h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6 show-grid">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="example-caption">EXAMPLE:</div>
+                    <div save-content="dir-selection-html">
+                        <treecontrol class="tree-classic"
+                                     tree-model="treedata"
+                                     options="opts"
+                                     on-selection="showSelected(node)">
+                            label: {{node.label}} ({{node.id}})
+                        </treecontrol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <p>To restrict which nodes are selectable on the tree, define the <code>options.isSelectable(node)</code> function.</p>
+            <p>Example disables the selection of any node on or under the <code>Node 1</code> node</p>
+            <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+        </div>
+    </div>
+    <div class="row">
+        <tabset>
+            <tab heading="Markup" >
+                <pre class="code" apply-content="dir-selection-html" highlight-lang="html"></pre>
+            </tab>
+            <tab heading="JavaScript">
+                <pre class="code" apply-content="dir-selection-js" highlight-lang="js"></pre>
+            </tab>
+        </tabset>
+    </div>
+    <script save-content="dir-selection-js">
+        function IsSelectable($scope) {
+            $scope.treedata=createSubTree(3, 4, "");
+            $scope.opts = {
+                isSelectable: function(node) {
+                    return node.label.indexOf("Node 1") !== 0;
+                }
             };
             $scope.showSelected = function(sel) {
                 $scope.selectedNode = sel;

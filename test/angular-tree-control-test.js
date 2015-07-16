@@ -236,6 +236,17 @@ describe('treeControl', function() {
             expect($rootScope.itemSelected.calls.length).toBe(2);
         });
 
+        it('should invoke on-selection callback with all the scope variables ($parentNode, $index, $first, $middle, $last, $odd, $even)', function () {
+          $rootScope.treedata = createSubTree(2, 2);
+          element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label, ($parentNode?$parentNode.label:null), $index, $first, $middle, $last, $odd, $even)">{{node.label}}</treecontrol>')($rootScope);
+          $rootScope.$digest();
+
+          $rootScope.itemSelected = jasmine.createSpy('itemSelected');
+          element.find('li:eq(1) .tree-branch-head').click();
+          element.find('li:eq(1) li:eq(0) div').click();
+          expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
+        });
+
         it('should un-select a node after second click', function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.selectedItem = $rootScope.treedata[0];
@@ -244,6 +255,20 @@ describe('treeControl', function() {
 
             element.find('li:eq(0) div').click();
             expect($rootScope.selectedItem).toBeUndefined()
+        });
+        
+        it('should not un-select a node after second click when allowDeselect==false', function () {
+            $rootScope.treeOptions = {allowDeselect: false};
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions" on-selection="itemSelected(node.label, selected)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            $rootScope.itemSelected = jasmine.createSpy('itemSelected');
+            element.find('li:eq(0) div').click();
+            element.find('li:eq(0) div').click();
+            expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, true);
+            expect($rootScope.itemSelected).not.toHaveBeenCalledWith($rootScope.treedata[0].label, false);
+            expect($rootScope.itemSelected.calls.length).toBe(2);
         });
 
         it('should retain selection after full model refresh', function () {
@@ -260,6 +285,48 @@ describe('treeControl', function() {
             expect(element.find('.tree-selected').length).toBe(1);
         });
     });
+
+    describe('toggle', function() {
+      it('should call on-node-toggle when node head is clicked with the expanding node and expanding indication', function () {
+        $rootScope.treedata = createSubTree(2, 2);
+        element = $compile('<treecontrol tree-model="treedata" on-node-toggle="nodeToggle(node.label, expanded)">{{node.label}}</treecontrol>')($rootScope);
+        $rootScope.$digest();
+
+        $rootScope.nodeToggle = jasmine.createSpy('nodeToggle');
+        element.find('li:eq(1) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) .tree-branch-head').click(); // contracting
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].label, true);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].label, false);
+      });
+
+      it('should call toggle for a child node', function () {
+        $rootScope.treedata = createSubTree(3, 2);
+        element = $compile('<treecontrol tree-model="treedata" on-node-toggle="nodeToggle(node.label, expanded)">{{node.label}}</treecontrol>')($rootScope);
+        $rootScope.$digest();
+
+        $rootScope.nodeToggle = jasmine.createSpy('nodeToggle');
+        element.find('li:eq(1) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // contracting
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].label, true);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, false);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, false);
+      });
+
+      it('should support $parentNode, $first, $last, $middle, $index, $odd, $even', function () {
+        $rootScope.treedata = createSubTree(2, 2);
+        element = $compile('<treecontrol tree-model="treedata" on-node-toggle="nodeToggle(node.label, ($parentNode?$parentNode.label:null), $index, $first, $middle, $last, $odd, $even)">{{node.label}}</treecontrol>')($rootScope);
+        $rootScope.$digest();
+
+        $rootScope.nodeToggle = jasmine.createSpy('nodeToggle');
+        element.find('li:eq(1) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // expanding
+        element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // contracting
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].label, null, 1, false, false, true, true, false);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
+        expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
+      });
+    })
 
     describe('multi-selection', function() {
         it('should publish the currently selected nodes on scope', function () {
@@ -409,6 +476,40 @@ describe('treeControl', function() {
 
             element.find('li:eq(0) li:eq(0) div').click();
             expect(element.find('.tree-selected').length).toBe(1);
+        });
+
+        it('should style unselectable nodes', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treeOptions = {isSelectable: function(node) {return false;}};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            expect(element.find('.tree-unselectable').length).toBe(2);
+
+            element.find('li:eq(0) div').click();
+            expect(element.find('.tree-unselectable').length).toBe(4);
+
+            element.find('li:eq(0) li:eq(0) div').click();
+            expect(element.find('.tree-unselectable').length).toBe(4);
+        });
+
+        it('should not allow selection of unselectable nodes', function () {
+            $rootScope.treedata = createSubTree(2, 2, "");
+            $rootScope.treeOptions = {
+                isSelectable: function(node) {
+                    return node.label !== "node 1";
+                }
+            };
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions" selected-node="selected">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            expect($rootScope.selected).toBeUndefined('No selection initially');
+
+            element.find('li:eq(0) div').click();
+            expect($rootScope.selected).toBeUndefined('Clicking "node 1" should NOT change selection');
+
+            element.find('li:eq(1) div').click();
+            expect($rootScope.selected).toBeDefined('Clicking "node 2" should change selection');
         });
 
         it('should be able to accept alternative equality function', function () {
