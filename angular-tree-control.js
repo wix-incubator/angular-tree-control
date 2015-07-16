@@ -4,11 +4,6 @@
     angular.module('treeControl')
         .directive('treecontrol', [
             '$compile', function ($compile) {
-                /**
-             * @param cssClass - the css class
-             * @param addClassProperty - should we wrap the class name with class=""
-             */
-
                 return {
                     restrict: 'EA',
                     require: "treecontrol",
