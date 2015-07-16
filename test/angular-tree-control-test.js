@@ -2,6 +2,25 @@ describe('treeControl', function() {
     var $compile, $rootScope, element, num;
 
     beforeEach(function () {
+        angular.mock.module(function($filterProvider) {
+            $filterProvider.register('startsWithLetter', startsWithLetter);
+        });
+
+        // custom filter for the repeat with argument
+        function startsWithLetter() {
+            return function (items, letter) {
+                var filtered = [];
+                var letterMatch = new RegExp(letter, 'i');
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    if (letterMatch.test(item.label.substring(0, 1))) {
+                        filtered.push(item);
+                    }
+                }
+                return filtered;
+            };
+        }
+
         module('treeControl');
         inject(function ($injector) {
             $compile = $injector.get('$compile');
@@ -624,6 +643,24 @@ describe('treeControl', function() {
             $rootScope.$digest();
             expect(element.find('li:eq(0)').text()).toBe('abcd');
             expect(element.find('li').length).toBe(1);
+        });
+
+        it('should be able to accept an alternative filter for the repeat with arguments', function() {
+            $rootScope.treedata = [
+                { label: "abcd", age: 12, children: [] },
+                { label: "abef", age: 12, children: [] },
+                { label: "bcde", age: 14, children: [] }
+            ];
+            $rootScope.predicate = "d";
+            element = $compile('<treecontrol tree-model="treedata" filter="startsWithLetter" filter-expression="predicate">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li').length).toBe(0);
+
+            $rootScope.predicate = "a";
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('abcd');
+            expect(element.find('li:eq(1)').text()).toBe('abef');
+            expect(element.find('li').length).toBe(2);
         });
     });
 
