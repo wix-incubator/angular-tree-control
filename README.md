@@ -135,7 +135,6 @@ Attributes of angular treecontrol
     - `label` : inhject classes into the div element around the label
     - `labelSelected` : inject classes into the div element around the label only when the node is selected
 - `order-by` : value for ng-repeat to use for ordering sibling nodes
-- `order-by-expression` : expression for ng-repeat to use for ordering sibling nodes
 - `reverse-order` : whether or not to reverse the ordering of sibling nodes based on the value of `order-by`
 - `filter-expression` : value for ng-repeat to use for filtering the sibling nodes
 - `filter-comparator` : value for ng-repeat to use for comparing nodes with the filter expression
