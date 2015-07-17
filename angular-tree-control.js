@@ -220,15 +220,21 @@
                         }
                     };
 
-                    $scope.rightClickNodeLabel = function( targetNode ) {
+                    $scope.rightClickNodeLabel = function( targetNode, $event ) {
 
-                        // Are are we changing the 'selected' node (as well)?
-                        if ($scope.selectedNode != targetNode) {
-                            this.selectNodeLabel( targetNode);
-                        }
-
-                        // ...and do the rightClick
+                        // Is there a right click function??
                         if($scope.onRightClick) {
+
+                            // Turn off the browser default context-menu
+                            if($event)
+                                $event.preventDefault();
+
+                            // Are are we changing the 'selected' node (as well)?
+                            if ($scope.selectedNode != targetNode) {
+                                this.selectNodeLabel(targetNode);
+                            }
+
+                            // Finally go do what they asked
                             $scope.onRightClick({node: targetNode});
                         }
                     };
@@ -336,8 +342,7 @@
                 var fn = $parse(attrs.treeRightClick);
                 element.bind('contextmenu', function(event) {
                     scope.$apply(function() {
-                        event.preventDefault();     // Don't show the browser's normal context menu
-                        fn(scope, {$event:event});  // go do our stuff
+                        fn(scope, {$event:event});    // go do our stuff
                     });
                 });
             };
