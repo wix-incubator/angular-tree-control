@@ -75,6 +75,24 @@ describe('treeControl', function() {
         });
     });
 
+    describe('rendering context menu', function () {
+        it('should not render context-menu-id attributes if menu-id is not provided', function() {
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('div.tree-label:eq(0)')[0].attributes['context-menu-id']).toBeFalsy();
+        });
+
+        it('should render context-menu-id attributes if menu-id is provided', function() {
+
+            $rootScope.treedata = createSubTree(2,2);
+            element = $compile('<treecontrol tree-model="treedata" menu-id="ctxMenuId">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('div.tree-label:eq(0)')[0].attributes['context-menu-id'].value).toBe("ctxMenuId");
+        });
+    });
+
+
     describe('customising using options.isLeaf', function () {
         it('should display first level parents as collapsed nodes, including the leaf', function () {
             $rootScope.treedata = createSubTree(2, 2);
@@ -192,38 +210,6 @@ describe('treeControl', function() {
             expect(element.find('li:eq(2) span').text()).toBe('node 11 odd:false');
             expect(element.find('li:eq(3) span').text()).toBe('node 16 odd:true');
         });
-
-        it('should not render context-menu-id attributes if menu-id is not provided', function() {
-
-
-            $rootScope.treedata = [
-                { label: "a", children: [] },
-                { label: "c", children: [] },
-                { label: "b", children: [] }
-            ];
-            $rootScope.predicate = 'label';
-            $rootScope.reverse = true;
-            element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
-            $rootScope.$digest();
-
-            expect(element.find('div.tree-label:eq(0)')[0].attributes['ng-click']).toBeTruthy();
-            expect(element.find('div.tree-label:eq(0)')[0].attributes['context-menu-id']).toBeFalsy();
-        });
-
-        it('should render context-menu-id attributes if menu-id is provided', function() {
-
-            $rootScope.treedata = [
-                { label: "a", children: [] },
-                { label: "c", children: [] },
-                { label: "b", children: [] }
-            ];
-            $rootScope.predicate = 'label';
-            $rootScope.reverse = true;
-            element = $compile('<treecontrol tree-model="treedata" menu-id="ctxMenuId">{{node.label}}</treecontrol>')($rootScope);
-            $rootScope.$digest();
-
-            expect(element.find('div.tree-label:eq(0)')[0].attributes['context-menu-id'].value).toBe("ctxMenuId");
-        });
     });
 
     describe('selection', function() {
@@ -315,6 +301,18 @@ describe('treeControl', function() {
             $rootScope.treedata = angular.copy(testTree);
             $rootScope.$digest();
             expect(element.find('.tree-selected').length).toBe(1);
+        });
+    });
+
+    describe('rightclick', function() {
+        it('should invoke right-click callback when item is right-clicked', function() {
+
+            $rootScope.treedata = createSubTree(2,2);
+            element = $compile('<treecontrol tree-model="treedata" on-right-click="rightclick(node.label)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            $rootScope.rightclick = jasmine.createSpy('rightclick');
+            element.find('li:eq(1) div').triggerHandler('contextmenu');
+            expect($rootScope.rightclick).toHaveBeenCalledWith($rootScope.treedata[1].label);
         });
     });
 
