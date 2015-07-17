@@ -449,7 +449,7 @@ describe('treeControl', function() {
                 { label: "b", children: [] }
             ];
 
-            element = $compile('<treecontrol tree-model="treedata">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
             expect(element.find('li:eq(0)').text()).toBe('a');
             expect(element.find('li:eq(1)').text()).toBe('c');
