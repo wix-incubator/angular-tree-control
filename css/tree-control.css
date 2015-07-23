@@ -60,6 +60,10 @@ treecontrol.tree-classic li.tree-leaf i.tree-leaf-head {
     background: url("../images/file.png") no-repeat;
 }
 
+treecontrol.tree-classic li.tree-leaf i.tree-leaf-head-custom {
+    padding: 1px 10px;
+}
+
 treecontrol.tree-classic li .tree-selected {
     background-color: #aaddff;
     font-weight: bold;
