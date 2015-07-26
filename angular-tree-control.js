@@ -238,7 +238,8 @@
                     var orderBy = $scope.orderBy ? ' | orderBy:orderBy:reverseOrder' : '';
                     var template =
                         '<ul '+classIfDefined($scope.options.injectClasses.ul, true)+'>' +
-                            '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator ' + orderBy + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+'>' +
+                            '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator ' + orderBy + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+
+                               'set-node-to-data>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head '+classIfDefined($scope.options.injectClasses.iLeaf, false)+'"></i>' +
                             '<div class="tree-label '+classIfDefined($scope.options.injectClasses.label, false)+'" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
@@ -266,7 +267,7 @@
                             }
                         });
 
-                        scope.$watchCollection('expandedNodes', function(newValue) {
+                        scope.$watchCollection('expandedNodes', function(newValue, oldValue) {
                             var notFoundIds = 0;
                             var newExpandedNodesMap = {};
                             var $liElements = element.find('li');
@@ -274,7 +275,10 @@
                             // find all nodes visible on the tree and the scope $id of the scopes including them
                             angular.forEach($liElements, function(liElement) {
                                 var $liElement = angular.element(liElement);
-                                var liScope = $liElement.scope();
+                                var liScope = {
+                                    $id: $liElement.data('scope-id'),
+                                    node: $liElement.data('node')
+                                };
                                 existingScopes.push(liScope);
                             });
                             // iterate over the newValue, the new expanded nodes, and for each find it in the existingNodesAndScopes
@@ -310,6 +314,15 @@
                     }
                 }
             };
+        }])
+        .directive("setNodeToData", ['$parse', function($parse) {
+            return {
+                restrict: 'A',
+                link: function($scope, $element, $attrs) {
+                    $element.data('node', $scope.node);
+                    $element.data('scope-id', $scope.$id);
+                }
+            }
         }])
         .directive("treeitem", function() {
             return {
