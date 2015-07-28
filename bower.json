@@ -1,6 +1,10 @@
 {
   "name": "angular-tree-control",
   "version": "0.2.12",
+  "author": "Yoav Abrahami",
+  "contributors": [
+    "Benjamin Orozco <benoror@gmail.com>"
+  ],
   "main": [
     "./angular-tree-control.js",
     "./css/tree-control.css"
