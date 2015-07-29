@@ -10,7 +10,10 @@
     "type": "git",
     "url": "git://github.com/wix/angular-tree-control.git"
   },
-  "author": "",
+  "author": "Yoav Abrahami",
+  "contributors": [
+    "Benjamin Orozco <benoror@gmail.com>"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/wix/angular-tree-control/issues"

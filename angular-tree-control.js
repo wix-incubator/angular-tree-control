@@ -1,3 +1,7 @@
+/* commonjs package manager support (eg componentjs) */
+if (typeof module !== "undefined" && typeof exports !== "undefined" && module.exports === exports){
+  module.exports = 'treeControl';
+}
 (function ( angular ) {
     'use strict';
     
@@ -157,7 +161,7 @@
                                     index = i;
                                 }
                             }
-                            if (index != undefined)
+                            if (index !== undefined)
                                 $scope.expandedNodes.splice(index, 1);
                         }
                         if ($scope.onNodeToggle) {
@@ -311,7 +315,7 @@
                         // we can fix this to work with the link transclude function with angular 1.2.6. as for angular 1.2.0 we need
                         // to keep using the compile function
                         scope.$treeTransclude = childTranscludeFn;
-                    }
+                    };
                 }
             };
         }])
@@ -322,7 +326,7 @@
                     $element.data('node', $scope.node);
                     $element.data('scope-id', $scope.$id);
                 }
-            }
+            };
         }])
         .directive("treeitem", function() {
             return {
@@ -334,7 +338,7 @@
                         element.html('').append(clone);
                     });
                 }
-            }
+            };
         })
         .directive("treeTransclude", function() {
             return {
@@ -378,6 +382,6 @@
                         element.append(clone);
                     });
                 }
-            }
+            };
         });
 })( angular );
