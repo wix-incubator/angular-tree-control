@@ -750,6 +750,79 @@
     </script>
 </section>
 
+<section id="file-style" ng-controller="FileStyle">
+    <div class="page-header">
+        <h1>File Style using Tree Label Templates <small>(Basic style, default configuration)</small></h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6 show-grid">
+            <div class="panel panel-default">
+                <div class="panel-body" style="background-color: #555;">
+                    <div class="example-caption">EXAMPLE:</div>
+                    <div save-content="file-style-html">
+                        <!-- Note that the tree does not set the background color. We inject it from the wrapper div. -->
+                        <div style="background-color: #555;">
+                            <treecontrol class="tree-dark"
+                                         tree-model="treedata"
+                                         on-selection="showSelected(node)">
+                                <span ng-switch on="node.type">
+                                    <span ng-switch-when="folder" class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+                                    <span ng-switch-when="pic" class="glyphicon glyphicon-picture" aria-hidden="true"></span>
+                                    <span ng-switch-when="doc" class="glyphicon glyphicon-file" aria-hidden="true"></span>
+                                    <span ng-switch-when="file" class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                                    <span ng-switch-when="movie" class="glyphicon glyphicon-film" aria-hidden="true"></span>
+                                    <span ng-switch-when="email" class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                                    <span ng-switch-when="home" class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                                    <span ng-switch-when="trash" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                </span> label: {{node.label}}
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <p>When using the tree control to display file like structures it is required to display the file type on each of the nodes. To achive that
+            we have to use a second icon using the Tree Label Templates with a <code>ng-switch</code> or equivalent directive, as shown in this example.</p>
+            <p>The tree control does not support replacing the expand / contract icons with a file type icon - it is design decision we made as we designed
+            the tree control.</p>
+        </div>
+    </div>
+    <div class="row">
+        <tabset>
+            <tab heading="Markup" >
+                <pre class="code" apply-content="file-style-html" highlight-lang="html"></pre>
+            </tab>
+            <tab heading="JavaScript">
+                <pre class="code" apply-content="file-style-js" highlight-lang="js"></pre>
+            </tab>
+        </tabset>
+    </div>
+    <script save-content="file-style-js">
+        function FileStyle($scope) {
+            $scope.treedata=[
+                {label: "Documents", type: "folder", children: [
+                    {label: "a picture", type: "pic"},
+                    {label: "another picture", type: "pic"},
+                    {label: "a doc", type: "doc"},
+                    {label: "a file", type: "file"},
+                    {label: "a movie", type: "movie"}
+                ]},
+                {label: "My Computer", type: "folder", children: [
+                    {label: "email", type: "email"},
+                    {label: "home", type: "home"}
+                ]},
+                {label: "trash", type: "trash"}
+
+            ];
+            $scope.showSelected = function(sel) {
+                $scope.selectedNode = sel;
+            };
+        }
+    </script>
+</section>
+
+
 <section id="custom-css" ng-controller="CustomCss">
     <div class="page-header">
         <h1>Custom Css Classes <small>(options.injectClasses)</small></h1>
