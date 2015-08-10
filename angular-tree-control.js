@@ -40,6 +40,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     onNodeToggle: "&",
                     options: "=?",
                     orderBy: "@",
+                    orderByExpression: "=?",
                     reverseOrder: "@",
                     filterExpression: "=?",
                     filterComparator: "=?"
@@ -239,7 +240,12 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 
                     //tree template
-                    var orderBy = $scope.orderBy ? ' | orderBy:orderBy:reverseOrder' : '';
+                    var orderBy = '';
+                    if ($scope.orderByExpression) {
+                        orderBy = ' | orderBy:orderByExpression:reverseOrder';
+                    } else if ($scope.orderBy) {
+                        orderBy = ' | orderBy:orderBy:reverseOrder';
+                    }
                     var template =
                         '<ul '+classIfDefined($scope.options.injectClasses.ul, true)+'>' +
                             '<li ng-repeat="node in node.' + $scope.options.nodeChildren + ' | filter:filterExpression:filterComparator ' + orderBy + '" ng-class="headClass(node)" '+classIfDefined($scope.options.injectClasses.li, true)+
