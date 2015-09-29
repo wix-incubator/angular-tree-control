@@ -6,6 +6,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
     'use strict';
     
     angular.module( 'treeControl', [] )
+        .constant('treeConfig', {
+            templateUrl: null
+        })
         .directive( 'treecontrol', ['$compile', function( $compile ) {
             /**
              * @param cssClass - the css class
@@ -44,7 +47,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     filterExpression: "=?",
                     filterComparator: "=?"
                 },
-                controller: ['$scope', '$templateCache', '$interpolate', function( $scope, $templateCache, $interpolate ) {
+                controller: ['$scope', '$templateCache', '$interpolate', 'treeConfig', function( $scope, $templateCache, $interpolate, treeConfig ) {
 
                     function defaultIsLeaf(node) {
                         return !node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0;
@@ -248,7 +251,12 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         labelClass: classIfDefined($scope.options.injectClasses.label, false)
                     };
 
-                    var template = $templateCache.get('treeControl.tpl.html');
+                    var template;
+                    var templateUrl = $scope.options.templateUrl || treeConfig.templateUrl;
+
+                    if(templateUrl) {
+                        template = $templateCache.get(templateUrl);
+                    }
 
                     if(!template) {
                         template =
