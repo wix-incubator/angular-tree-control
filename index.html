@@ -1186,7 +1186,7 @@
                 <li><code>options.templateUrl</code> for individual tree control.</li>
                 <li>
                     <p>
-                        <code>treeConfig.templateUrl</code> for all tree controls during application <code>config</code> or <code>run</code> step.<br/>
+                        <code>treeConfig.templateUrl</code> for all tree controls during application <code>config</code> or <code>run</code> step.
                         ( <code>treeConfig</code> is global injectable value provider)
                     </p>
                 </li>
@@ -1222,6 +1222,8 @@
     </script>
 
     <script type="text/ecmascript" save-content="external-template-global">
+        // this code snippet is just to show how to use the global external template option but is not used for
+        // this specific example. this specific example is using the instance template option
         angular.module('app', ['treeControl'])
                 .run(function (treeConfig) {
                     treeConfig.templateUrl = 'treeControlExternalTemplate.html';
