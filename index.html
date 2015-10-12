@@ -1160,6 +1160,99 @@
     </script>
 </section>
 
+<section id="externalTemplate" ng-controller="ExternalTemplate">
+    <div class="page-header">
+        <h1>External Template <small>(options.templateUrl, treeConfig.templateUrl)</small></h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6 show-grid">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="example-caption">EXAMPLE:</div>
+                    <div save-content="external-template-html">
+                        <treecontrol class="tree-classic"
+                                     tree-model="treedata"
+                                     options="opts">
+                            label: {{node.label}} ({{node.id}})
+                        </treecontrol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <p>By default the angular tree control uses internal template to define control structure.</p>
+            <p>However, user is able to specify his own template via:</p>
+            <ul>
+                <li><code>options.templateUrl</code> for individual tree control.</li>
+                <li>
+                    <p>
+                        <code>treeConfig.templateUrl</code> for all tree controls during application <code>config</code> or <code>run</code> step.
+                        ( <code>treeConfig</code> is global injectable value provider)
+                    </p>
+                </li>
+            </ul>
+            <p>If user defined template could not be found, default template will be used.</p>
+            <p>Example above, applies italic bold style for element label, and uses ng-show instead of ng-if (as defined in default template)</p>
+        </div>
+    </div>
+    <div class="row">
+        <tabset>
+            <tab heading="Markup" >
+                <pre class="code" apply-content="external-template-html" highlight-lang="html"></pre>
+            </tab>
+            <tab heading="JavaScript (instance template)">
+                <pre class="code" apply-content="external-template-js" highlight-lang="js"></pre>
+            </tab>
+            <tab heading="JavaScript (global template)">
+                <pre class="code" apply-content="external-template-global" highlight-lang="js"></pre>
+            </tab>
+            <tab heading="Template">
+                <pre class="code" apply-content="external-template-tmpl" highlight-lang="html"></pre>
+            </tab>
+        </tabset>
+    </div>
+    <script save-content="external-template-js">
+        function ExternalTemplate($scope) {
+            $scope.treedata = createSubTree(3, 4, "");
+
+            $scope.opts = {
+                templateUrl: 'treeControlExternalTemplate.html'
+            }
+        }
+    </script>
+
+    <script type="text/ecmascript" save-content="external-template-global">
+        // this code snippet is just to show how to use the global external template option but is not used for
+        // this specific example. this specific example is using the instance template option
+        angular.module('app', ['treeControl'])
+                .run(function (treeConfig) {
+                    treeConfig.templateUrl = 'treeControlExternalTemplate.html';
+                });
+    </script>
+
+    <script id="treeControlExternalTemplate.html" type="text/ng-template" save-content="external-template-tmpl">
+        <ul {{options.ulClass}}>
+            <li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}"
+                ng-class="headClass(node)"
+                {{options.liClass}}
+                set-node-to-data>
+                <i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>
+                <i class="tree-leaf-head {{options.iLeafClass}}"></i>
+
+                <i>
+                    <b>
+                        <div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]"
+                             ng-click="selectNodeLabel(node)" tree-transclude></div>
+                    </b>
+                </i>
+
+                <treeitem ng-show="nodeExpanded()"></treeitem>
+
+            </li>
+        </ul>
+    </script>
+</section>
+
 </div>
 <div class="col-md-3">
     <ul nav class="nav docs-sidenav">
