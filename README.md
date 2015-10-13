@@ -1,6 +1,7 @@
 Angular Tree Control
 ================
 
+[![npm version](https://badge.fury.io/js/angular-tree-control.svg)](https://badge.fury.io/js/angular-tree-control)
 [![Bower version](https://badge.fury.io/bo/angular-tree-control.svg)](http://badge.fury.io/bo/angular-tree-control)
 [![Build Status](https://travis-ci.org/wix/angular-tree-control.png)](https://travis-ci.org/wix/angular-tree-control)
 [![Coverage Status](https://coveralls.io/repos/wix/angular-tree-control/badge.png)](https://coveralls.io/r/wix/angular-tree-control)
