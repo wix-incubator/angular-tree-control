@@ -1005,9 +1005,9 @@
                     <div save-content="sorting-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
-                                     order-by="label"
+                                     order-by="{{orderby}}"
                                      reverse-order="{{reverse}}">
-                            label: {{node.label}} ({{node.id}})
+                            label: {{node.label}} {{node.name}} ({{node.id}})
                         </treecontrol>
                     </div>
                 </div>
@@ -1019,6 +1019,10 @@
                 see more details at the <a href="https://code.angularjs.org/1.2.0-rc.3/docs/api/ng.filter:orderBy">Angular JS orderBy</a> docs.</p>
             <p>The sorting is done for each branch individually (sorting does not change the stucture of the tree itself).</p>
             <input type="checkbox" ng-model="reverse"/> Reverse Order
+            <select ng-model="orderby">
+                <option value="label">label</option>
+                <option value="name">name</option>
+            </select>
         </div>
     </div>
     <div class="row">
@@ -1035,6 +1039,7 @@
         function Sorting($scope) {
             $scope.treedata=createSubTree(3, 4, "");
             $scope.reverse = true;
+            $scope.orderby = 'label';
 
         }
     </script>
@@ -1343,11 +1348,12 @@
                         }
                     })
             ;
+    var names = ['Homer', 'Marge', 'Bart', 'Lisa', 'Mo'];
     function createSubTree(level, width, prefix) {
         if (level > 0) {
             var res = [];
             for (var i=1; i <= width; i++)
-                res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "i": i, "children": createSubTree(level-1, width, prefix + i +".") });
+                res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "i": i, "children": createSubTree(level-1, width, prefix + i +"."), "name": names[i%names.length] });
             return res;
         }
         else

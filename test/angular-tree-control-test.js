@@ -455,6 +455,26 @@ describe('treeControl', function() {
             expect(element.find('li:eq(2)').text()).toBe('a');
         });
 
+        it('should support re-ordering as order-by is updated', function() {
+            $rootScope.treedata = [
+            { label: "a", id: 2, children: [] },
+            { label: "c", id: 1, children: [] },
+            { label: "b", id: 3, children: [] }
+            ];
+            $rootScope.predicate = 'label';
+            element = $compile('<treecontrol tree-model="treedata" order-by="{{predicate}}" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('a');
+            expect(element.find('li:eq(1)').text()).toBe('b');
+            expect(element.find('li:eq(2)').text()).toBe('c');
+
+            $rootScope.predicate = 'id';
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('c');
+            expect(element.find('li:eq(1)').text()).toBe('a');
+            expect(element.find('li:eq(2)').text()).toBe('b');
+        });
+
         it('should be able to accept alternative children variable name', function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata.push({kinder: [{}]});

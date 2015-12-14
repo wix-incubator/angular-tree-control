@@ -246,8 +246,12 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                       return !($scope.reverseOrder === 'false' || $scope.reverseOrder === 'False' || $scope.reverseOrder === '' || $scope.reverseOrder === false);
                     };
 
+                    $scope.orderByFunc = function() {
+                      return "'" + $scope.orderBy + "'";
+                    };
+
                     var templateOptions = {
-                        orderBy: $scope.orderBy ? " | orderBy:'"+$scope.orderBy+"':isReverse()" : '',
+                        orderBy: $scope.orderBy ? " | orderBy:orderByFunc():isReverse()" : '',
                         ulClass: classIfDefined($scope.options.injectClasses.ul, true),
                         nodeChildren:  $scope.options.nodeChildren,
                         liClass: classIfDefined($scope.options.injectClasses.li, true),
