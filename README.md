@@ -111,8 +111,8 @@ Attributes of angular treecontrol
 - `selected-node` : [Node], used when `multiSelection=false`. Binding for the selected node in the tree. Updating this value updates the selection displayed in the tree. Selecting a node in the tree will update this value.
 - `selected-nodes` : [Array[Node]], used when `multiSelection=true`. Binding for the selected nodes in the tree. Updating this value updates the selection displayed in the tree. Selecting a node in the tree will update this value.
 - `expanded-nodes` : [Array[Node]] binding for the expanded nodes in the tree. Updating this value updates the nodes that are expanded in the tree.
-- `on-selection` : `(node, selected)` callback called whenever selecting a node in the tree. The callback expression can use the selected node (`node`) and a boolean which indicates if the node was selected or deselected (`selected`).
-- `on-node-toggle` : `(node, expanded)` callback called whenever a node expands or collapses in the tree. The callback expression can use the toggled node (`node`) and a boolean which indicates expansion or collapse (`expanded`).
+- `on-selection` : `(node, selected,$event)` callback called whenever selecting a node in the tree. The callback expression can use the selected node (`node`), a boolean which indicates if the node was selected or deselected (`selected`) and the mouse event generated from the selection (`$event`).
+- `on-node-toggle` : `(node, expanded, $event)` callback called whenever a node expands or collapses in the tree. The callback expression can use the toggled node (`node`), a boolean which indicates expansion or collapse (`expanded`) and the mouse event generated from the click (`$event`).
 - `options` : different options to customize the tree control.
   - `multiSelection` : [Boolean] enable multiple nodes selection in the tree.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.

@@ -169,14 +169,14 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         }
                         if ($scope.onNodeToggle) {
                             var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
-                            $scope.onNodeToggle({node: transcludedScope.node, $parentNode: parentNode,
+                            $scope.onNodeToggle({node: transcludedScope.node, $event: transcludedScope.$event, $parentNode: parentNode,
                               $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
                               $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even, expanded: expanding});
 
                         }
                     };
 
-                    $scope.selectNodeLabel = function( selectedNode){
+                    $scope.selectNodeLabel = function( selectedNode, $event){
                         var transcludedScope = this;
                         if(!$scope.options.isLeaf(selectedNode) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
                             // Branch node is not selectable, expand
@@ -218,7 +218,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             }
                             if ($scope.onSelection) {
                                 var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
-                                $scope.onSelection({node: selectedNode, selected: selected, $parentNode: parentNode,
+                                $scope.onSelection({node: selectedNode, $event: $event, selected: selected, $parentNode: parentNode,
                                   $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
                                   $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even});
                             }
@@ -271,9 +271,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             '<ul {{options.ulClass}} >' +
                             '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
                             'set-node-to-data>' +
-                            '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
+                            '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node,$event)"></i>' +
                             '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
-                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node,$event)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
