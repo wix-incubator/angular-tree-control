@@ -150,7 +150,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return !!$scope.expandedNodesMap[this.$id];
                     };
 
-                    $scope.selectNodeHead = function() {
+                    $scope.selectNodeHead = function(node,$event) {
                         var transcludedScope = this;
                         var expanding = $scope.expandedNodesMap[transcludedScope.$id] === undefined;
                         $scope.expandedNodesMap[transcludedScope.$id] = (expanding ? transcludedScope.node : undefined);
@@ -169,7 +169,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         }
                         if ($scope.onNodeToggle) {
                             var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
-                            $scope.onNodeToggle({node: transcludedScope.node, $event: transcludedScope.$event, $parentNode: parentNode,
+                            $scope.onNodeToggle({node: transcludedScope.node, $event: $event, $parentNode: parentNode,
                               $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
                               $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even, expanded: expanding});
 
@@ -180,7 +180,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         var transcludedScope = this;
                         if(!$scope.options.isLeaf(selectedNode) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
                             // Branch node is not selectable, expand
-                            this.selectNodeHead();
+                            this.selectNodeHead(selectedNode,$event);
                         }
                         else if($scope.options.isLeaf(selectedNode) && (!$scope.options.isSelectable(selectedNode))) {
                             // Leaf node is not selectable
