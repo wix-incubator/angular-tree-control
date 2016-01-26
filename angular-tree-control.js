@@ -406,8 +406,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     });
 
                     scope.$treeTransclude(scope.transcludeScope, function(clone) {
-                        element.empty();
-                        element.append(clone);
+                        $(element).empty(); //Using jquery empty method instead of angularjs to add angularjs 1.2 support
+                        $(element).append(clone); //Using jquery empty method instead of angularjs to add angularjs 1.2 support
                     });
                 }
             };
