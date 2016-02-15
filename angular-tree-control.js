@@ -6,7 +6,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
     'use strict';
 
     var place_holder_symbol = "place_holder_symbol";
-
+    
     angular.module( 'treeControl', [] )
         .constant('treeConfig', {
             templateUrl: null
@@ -200,17 +200,21 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                 promise = $scope.onNodeRequestData({node: nodeBuffer, $parentNode: parentNode,
                               $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
                               $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even, expanded: expanding});
-                            if ((angular.isObject(promise) || angular.isFunction(promise)) && angular.isFunction(promise.then)){
-                                promise.then(function() { 
-                                    if (angular.isArray(nodeBuffer) && nodeBuffer.length > 0) {
-                                        transcludedScope.node[$scope.options.nodeChildren] = angular.copy(nodeBuffer);
-                                    } else {
-                                        transcludedScope.node[$scope.options.nodeChildren] = [];
-                                    }
-                                    $scope.toggleNode(transcludedScope, expanding);
-                                });
-                            } else { 
-                                throw("the return of on-node-request-data must be a promise");
+                            if (promise) {
+                                if ((angular.isObject(promise) || angular.isFunction(promise)) && angular.isFunction(promise.then)){
+                                    promise.then(function() {
+                                        if (angular.isArray(nodeBuffer) && nodeBuffer.length > 0) {
+                                            transcludedScope.node[$scope.options.nodeChildren] = angular.copy(nodeBuffer);
+                                        } else {
+                                            transcludedScope.node[$scope.options.nodeChildren] = [];
+                                        }
+                                        $scope.toggleNode(transcludedScope, expanding);
+                                    });
+                                } else {
+                                    throw("the return of on-node-request-data must be a promise");
+                                }
+                            } else {
+                                throw("on-node-request-data must be defined in serverSide mode");
                             }
                         } else {
                             $scope.toggleNode(transcludedScope, expanding);
