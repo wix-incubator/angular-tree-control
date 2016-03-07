@@ -73,7 +73,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return dst || src;
                     }
                     function defaultEquality(a, b) {
-                        if (!a || !b)
+                        if (!a || !b )
                             return false;
                         a = shallowCopy(a);
                         a[$scope.options.nodeChildren] = [];
