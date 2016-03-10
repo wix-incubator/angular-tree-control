@@ -74,6 +74,7 @@ describe('treeControl', function() {
             $rootScope.$digest();
             expect(element.find('li.tree-leaf').length).toBe(0);
         });
+
     });
 
     describe('customising using options.isLeaf', function () {
@@ -761,31 +762,58 @@ describe('treeControl', function() {
 
     });
 
-  describe('external template', function () {
-    beforeEach(function () {
-      $rootScope.treedata = createSubTree(3, 2);
-      $rootScope.expandedNodes = [$rootScope.treedata[1], $rootScope.treedata[1].children[1]];
-      $templateCache.put("my-template",
-        '<ul {{options.ulClass}} >' +
-        '  <li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
-        'set-node-to-data>' +
-        '    <i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
-        '    <i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
-        '    <div class="item-wrapper"><div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div></div>' +
-        '    <treeitem ng-if="nodeExpanded()"></treeitem>' +
-        '  </li>' +
-        '</ul>');
-      $rootScope.treeOptions = {
-        templateUrl: 'my-template'
-      };
-      element = $compile('<treecontrol tree-model="treedata" expanded-nodes="expandedNodes" options="treeOptions"><div class="item-wrapper-2">{{node.label}}</div></treecontrol>')($rootScope);
-      $rootScope.$digest();
+    describe('external template', function () {
+        beforeEach(function () {
+          $rootScope.treedata = createSubTree(3, 2);
+          $rootScope.expandedNodes = [$rootScope.treedata[1], $rootScope.treedata[1].children[1]];
+          $templateCache.put("my-template",
+            '<ul {{options.ulClass}} >' +
+            '  <li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
+            'set-node-to-data>' +
+            '    <i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
+            '    <i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
+            '    <div class="item-wrapper"><div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div></div>' +
+            '    <treeitem ng-if="nodeExpanded()"></treeitem>' +
+            '  </li>' +
+            '</ul>');
+          $rootScope.treeOptions = {
+            templateUrl: 'my-template'
+          };
+          element = $compile('<treecontrol tree-model="treedata" expanded-nodes="expandedNodes" options="treeOptions"><div class="item-wrapper-2">{{node.label}}</div></treecontrol>')($rootScope);
+          $rootScope.$digest();
+        });
+
+        it('should contain 6 labels with 2 wrapper divs: div.item-wrapper (from the custom template) and div.item-wrapper-2 (from the tree label template). ' +
+           'The number 6 is because we have a tree with 2 nodes at each level with two expanded nodes - so 2 roots and 2 children of each expanded node.', function () {
+          expect(element.find('li div.item-wrapper div.item-wrapper-2').length).toBe(6);
+        });
     });
 
-    it('should contain 6 labels with 2 wrapper divs: div.item-wrapper (from the custom template) and div.item-wrapper-2 (from the tree label template). ' +
-       'The number 6 is because we have a tree with 2 nodes at each level with two expanded nodes - so 2 roots and 2 children of each expanded node.', function () {
-      expect(element.find('li div.item-wrapper div.item-wrapper-2').length).toBe(6);
+    describe('selected Node null or undefined', function() {
+
+        it('should delete the selected node without breaking the $digest', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" selected-node="selectedItem">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            element.find('li:eq(0) div').click();
+            expect($rootScope.selectedItem.label).toBe('node 1');
+            delete $rootScope.selectedItem ;
+            $rootScope.$digest();
+
+        });
+
+        it('should change the selected node to null without breaking the $digest', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" selected-node="selectedItem">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            element.find('li:eq(0) div').click();
+            expect($rootScope.selectedItem.label).toBe('node 1');
+            $rootScope.selectedItem = null;
+            $rootScope.$digest();
+
+        });
     });
-  });
 
 });
