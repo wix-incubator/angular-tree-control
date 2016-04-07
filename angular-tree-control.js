@@ -4,6 +4,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 }
 (function ( angular ) {
     'use strict';
+
+    var place_holder_symbol = "place_holder_symbol";
     
     angular.module( 'treeControl', [] )
         .constant('treeConfig', {
@@ -41,6 +43,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     expandedNodes: "=?",
                     onSelection: "&",
                     onNodeToggle: "&",
+                    onNodeRequestData: '&',
                     options: "=?",
                     orderBy: "@",
                     reverseOrder: "@",
@@ -86,6 +89,18 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return true;
                     }
 
+                    function isPlaceHolderSymbol(node) {
+                        return node.placeHolderSymbol == place_holder_symbol;
+                    }
+
+                    function isNeedExpandRequestData(node) {
+                        return (angular.isArray(node[$scope.options.nodeChildren]) && node[$scope.options.nodeChildren].length == 1 && isPlaceHolderSymbol(node[$scope.options.nodeChildren][0]));
+                    }
+
+                    $scope.getParentNode = function(transcludedScope) {
+                        return (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
+                    };
+
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "multiSelection", false);
                     ensureDefault($scope.options, "nodeChildren", "children");
@@ -103,7 +118,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
                     ensureDefault($scope.options, "allowDeselect", true);
                     ensureDefault($scope.options, "isSelectable", defaultIsSelectable);
-                  
+                    ensureDefault($scope.options, "serverSide", false);
+
                     $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
@@ -150,9 +166,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return !!$scope.expandedNodesMap[this.$id];
                     };
 
-                    $scope.selectNodeHead = function() {
-                        var transcludedScope = this;
-                        var expanding = $scope.expandedNodesMap[transcludedScope.$id] === undefined;
+                    $scope.toggleNode = function(transcludedScope, expanding) {
                         $scope.expandedNodesMap[transcludedScope.$id] = (expanding ? transcludedScope.node : undefined);
                         if (expanding) {
                             $scope.expandedNodes.push(transcludedScope.node);
@@ -168,11 +182,42 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                 $scope.expandedNodes.splice(index, 1);
                         }
                         if ($scope.onNodeToggle) {
-                            var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
+                            var parentNode = $scope.getParentNode(transcludedScope);
                             $scope.onNodeToggle({node: transcludedScope.node, $parentNode: parentNode,
                               $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
                               $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even, expanded: expanding});
 
+                        }
+                    }
+
+                    $scope.selectNodeHead = function() {
+                        var transcludedScope = this;
+                        var expanding = $scope.expandedNodesMap[transcludedScope.$id] === undefined;
+
+                        if (expanding && $scope.onNodeRequestData && isNeedExpandRequestData(transcludedScope.node)) {  
+                            var nodeBuffer = [],
+                                parentNode = $scope.getParentNode(transcludedScope),
+                                promise = $scope.onNodeRequestData({node: nodeBuffer, $parentNode: parentNode,
+                              $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
+                              $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even, expanded: expanding});
+                            if (promise) {
+                                if ((angular.isObject(promise) || angular.isFunction(promise)) && angular.isFunction(promise.then)){
+                                    promise.then(function() {
+                                        if (angular.isArray(nodeBuffer) && nodeBuffer.length > 0) {
+                                            transcludedScope.node[$scope.options.nodeChildren] = angular.copy(nodeBuffer);
+                                        } else {
+                                            transcludedScope.node[$scope.options.nodeChildren] = [];
+                                        }
+                                        $scope.toggleNode(transcludedScope, expanding);
+                                    });
+                                } else {
+                                    throw("the return of on-node-request-data must be a promise");
+                                }
+                            } else {
+                                throw("on-node-request-data must be defined in serverSide mode");
+                            }
+                        } else {
+                            $scope.toggleNode(transcludedScope, expanding);
                         }
                     };
 
@@ -285,6 +330,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     return function ( scope, element, attrs, treemodelCntr ) {
 
                         scope.$watch("treeModel", function updateNodeOnRootScope(newValue) {
+
                             if (angular.isArray(newValue)) {
                                 if (angular.isDefined(scope.node) && angular.equals(scope.node[scope.options.nodeChildren], newValue))
                                     return;
@@ -351,6 +397,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             return {
                 restrict: 'A',
                 link: function($scope, $element, $attrs) {
+                    if ($scope.options.serverSide && typeof $scope.node[$scope.options.nodeChildren] == "undefined") {
+                        $scope.node[$scope.options.nodeChildren] = [{placeHolderSymbol: place_holder_symbol}];
+                    }
                     $element.data('node', $scope.node);
                     $element.data('scope-id', $scope.$id);
                 }
