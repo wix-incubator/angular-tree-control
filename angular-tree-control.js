@@ -4,6 +4,21 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 }
 (function ( angular ) {
     'use strict';
+
+    function createPath(startScope) {
+        return function path() {
+            var _path = [];
+            var scope = startScope;
+            var prevNode;
+            while (scope && scope.node !== startScope.synteticRoot) {
+                if (prevNode !== scope.node)
+                    _path.push(scope.node);
+                prevNode = scope.node;
+                scope = scope.$parent;
+            }
+            return _path;
+        }
+    }
     
     angular.module( 'treeControl', [] )
         .constant('treeConfig', {
@@ -169,19 +184,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         }
                         if ($scope.onNodeToggle) {
                             var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
-                            var path = function() {
-                                var _path = [];
-                                var scope = transcludedScope;
-                                var prevNode;
-                                while (scope && scope.node !== transcludedScope.synteticRoot) {
-                                    if (prevNode !== scope.node)
-                                        _path.push(scope.node);
-                                    prevNode = scope.node;
-                                    // because of the tree structure, we need to skip a scope here
-                                    scope = scope.$parent;
-                                }
-                                return _path;
-                            };
+                            var path = createPath(transcludedScope);
                             $scope.onNodeToggle({node: transcludedScope.node, $parentNode: parentNode, $path: path,
                               $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
                               $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even, expanded: expanding});
@@ -231,19 +234,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             }
                             if ($scope.onSelection) {
                                 var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
-                                var path = function() {
-                                    var _path = [];
-                                    var scope = transcludedScope;
-                                    var prevNode;
-                                    while (scope && scope.node !== transcludedScope.synteticRoot) {
-                                        if (prevNode !== scope.node)
-                                            _path.push(scope.node);
-                                        prevNode = scope.node;
-                                        // because of the tree structure, we need to skip a scope here
-                                        scope = scope.$parent;
-                                    }
-                                    return _path;
-                                };
+                                var path = createPath(transcludedScope)
                                 $scope.onSelection({node: selectedNode, selected: selected, $parentNode: parentNode, $path: path,
                                   $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
                                   $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even});
@@ -421,20 +412,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     // create a scope for the transclusion, whos parent is the parent of the tree control
                     scope.transcludeScope = scope.parentScopeOfTree.$new();
                     scope.transcludeScope.node = scope.node;
-                    var path = function() {
-                        var _path = [];
-                        var _scope = scope;
-                        var prevNode;
-                        while (_scope && _scope.node !== scope.synteticRoot) {
-                            if (prevNode !== _scope.node)
-                                _path.push(_scope.node);
-                            prevNode = _scope.node;
-                            // because of the tree structure, we need to skip a scope here
-                            _scope = _scope.$parent;
-                        }
-                        return _path;
-                    };
-                    scope.transcludeScope.$path = path;
+                    scope.transcludeScope.$path = createPath(scope);
                     scope.transcludeScope.$parentNode = (scope.$parent.node === scope.synteticRoot)?null:scope.$parent.node;
                     scope.transcludeScope.$index = scope.$index;
                     scope.transcludeScope.$first = scope.$first;
