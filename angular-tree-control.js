@@ -42,7 +42,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     onSelection: "&",
                     onNodeToggle: "&",
                     options: "=?",
-                    orderBy: "@",
+                    orderBy: "=?",
                     reverseOrder: "@",
                     filterExpression: "=?",
                     filterComparator: "=?"
@@ -247,8 +247,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 
                     $scope.orderByFunc = function() {
-                      return "'" + $scope.orderBy + "'";
+                      return $scope.orderBy;
                     };
+//                    return "" + $scope.orderBy;
 
                     var templateOptions = {
                         orderBy: $scope.orderBy ? " | orderBy:orderByFunc():isReverse()" : '',

@@ -433,11 +433,65 @@ describe('treeControl', function() {
             ];
             $rootScope.predicate = 'label';
             $rootScope.reverse = false;
-            element = $compile('<treecontrol tree-model="treedata" order-by="{{predicate}}" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" order-by="predicate" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
             expect(element.find('li:eq(0)').text()).toBe('a');
             expect(element.find('li:eq(1)').text()).toBe('b');
             expect(element.find('li:eq(2)').text()).toBe('c');
+        });
+
+        it('should order sibling nodes in normal order with inplace order-by', function() {
+            $rootScope.treedata = [
+                { label: "a", children: [] },
+                { label: "c", children: [] },
+                { label: "b", children: [] }
+            ];
+            $rootScope.reverse = false;
+            element = $compile('<treecontrol tree-model="treedata" order-by="\'label\'" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('a');
+            expect(element.find('li:eq(1)').text()).toBe('b');
+            expect(element.find('li:eq(2)').text()).toBe('c');
+        });
+
+        it('should order sibling nodes in normal order with multiple fields', function() {
+            $rootScope.treedata = [
+                { group: 2, label: "c", children: [] },
+                { group: 1, label: "b", children: [] },
+                { group: 2, label: "b", children: [] },
+                { group: 2, label: "a", children: [] },
+                { group: 1, label: "c", children: [] }
+            ];
+            $rootScope.predicate = ['group', 'label'];
+            $rootScope.reverse = false;
+            element = $compile('<treecontrol tree-model="treedata" order-by="predicate" reverse-order="{{reverse}}">{{node.group}}-{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('1-b');
+            expect(element.find('li:eq(1)').text()).toBe('1-c');
+            expect(element.find('li:eq(2)').text()).toBe('2-a');
+            expect(element.find('li:eq(3)').text()).toBe('2-b');
+            expect(element.find('li:eq(4)').text()).toBe('2-c');
+        });
+
+        it('should order sibling nodes in normal order with a function', function() {
+            $rootScope.treedata = [
+                { group: 2, label: "c", children: [] },
+                { group: 1, label: "b", children: [] },
+                { group: 2, label: "b", children: [] },
+                { group: 2, label: "a", children: [] },
+                { group: 1, label: "c", children: [] }
+            ];
+            $rootScope.predicate = function(obj) {
+                return obj.group + '-' + obj.label;
+            };
+            $rootScope.reverse = false;
+            element = $compile('<treecontrol tree-model="treedata" order-by="predicate" reverse-order="{{reverse}}">{{node.group}}-{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('1-b');
+            expect(element.find('li:eq(1)').text()).toBe('1-c');
+            expect(element.find('li:eq(2)').text()).toBe('2-a');
+            expect(element.find('li:eq(3)').text()).toBe('2-b');
+            expect(element.find('li:eq(4)').text()).toBe('2-c');
         });
 
         it('should order sibling nodes in reverse order', function() {
@@ -448,7 +502,7 @@ describe('treeControl', function() {
             ];
             $rootScope.predicate = 'label';
             $rootScope.reverse = true;
-            element = $compile('<treecontrol tree-model="treedata" order-by="{{predicate}}" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" order-by="predicate" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
             expect(element.find('li:eq(0)').text()).toBe('c');
             expect(element.find('li:eq(1)').text()).toBe('b');
@@ -462,7 +516,7 @@ describe('treeControl', function() {
             { label: "b", id: 3, children: [] }
             ];
             $rootScope.predicate = 'label';
-            element = $compile('<treecontrol tree-model="treedata" order-by="{{predicate}}" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" order-by="predicate" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
             expect(element.find('li:eq(0)').text()).toBe('a');
             expect(element.find('li:eq(1)').text()).toBe('b');
