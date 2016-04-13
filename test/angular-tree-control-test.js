@@ -194,6 +194,18 @@ describe('treeControl', function() {
             expect(element.find('li:eq(2) span').text()).toBe('node 11 odd:false');
             expect(element.find('li:eq(3) span').text()).toBe('node 16 odd:true');
         });
+
+        it('should support $path', function () {
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} path:{{renderPath($path)}}</treecontrol>')($rootScope);
+            $rootScope.renderPath = function(path) {
+                return path().map(function(obj) {return obj.label});
+            };
+            $rootScope.$digest();
+
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 path:["node 1"]');
+            element.find('li:eq(0) .tree-branch-head').click(); // expanding node 1
+            expect(element.find('li:eq(0) li:eq(0) span').text()).toBe('node 2 path:["node 2","node 1"]');
+        });
     });
 
     describe('selection', function() {
@@ -328,6 +340,29 @@ describe('treeControl', function() {
         expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
         expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
       });
+
+        it('should support $path', function () {
+            $rootScope.treedata = createSubTree(3, 2);
+            element = $compile('<treecontrol tree-model="treedata" on-node-toggle="nodeToggle(node.label, $path)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            var calls = [];
+            $rootScope.nodeToggle = function(label, path) {
+              calls.push({label: label, path: path().map(function(obj) {return obj.label})});
+            };
+            element.find('li:eq(1) .tree-branch-head').click(); // expanding node 8
+            element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // expanding node 9
+            element.find('li:eq(1) li:eq(0) li:eq(0) .tree-branch-head').click(); // expanding node 10
+            element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // contracting node 8
+            expect(calls[0].label).toEqual('node 8');
+            expect(calls[0].path).toEqual(['node 8']);
+            expect(calls[1].label).toEqual('node 9');
+            expect(calls[1].path).toEqual(['node 9', 'node 8']);
+            expect(calls[2].label).toEqual('node 10');
+            expect(calls[2].path).toEqual(['node 10', 'node 9', 'node 8']);
+            expect(calls[3].label).toEqual('node 9');
+            expect(calls[3].path).toEqual(['node 9', 'node 8']);
+        });
     })
 
     describe('multi-selection', function() {
@@ -379,6 +414,23 @@ describe('treeControl', function() {
             expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, true);
             expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, false);
             expect($rootScope.itemSelected.calls.length).toBe(2);
+        });
+
+        it('should call on-selection with $path function', function () {
+            $rootScope.treeOptions = {multiSelection: true};
+            $rootScope.treedata = createSubTree(3, 2);
+            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label, $path)" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            var calls = [];
+            $rootScope.itemSelected = function(label, path) {
+                calls.push({label: label, path: path().map(function(obj) {return obj.label})});
+            };
+            element.find('li:eq(1) .tree-branch-head').click(); // expanding node 8
+            element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // expanding node 9
+            element.find('li:eq(1) li:eq(0) li:eq(0) div').click(); // click node 10
+            expect(calls[0].label).toEqual('node 10');
+            expect(calls[0].path).toEqual(['node 10', 'node 9', 'node 8']);
         });
 
         it('should un-select a node after second click', function () {
