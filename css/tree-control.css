@@ -120,3 +120,31 @@ treecontrol.tree-dark li .tree-unselectable {
 treecontrol.tree-dark {
     color: #ddd;
 }
+
+treeitem,
+treeitem.ng-enter li,
+treeitem.ng-leave li {
+    transition: 200ms linear all;
+}
+treeitem.ng-enter li {
+    position: relative;
+    display: block;
+    opacity: 0;
+    max-height:0px;
+}
+treeitem.ng-enter-active li {
+    opacity: 1;
+    max-height:30px;
+}
+treeitem.ng-leave li {
+    position: relative;
+    display: block;
+    height:30px;
+    max-height: 30px;
+    opacity: 1;
+}
+treeitem.ng-leave-active li {
+    height: 0px;
+    max-height:0px;
+    opacity: 0;
+}
