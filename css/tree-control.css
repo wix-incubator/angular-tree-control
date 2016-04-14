@@ -124,7 +124,7 @@ treecontrol.tree-dark {
 treeitem,
 treeitem.ng-enter li,
 treeitem.ng-leave li {
-    transition: 200ms linear all;
+    transition: 100ms linear all;
 }
 treeitem.ng-enter li {
     position: relative;
