@@ -119,6 +119,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     ensureDefault($scope.options, "allowDeselect", true);
                     ensureDefault($scope.options, "isSelectable", defaultIsSelectable);
                   
+                    $scope.focusedNode = !!$scope.treeModel ? $scope.treeModel[0] : undefined;
                     $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
@@ -165,6 +166,95 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return !!$scope.expandedNodesMap[this.$id];
                     };
 
+                    $scope.focusTree = function ($event) {
+                        if(!$event.relatedTarget || $event.relatedTarget.className.indexOf('tree-label') === -1){
+                            if(!$scope.focusedNode){
+                                $scope.focusedNode = $event.target.getElementsByClassName('tree-label')[0];
+                            }
+                            $scope.focusedNode.focus();
+                        }
+
+                    };
+
+                    $scope.focusNode = function ($event, node) {
+                        $scope.focusedNode = $event.target;
+                    };
+
+                    $scope.keyDown = function ($event, node) {
+                        var transcludedScope = this;
+                        var keyHandler = {
+                            32: handleSpace,
+                            37: handleLeftArrow,
+                            38: handleDownArrow,
+                            39: handleRightArrow,
+                            40: handleUpArrow
+                        };
+
+                        var handler = keyHandler[$event.keyCode];
+                        handler && handler($event);
+
+                        function handleDownArrow($event) {
+                            var currentElement = $event.target;
+                            var allNodes = getAllVisibleNodes(currentElement);
+                            var nextToFocus = allNodes[_.indexOf(allNodes, $event.target) - 1];
+                            if(nextToFocus){
+                                nextToFocus.focus();
+                            }
+                        }
+
+                        function handleLeftArrow($event) {
+                            if(transcludedScope.$parent.$parent.$id){
+                                var index;
+                                for (var i=0; (i < $scope.expandedNodes.length) && !index; i++) {
+                                    if ($scope.options.equality($scope.expandedNodes[i], transcludedScope.$parent.$parent.node)) {
+                                        index = i;
+                                    }
+                                }
+
+                                if(index !== undefined){
+                                    $scope.expandedNodes.splice(index, 1);
+
+                                    var $visibleNodes = getAllVisibleNodes($event.target);
+                                    for (var i=0; i < $visibleNodes.length; i++) {
+                                        var $visibleNode = angular.element($visibleNodes[i].parentElement);
+                                        if (transcludedScope.$parent.$parent.$id === $visibleNode.data('scope-id')) {
+                                            $visibleNodes[i].focus();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        function handleRightArrow($event) {
+                            if(!$scope.expandedNodesMap[transcludedScope.$id]){
+                                $scope.expandedNodes.push(transcludedScope.node);
+                            }
+                            $event.target.focus();
+                        }
+
+                        function handleUpArrow($event) {
+                            var currentElement = $event.target;
+                            var allNodes = getAllVisibleNodes(currentElement);
+                            var nextToFocus = allNodes[_.indexOf(allNodes, $event.target) + 1];
+                            if(nextToFocus){
+                                nextToFocus.focus();
+                            }
+                        }
+
+                        function handleSpace($event) {
+                            $scope.selectNodeLabel(transcludedScope.node);
+                        }
+
+                        function getAllVisibleNodes(element){
+                            var treeControlElement = element;
+                            while(treeControlElement.tagName !== 'TREECONTROL'){
+                                treeControlElement = treeControlElement.parentElement;
+                            }
+                            return treeControlElement.getElementsByClassName('tree-label');
+                        }
+                    }
+
                     $scope.selectNodeHead = function() {
                         var transcludedScope = this;
                         var expanding = $scope.expandedNodesMap[transcludedScope.$id] === undefined;
@@ -193,6 +283,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 
                     $scope.selectNodeLabel = function( selectedNode){
+                        $scope.focusedNode = selectedNode;
                         var transcludedScope = this;
                         if(!$scope.options.isLeaf(selectedNode) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
                             // Branch node is not selectable, expand
@@ -286,12 +377,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     if(!template) {
                         template =
-                            '<ul {{options.ulClass}} >' +
+                            '<ul {{options.ulClass}} ng-focus="focusTree($event)">' +
                             '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
                             'set-node-to-data>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
-                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude ' +
+                            'ng-keydown="keyDown($event, node)" tabindex="-1" ng-focus="focusNode($event, node)"></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
@@ -355,6 +447,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                         //Rendering template for a root node
                         treemodelCntr.template( scope, function(clone) {
+                            clone.attr('tabindex', 0);
                             element.html('').append( clone );
                         });
                         // save the transclude function from compile (which is not bound to a scope as apposed to the one from link)
