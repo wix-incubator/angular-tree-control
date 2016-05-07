@@ -14,7 +14,7 @@
   "contributors": [
     "Benjamin Orozco <benoror@gmail.com>"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/wix/angular-tree-control/issues"
   },
