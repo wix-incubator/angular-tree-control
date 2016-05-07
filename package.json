@@ -1,6 +1,6 @@
 {
   "name": "angular-tree-control",
-  "version": "0.2.25",
+  "version": "0.2.26",
   "description": "Angular Tree Control",
   "main": "angular-tree-control.js",
   "scripts": {
