@@ -48,7 +48,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
         return dst || src;
     }
-    function defaultEquality($scope,a, b) {
+    function defaultEquality(a, b,$scope) {
         if (!a || !b)
             return false;
         a = shallowCopy(a);
@@ -136,11 +136,11 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
 
                     function isSelectedNode(node) {
-                        if (!$scope.options.multiSelection && ($scope.options.equality($scope,node, $scope.selectedNode)))
+                        if (!$scope.options.multiSelection && ($scope.options.equality(node, $scope.selectedNode , $scope)))
                             return true;
                         else if ($scope.options.multiSelection && $scope.selectedNodes) {
                             for (var i = 0; (i < $scope.selectedNodes.length); i++) {
-                                if ($scope.options.equality($scope,node, $scope.selectedNodes[i])) {
+                                if ($scope.options.equality(node, $scope.selectedNodes[i] , $scope)) {
                                     return true;
                                 }
                             }
@@ -182,7 +182,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         else {
                             var index;
                             for (var i=0; (i < $scope.expandedNodes.length) && !index; i++) {
-                                if ($scope.options.equality($scope,$scope.expandedNodes[i], transcludedScope.node)) {
+                                if ($scope.options.equality($scope.expandedNodes[i], transcludedScope.node , $scope)) {
                                     index = i;
                                 }
                             }
@@ -214,7 +214,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             if ($scope.options.multiSelection) {
                                 var pos = -1;
                                 for (var i=0; i < $scope.selectedNodes.length; i++) {
-                                    if($scope.options.equality($scope,selectedNode, $scope.selectedNodes[i])) {
+                                    if($scope.options.equality(selectedNode, $scope.selectedNodes[i] , $scope)) {
                                         pos = i;
                                         break;
                                     }
@@ -226,7 +226,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                     $scope.selectedNodes.splice(pos, 1);
                                 }
                             } else {
-                                if (!$scope.options.equality($scope,selectedNode, $scope.selectedNode)) {
+                                if (!$scope.options.equality(selectedNode, $scope.selectedNode , $scope)) {
                                     $scope.selectedNode = selectedNode;
                                     selected = true;
                                 }
@@ -345,7 +345,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                 var found = false;
                                 for (var i=0; (i < existingScopes.length) && !found; i++) {
                                     var existingScope = existingScopes[i];
-                                    if (scope.options.equality(scope,newExNode, existingScope.node)) {
+                                    if (scope.options.equality(newExNode, existingScope.node , scope)) {
                                         newExpandedNodesMap[existingScope.$id] = existingScope.node;
                                         found = true;
                                     }
@@ -402,18 +402,18 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 link: function(scope, element, attrs, controller) {
                     if (!scope.options.isLeaf(scope,scope.node)) {
                         angular.forEach(scope.expandedNodesMap, function (node, id) {
-                            if (scope.options.equality(scope,node, scope.node)) {
+                            if (scope.options.equality(node, scope.node , scope)) {
                                 scope.expandedNodesMap[scope.$id] = scope.node;
                                 scope.expandedNodesMap[id] = undefined;
                             }
                         });
                     }
-                    if (!scope.options.multiSelection && scope.options.equality(scope,scope.node, scope.selectedNode)) {
+                    if (!scope.options.multiSelection && scope.options.equality(scope.node, scope.selectedNode , scope)) {
                         scope.selectedNode = scope.node;
                     } else if (scope.options.multiSelection) {
                         var newSelectedNodes = [];
                         for (var i = 0; (i < scope.selectedNodes.length); i++) {
-                            if (scope.options.equality(scope,scope.node, scope.selectedNodes[i])) {
+                            if (scope.options.equality(scope.node, scope.selectedNodes[i] , scope)) {
                                 newSelectedNodes.push(scope.node);
                             }
                         }
