@@ -123,7 +123,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
                     for (var i=0; i < $scope.expandedNodes.length; i++) {
-                        $scope.expandedNodesMap[""+i] = $scope.expandedNodes[i];
+                        $scope.expandedNodesMap['x'+i] = $scope.expandedNodes[i];
                     }
                     $scope.parentScopeOfTree = $scope.$parent;
 
@@ -344,7 +344,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                     }
                                 }
                                 if (!found)
-                                    newExpandedNodesMap[notFoundIds++] = newExNode;
+                                    newExpandedNodesMap['x' + notFoundIds++] = newExNode;
                             });
                             scope.expandedNodesMap = newExpandedNodesMap;
                         });
@@ -393,7 +393,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         angular.forEach(scope.expandedNodesMap, function (node, id) {
                             if (scope.options.equality(node, scope.node)) {
                                 scope.expandedNodesMap[scope.$id] = scope.node;
-                                scope.expandedNodesMap[id] = undefined;
+                                scope.expandedNodesMap['x'+id] = undefined;
                             }
                         });
                     }
