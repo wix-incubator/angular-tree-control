@@ -208,6 +208,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                         function handleTab($event) {
                             if($event.shiftKey){
+                                $event.stopPropagation();
                                 var ulTreeBase = getRoot($event.target).getElementsByTagName('ul')[0];
                                 ulTreeBase.setAttribute('data-skip', true);
                                 ulTreeBase.focus();
