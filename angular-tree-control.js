@@ -273,7 +273,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         function getAllVisibleNodes(element){
                             return getRoot(element).getElementsByClassName('tree-label');
                         }
-                    }
+                    };
 
                     $scope.selectNodeHead = function() {
                         var transcludedScope = this;
