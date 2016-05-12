@@ -167,13 +167,14 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 
                     $scope.focusTree = function ($event) {
-                        if(!$event.relatedTarget || $event.relatedTarget.className.indexOf('tree-label') === -1){
+                        var ulTreeBase = $event.target;
+                        if(!(ulTreeBase.getAttribute('data-skip') === 'true')){
                             if(!$scope.focusedNode){
                                 $scope.focusedNode = $event.target.getElementsByClassName('tree-label')[0];
                             }
                             $scope.focusedNode.focus();
                         }
-
+                        ulTreeBase.setAttribute('data-skip', false);
                     };
 
                     $scope.focusNode = function ($event) {
@@ -182,7 +183,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     $scope.keyDown = function ($event) {
                         var transcludedScope = this;
-                        var keyHandler = {
+
+                        var keyHandlers = {
+                            9: handleTab,
                             32: handleSpace,
                             37: handleLeftArrow,
                             38: handleDownArrow,
@@ -190,8 +193,21 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             40: handleUpArrow
                         };
 
-                        var handler = keyHandler[$event.keyCode];
-                        handler && handler($event);
+                        var handler = keyHandlers[$event.which];
+                        if(!!handler){
+                            if($event.which != 9){
+                                $event.preventDefault();
+                            }
+                            handler($event);
+                        }
+
+                        function handleTab($event) {
+                            if($event.shiftKey){
+                                var ulTreeBase = getRoot($event.target).getElementsByTagName('ul')[0];
+                                ulTreeBase.setAttribute('data-skip', true);
+                                ulTreeBase.focus();
+                            }
+                        }
 
                         function handleDownArrow($event) {
                             var currentElement = $event.target;
@@ -246,12 +262,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             $scope.selectNodeLabel($event, transcludedScope.node);
                         }
 
-                        function getAllVisibleNodes(element){
+                        function getRoot(element){
                             var treeControlElement = element;
                             while(treeControlElement.tagName !== 'TREECONTROL'){
                                 treeControlElement = treeControlElement.parentElement;
                             }
-                            return treeControlElement.getElementsByClassName('tree-label');
+                            return treeControlElement;
+                        }
+
+                        function getAllVisibleNodes(element){
+                            return getRoot(element).getElementsByClassName('tree-label');
                         }
                     }
 
