@@ -176,11 +176,11 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     };
 
-                    $scope.focusNode = function ($event, node) {
+                    $scope.focusNode = function ($event) {
                         $scope.focusedNode = $event.target;
                     };
 
-                    $scope.keyDown = function ($event, node) {
+                    $scope.keyDown = function ($event) {
                         var transcludedScope = this;
                         var keyHandler = {
                             32: handleSpace,
@@ -243,7 +243,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         }
 
                         function handleSpace($event) {
-                            $scope.selectNodeLabel(transcludedScope.node);
+                            $scope.selectNodeLabel($event, transcludedScope.node);
                         }
 
                         function getAllVisibleNodes(element){
@@ -282,8 +282,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         }
                     };
 
-                    $scope.selectNodeLabel = function( selectedNode){
-                        $scope.focusedNode = selectedNode;
+                    $scope.selectNodeLabel = function($event, selectedNode){
+                        $scope.focusedNode = $event.currentTarget;
                         var transcludedScope = this;
                         if(!$scope.options.isLeaf(selectedNode) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
                             // Branch node is not selectable, expand
@@ -382,8 +382,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             'set-node-to-data>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
-                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude ' +
-                            'ng-keydown="keyDown($event, node)" tabindex="-1" ng-focus="focusNode($event, node)"></div>' +
+                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel($event, node)" tree-transclude ' +
+                            'ng-keydown="keyDown($event)" tabindex="-1" ng-focus="focusNode($event)"></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
