@@ -103,6 +103,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "multiSelection", false);
+                    ensureDefault($scope.options, "navigation", false);
                     ensureDefault($scope.options, "nodeChildren", "children");
                     ensureDefault($scope.options, "dirSelectable", "true");
                     ensureDefault($scope.options, "injectClasses", {});
@@ -127,7 +128,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         $scope.expandedNodesMap[""+i] = $scope.expandedNodes[i];
                     }
                     $scope.parentScopeOfTree = $scope.$parent;
-
+                    $scope.navigationEnabled = !!$scope.options.navigation;
+                    $scope.tabindex = $scope.navigationEnabled ? 'tabindex="-1"' : '';
 
                     function isSelectedNode(node) {
                         if (!$scope.options.multiSelection && ($scope.options.equality(node, $scope.selectedNode)))
@@ -182,6 +184,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 
                     $scope.keyDown = function ($event) {
+                        if(!$scope.navigationEnabled){
+                            return;
+                        }
                         var transcludedScope = this;
 
                         var keyHandlers = {
@@ -403,7 +408,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
                             '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel($event, node)" tree-transclude ' +
-                            'ng-keydown="keyDown($event)" tabindex="-1" ng-focus="focusNode($event)"></div>' +
+                            'ng-keydown="keyDown($event)" ' + $scope.tabindex + ' ng-focus="focusNode($event)"></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
@@ -467,7 +472,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                         //Rendering template for a root node
                         treemodelCntr.template( scope, function(clone) {
-                            clone.attr('tabindex', 0);
+                            if(scope.navigationEnabled){
+                                clone.attr('tabindex', 0);
+                            }
                             element.html('').append( clone );
                         });
                         // save the transclude function from compile (which is not bound to a scope as apposed to the one from link)
