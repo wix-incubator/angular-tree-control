@@ -103,6 +103,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     $scope.options = $scope.options || {};
                     ensureDefault($scope.options, "multiSelection", false);
+                    ensureDefault($scope.options, "recursiveSelection", false);
                     ensureDefault($scope.options, "nodeChildren", "children");
                     ensureDefault($scope.options, "dirSelectable", "true");
                     ensureDefault($scope.options, "injectClasses", {});
@@ -192,7 +193,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         }
                     };
 
-                    $scope.selectNodeLabel = function( selectedNode){
+                    $scope.selectNodeLabel = function( selectedNode, value){
                         var transcludedScope = this;
                         if(!$scope.options.isLeaf(selectedNode) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
                             // Branch node is not selectable, expand
@@ -212,11 +213,19 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                         break;
                                     }
                                 }
-                                if (pos === -1) {
+                                if (pos === -1 && (value === undefined || value === true)) {
                                     $scope.selectedNodes.push(selectedNode);
                                     selected = true;
-                                } else {
+                                } else if (pos !== -1 && value === true) {
+                                  selected = true;
+                                } else if (pos !== -1 && (value === undefined || value === false)) {
                                     $scope.selectedNodes.splice(pos, 1);
+                                }
+                                if($scope.options.recursiveSelection) {
+                                  var children = selectedNode[$scope.options.nodeChildren] || [];
+                                  for(var i=0; i<children.length; i++) {
+                                    $scope.selectNodeLabel(children[i], value || selected);
+                                  }
                                 }
                             } else {
                                 if (!$scope.options.equality(selectedNode, $scope.selectedNode)) {
