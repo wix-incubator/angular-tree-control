@@ -25,7 +25,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
             obj[prop] = value;
     }
 
-    function defaultIsLeaf($scope,node) {
+    function defaultIsLeaf(node, $scope) {
         return !node[$scope.options.nodeChildren] || node[$scope.options.nodeChildren].length === 0;
     }
 
@@ -153,7 +153,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         var injectSelectionClass = "";
                         if (liSelectionClass && isSelectedNode(node))
                             injectSelectionClass = " " + liSelectionClass;
-                        if ($scope.options.isLeaf($scope,node))
+                        if ($scope.options.isLeaf(node, $scope))
                             return "tree-leaf" + injectSelectionClass;
                         if ($scope.expandedNodesMap[this.$id])
                             return "tree-expanded" + injectSelectionClass;
@@ -201,11 +201,11 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     $scope.selectNodeLabel = function( selectedNode){
                         var transcludedScope = this;
-                        if(!$scope.options.isLeaf($scope,selectedNode) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
+                        if(!$scope.options.isLeaf(selectedNode, $scope) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
                             // Branch node is not selectable, expand
                             this.selectNodeHead();
                         }
-                        else if($scope.options.isLeaf($scope,selectedNode) && (!$scope.options.isSelectable(selectedNode))) {
+                        else if($scope.options.isLeaf(selectedNode, $scope) && (!$scope.options.isSelectable(selectedNode))) {
                             // Leaf node is not selectable
                             return;
                         }
@@ -400,7 +400,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 },
 
                 link: function(scope, element, attrs, controller) {
-                    if (!scope.options.isLeaf(scope,scope.node)) {
+                    if (!scope.options.isLeaf(scope.node, scope)) {
                         angular.forEach(scope.expandedNodesMap, function (node, id) {
                             if (scope.options.equality(node, scope.node , scope)) {
                                 scope.expandedNodesMap[scope.$id] = scope.node;
