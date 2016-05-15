@@ -873,7 +873,9 @@ describe('treeControl', function() {
             element.find('li:eq(1) .tree-branch-head').click();
             expect($rootScope.expandedNodes).not.toContain($rootScope.treedata[1]);
         });
+    });
 
+    describe('expanded-nodes binding', function () {
         it('should retain expansions after full model refresh', function () {
             var testTree = createSubTree(2, 2);
             $rootScope.treedata = angular.copy(testTree);
@@ -886,6 +888,32 @@ describe('treeControl', function() {
             $rootScope.treedata = angular.copy(testTree);
             $rootScope.$digest();
             expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
+        });
+
+        it('should support a large tree', function () {
+            var testTree = createSubTree(3, 10);
+            element = $compile('<treecontrol tree-model="treedata" expanded-nodes="expandedNodes">{{node.label}}</treecontrol>')($rootScope);
+
+            var expandedNodes = [];
+            function diveInto(parent) {
+                expandedNodes.push(parent);
+                if (Array.isArray(parent.children)) {
+                    parent.children.forEach(function(child) {
+                        diveInto(child);
+                    });
+                }
+            }
+            testTree.forEach(function(rootNode) {
+                diveInto(rootNode);
+            });
+
+            $rootScope.treedata = testTree;
+            $rootScope.$digest();
+            $rootScope.expandedNodes = expandedNodes;
+            $rootScope.$digest();
+
+            //console.log(element);
+            expect(element.find('li.tree-expanded').length + element.find('li.tree-leaf').length).toBe($rootScope.expandedNodes.length);
         });
 
     });

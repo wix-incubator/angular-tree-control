@@ -130,7 +130,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
                     for (var i=0; i < $scope.expandedNodes.length; i++) {
-                        $scope.expandedNodesMap[""+i] = $scope.expandedNodes[i];
+                        $scope.expandedNodesMap["a"+i] = $scope.expandedNodes[i];
                     }
                     $scope.parentScopeOfTree = $scope.$parent;
 
@@ -351,7 +351,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                     }
                                 }
                                 if (!found)
-                                    newExpandedNodesMap[notFoundIds++] = newExNode;
+                                    newExpandedNodesMap['a' + notFoundIds++] = newExNode;
                             });
                             scope.expandedNodesMap = newExpandedNodesMap;
                         });
