@@ -395,9 +395,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         })
         .directive("treeTransclude", function () {
             return {
-                controller: function ($scope) {
+                controller: ['$scope',function ($scope) {
                     ensureAllDefaultOptions($scope);
-                },
+                }],
 
                 link: function(scope, element, attrs, controller) {
                     if (!scope.options.isLeaf(scope.node, scope)) {
