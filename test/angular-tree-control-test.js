@@ -98,6 +98,28 @@ describe('treeControl', function() {
             expect(element.find('li.tree-leaf').length).toBe(3);
         });
 
+        it('should display first level parents as leafs, based on condition', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            // reverse which is leaf and which is branch - now we have 2 leafs that are not expanded
+            $rootScope.treeOptions = {isLeaf: function(node) {return node.children.length > 0;}};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li.tree-collapsed').length).toBe(0);
+            expect(element.find('li.tree-leaf').length).toBe(2);
+        });
+
+        it('should display second level as branches, based on condition', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            // reverse which is leaf and which is branch - now we have 2 leafs that are not expanded
+            $rootScope.treeOptions = {isLeaf: function(node) {return node.children.length > 0;}};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            element.find('li:eq(1) .tree-branch-head').click();
+            element.find('li:eq(0) .tree-branch-head').click();
+            // now the first level "leafs" are expanded, and we have 4 second level "branches"
+            expect(element.find('li.tree-collapsed').length).toBe(4);
+            expect(element.find('li.tree-leaf').length).toBe(2);
+        });
     });
 
     describe('rendering using external scope data', function () {
@@ -851,7 +873,9 @@ describe('treeControl', function() {
             element.find('li:eq(1) .tree-branch-head').click();
             expect($rootScope.expandedNodes).not.toContain($rootScope.treedata[1]);
         });
+    });
 
+    describe('expanded-nodes binding', function () {
         it('should retain expansions after full model refresh', function () {
             var testTree = createSubTree(2, 2);
             $rootScope.treedata = angular.copy(testTree);
@@ -864,6 +888,32 @@ describe('treeControl', function() {
             $rootScope.treedata = angular.copy(testTree);
             $rootScope.$digest();
             expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
+        });
+
+        it('should support a large tree', function () {
+            var testTree = createSubTree(3, 10);
+            element = $compile('<treecontrol tree-model="treedata" expanded-nodes="expandedNodes">{{node.label}}</treecontrol>')($rootScope);
+
+            var expandedNodes = [];
+            function diveInto(parent) {
+                expandedNodes.push(parent);
+                if (Array.isArray(parent.children)) {
+                    parent.children.forEach(function(child) {
+                        diveInto(child);
+                    });
+                }
+            }
+            testTree.forEach(function(rootNode) {
+                diveInto(rootNode);
+            });
+
+            $rootScope.treedata = testTree;
+            $rootScope.$digest();
+            $rootScope.expandedNodes = expandedNodes;
+            $rootScope.$digest();
+
+            //console.log(element);
+            expect(element.find('li.tree-expanded').length + element.find('li.tree-leaf').length).toBe($rootScope.expandedNodes.length);
         });
 
     });

@@ -14,7 +14,7 @@ To get started, check out [wix.github.io/angular-tree-control](http://wix.github
 
 ## Why yet another tree control
 
-We have tried a number of tree controls built for angular and experience a of issues with each. As a result we decided
+We have tried a number of tree controls built for angular and experience a lot of issues with each. As a result we decided
 to build a new tree control with the following design guidelines
 
 - Isolated scope - the tree control should not pollute the scope it is rendered at
