@@ -201,7 +201,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             37: handleLeftArrow,
                             38: handleUpArrow,
                             39: handleRightArrow,
-                            40: handleDownArrow
+                            40: handleDownArrow,
+                            106: handleStar
                         };
 
                         var handler = keyHandlers[$event.which];
@@ -221,12 +222,27 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             }
                         }
 
+                        function handleDownArrow($event) {
+                            var $visibleNodes = getAllVisibleNodes($event.target);
+                            for (var i = 0; i < $visibleNodes.length; i++) {
+                                var $visibleNode = angular.element($visibleNodes[i].parentElement);
+                                if (transcludedScope.$id === $visibleNode.data('scope-id')) {
+                                    if(i + 1 < $visibleNodes.length){
+                                        $visibleNodes[i + 1].focus();
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
                         function handleUpArrow($event) {
                             var $visibleNodes = getAllVisibleNodes($event.target);
                             for (var i = 0; i < $visibleNodes.length; i++) {
                                 var $visibleNode = angular.element($visibleNodes[i].parentElement);
                                 if (transcludedScope.$id === $visibleNode.data('scope-id')) {
-                                    $visibleNodes[i - 1].focus();
+                                    if(i - 1 >= 0){
+                                        $visibleNodes[i - 1].focus();
+                                    }
                                     break;
                                 }
                             }
@@ -237,7 +253,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                 var index;
                                 for (var i = 0; (i < $scope.expandedNodes.length) && !index; i++) {
 
-                                    if ($scope.options.equality($scope.expandedNodes[i], transcludedScope.node)) {
+                                    if ($scope.options.equality($scope.expandedNodes[i], transcludedScope.node, $scope)) {
                                         index = i;
                                     }
                                 }
@@ -265,25 +281,27 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                     $visibleNodes[1].focus();
                                 }
                             } else {
-                                if (!$scope.options.isLeaf(transcludedScope.node)) {
+                                if (!$scope.options.isLeaf(transcludedScope.node, $scope)) {
                                     $scope.expandedNodes.push(transcludedScope.node);
-                                }
-                            }
-                        }
-
-                        function handleDownArrow($event) {
-                            var $visibleNodes = getAllVisibleNodes($event.target);
-                            for (var i = 0; i < $visibleNodes.length; i++) {
-                                var $visibleNode = angular.element($visibleNodes[i].parentElement);
-                                if (transcludedScope.$id === $visibleNode.data('scope-id')) {
-                                    $visibleNodes[i + 1].focus();
-                                    break;
                                 }
                             }
                         }
 
                         function handleSpace($event) {
                             $scope.selectNodeLabel($event, transcludedScope.node);
+                        }
+
+                        function handleStar($event){
+                            expandAllChildren(transcludedScope.node);
+                        }
+
+                        function expandAllChildren(node) {
+                            if (!$scope.options.isLeaf(transcludedScope.node, $scope)) {
+                                $scope.expandedNodes.push(node);
+                                angular.forEach(node[$scope.options.nodeChildren], function (childNode) {
+                                    expandAllChildren(childNode);
+                                });
+                            }
                         }
 
                         function getRoot(element){
