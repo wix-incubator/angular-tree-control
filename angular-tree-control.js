@@ -193,9 +193,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             9: handleTab,
                             32: handleSpace,
                             37: handleLeftArrow,
-                            38: handleDownArrow,
+                            38: handleUpArrow,
                             39: handleRightArrow,
-                            40: handleUpArrow
+                            40: handleDownArrow
                         };
 
                         var handler = keyHandlers[$event.which];
@@ -215,29 +215,33 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             }
                         }
 
-                        function handleDownArrow($event) {
-                            var currentElement = $event.target;
-                            var allNodes = getAllVisibleNodes(currentElement);
-                            var nextToFocus = allNodes[_.indexOf(allNodes, $event.target) - 1];
-                            if(nextToFocus){
-                                nextToFocus.focus();
+                        function handleUpArrow($event) {
+                            var $visibleNodes = getAllVisibleNodes($event.target);
+                            for (var i = 0; i < $visibleNodes.length; i++) {
+                                var $visibleNode = angular.element($visibleNodes[i].parentElement);
+                                if (transcludedScope.$id === $visibleNode.data('scope-id')) {
+                                    $visibleNodes[i - 1].focus();
+                                    break;
+                                }
                             }
                         }
 
                         function handleLeftArrow($event) {
-                            if(transcludedScope.$parent.$parent.$id){
+                            if(transcludedScope.$parent.$parent.$id) {
                                 var index;
-                                for (var i=0; (i < $scope.expandedNodes.length) && !index; i++) {
-                                    if ($scope.options.equality($scope.expandedNodes[i], transcludedScope.$parent.$parent.node)) {
+                                for (var i = 0; (i < $scope.expandedNodes.length) && !index; i++) {
+
+                                    if ($scope.options.equality($scope.expandedNodes[i], transcludedScope.node)) {
                                         index = i;
                                     }
                                 }
-
-                                if(index !== undefined){
-                                    $scope.expandedNodes.splice(index, 1);
-
+                                if (!!$scope.expandedNodesMap[transcludedScope.$id]) {
+                                    if (index !== undefined) {
+                                        $scope.expandedNodes.splice(index, 1);
+                                    }
+                                } else {
                                     var $visibleNodes = getAllVisibleNodes($event.target);
-                                    for (var i=0; i < $visibleNodes.length; i++) {
+                                    for (var i = 0; i < $visibleNodes.length; i++) {
                                         var $visibleNode = angular.element($visibleNodes[i].parentElement);
                                         if (transcludedScope.$parent.$parent.$id === $visibleNode.data('scope-id')) {
                                             $visibleNodes[i].focus();
@@ -249,18 +253,26 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         }
 
                         function handleRightArrow($event) {
-                            if(!$scope.expandedNodesMap[transcludedScope.$id]){
-                                $scope.expandedNodes.push(transcludedScope.node);
+                            if(!!$scope.expandedNodesMap[transcludedScope.$id]){
+                                var $visibleNodes = $event.target.parentElement.getElementsByClassName('tree-label');
+                                if ($visibleNodes.length > 1) {
+                                    $visibleNodes[1].focus();
+                                }
+                            } else {
+                                if (!$scope.options.isLeaf(transcludedScope.node)) {
+                                    $scope.expandedNodes.push(transcludedScope.node);
+                                }
                             }
-                            $event.target.focus();
                         }
 
-                        function handleUpArrow($event) {
-                            var currentElement = $event.target;
-                            var allNodes = getAllVisibleNodes(currentElement);
-                            var nextToFocus = allNodes[_.indexOf(allNodes, $event.target) + 1];
-                            if(nextToFocus){
-                                nextToFocus.focus();
+                        function handleDownArrow($event) {
+                            var $visibleNodes = getAllVisibleNodes($event.target);
+                            for (var i = 0; i < $visibleNodes.length; i++) {
+                                var $visibleNode = angular.element($visibleNodes[i].parentElement);
+                                if (transcludedScope.$id === $visibleNode.data('scope-id')) {
+                                    $visibleNodes[i + 1].focus();
+                                    break;
+                                }
                             }
                         }
 
