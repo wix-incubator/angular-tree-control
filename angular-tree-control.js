@@ -250,17 +250,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                         function handleLeftArrow($event) {
                             if(transcludedScope.$parent.$parent.$id) {
-                                var index;
-                                for (var i = 0; (i < $scope.expandedNodes.length) && !index; i++) {
-
-                                    if ($scope.options.equality($scope.expandedNodes[i], transcludedScope.node, $scope)) {
-                                        index = i;
-                                    }
-                                }
-                                if (!!$scope.expandedNodesMap[transcludedScope.$id]) {
-                                    if (index !== undefined) {
-                                        $scope.expandedNodes.splice(index, 1);
-                                    }
+                                if (!!$scope.expandedNodesMap[transcludedScope.$id] && !$scope.options.isLeaf(transcludedScope.node, $scope)) {
+                                    $scope.selectNodeHead.call(transcludedScope);
                                 } else {
                                     var $visibleNodes = getAllVisibleNodes($event.target);
                                     for (var i = 0; i < $visibleNodes.length; i++) {
@@ -282,7 +273,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                 }
                             } else {
                                 if (!$scope.options.isLeaf(transcludedScope.node, $scope)) {
-                                    $scope.expandedNodes.push(transcludedScope.node);
+                                    $scope.selectNodeHead.call(transcludedScope);
                                 }
                             }
                         }
@@ -297,11 +288,22 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                         function expandAllChildren(node) {
                             if (!$scope.options.isLeaf(transcludedScope.node, $scope)) {
-                                $scope.expandedNodes.push(node);
+                                if(!isAlreadyExpanded(node)){
+                                    $scope.expandedNodes.push(node);
+                                }
                                 angular.forEach(node[$scope.options.nodeChildren], function (childNode) {
                                     expandAllChildren(childNode);
                                 });
                             }
+                        }
+
+                        function isAlreadyExpanded(node){
+                            for (var i = 0; i < $scope.expandedNodes.length; i++) {
+                                if($scope.options.equality($scope.expandedNodes[i], node, $scope)){
+                                    return true;
+                                }
+                            }
+                            return false;
                         }
 
                         function getRoot(element){
