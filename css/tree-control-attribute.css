@@ -107,3 +107,51 @@
 [treecontrol].tree-dark {
     color: #ddd;
 }
+
+[treecontrol].tree-boot {
+    color: #428bca;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+[treecontrol].tree-boot > ul > li {
+    padding: 0;
+}
+
+[treecontrol].tree-boot li > .tree-label {
+    display: block;
+    padding: 3px 0;
+    border-radius: 4px;
+}
+
+[treecontrol].tree-boot i.tree-branch-head,
+[treecontrol].tree-boot i.tree-leaf-head {
+    float: left;
+    height: 16px;
+    margin: 5px;
+}
+
+[treecontrol].tree-boot li.tree-expanded i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../images/folder.png") no-repeat;
+}
+
+[treecontrol].tree-boot li.tree-collapsed i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../images/folder-closed.png") no-repeat;
+}
+
+[treecontrol].tree-boot li.tree-leaf i.tree-leaf-head {
+    padding: 1px 10px;
+    background: url("../images/file.png") no-repeat;
+}
+
+[treecontrol].tree-boot .tree-label.tree-selected,
+[treecontrol].tree-boot .tree-label.tree-selected:hover {
+    color: #fff;
+    background-color: #428bca;
+}
+
+[treecontrol].tree-boot .tree-label:hover {
+    background-color: #eee;
+}
