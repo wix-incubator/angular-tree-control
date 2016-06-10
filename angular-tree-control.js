@@ -66,6 +66,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         ensureDefault($scope.options, "multiSelection", false);
         ensureDefault($scope.options, "nodeChildren", "children");
         ensureDefault($scope.options, "dirSelectable", "true");
+        ensureDefault($scope.options, "dirExpandDisabled", "true");
         ensureDefault($scope.options, "injectClasses", {});
         ensureDefault($scope.options.injectClasses, "ul", "");
         ensureDefault($scope.options.injectClasses, "li", "");
@@ -202,8 +203,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     $scope.selectNodeLabel = function( selectedNode){
                         var transcludedScope = this;
                         if(!$scope.options.isLeaf(selectedNode, $scope) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
-                            // Branch node is not selectable, expand
-                            this.selectNodeHead();
+                            if($scope.options.dirExpandDisabled) {
+                                // Branch node is not selectable, expand
+                                this.selectNodeHead();
+                            }
                         }
                         else if($scope.options.isLeaf(selectedNode, $scope) && (!$scope.options.isSelectable(selectedNode))) {
                             // Leaf node is not selectable
