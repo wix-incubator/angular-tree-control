@@ -1185,7 +1185,7 @@
 
 <section id="externalTemplate" ng-controller="ExternalTemplate">
     <div class="page-header">
-        <h1>External Template <small>(options.templateUrl, treeConfig.templateUrl)</small></h1>
+        <h1>External Template <small>(options.templateUrl, treeControlConfig.templateUrl)</small></h1>
     </div>
     <div class="row">
         <div class="col-md-6 show-grid">
@@ -1209,8 +1209,8 @@
                 <li><code>options.templateUrl</code> for individual tree control.</li>
                 <li>
                     <p>
-                        <code>treeConfig.templateUrl</code> for all tree controls during application <code>config</code> or <code>run</code> step.
-                        ( <code>treeConfig</code> is global injectable value provider)
+                        <code>treeControlConfig.templateUrl</code> for all tree controls during application <code>config</code> or <code>run</code> step.
+                        ( <code>treeControlConfig</code> is global injectable value provider)
                     </p>
                 </li>
             </ul>
@@ -1248,8 +1248,8 @@
         // this code snippet is just to show how to use the global external template option but is not used for
         // this specific example. this specific example is using the instance template option
         angular.module('app', ['treeControl'])
-                .run(function (treeConfig) {
-                    treeConfig.templateUrl = 'treeControlExternalTemplate.html';
+                .run(function (treeControlConfig) {
+                    treeControlConfig.templateUrl = 'treeControlExternalTemplate.html';
                 });
     </script>
 

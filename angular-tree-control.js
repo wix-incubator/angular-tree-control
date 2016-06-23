@@ -82,7 +82,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
     }
     
     angular.module( 'treeControl', [] )
-        .constant('treeConfig', {
+        .constant('treeControlConfig', {
             templateUrl: null
         })
         .directive( 'treecontrol', ['$compile', function( $compile ) {
@@ -120,7 +120,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     filterExpression: "=?",
                     filterComparator: "=?"
                 },
-                controller: ['$scope', '$templateCache', '$interpolate', 'treeConfig', function ($scope, $templateCache, $interpolate, treeConfig) {
+                controller: ['$scope', '$templateCache', '$interpolate', 'treeControlConfig', function ($scope, $templateCache, $interpolate, treeControlConfig) {
                     
                     $scope.options = $scope.options || {};
                     
@@ -285,7 +285,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 
                     var template;
-                    var templateUrl = $scope.options.templateUrl || treeConfig.templateUrl;
+                    var templateUrl = $scope.options.templateUrl || treeControlConfig.templateUrl;
 
                     if(templateUrl) {
                         template = $templateCache.get(templateUrl);
