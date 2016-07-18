@@ -48,6 +48,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
         return dst || src;
     }
+
     function defaultEquality(a, b,$scope) {
         if (!a || !b)
             return false;
@@ -55,9 +56,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         a[$scope.options.nodeChildren] = [];
         b = shallowCopy(b);
         b[$scope.options.nodeChildren] = [];
-        return angular.equals(a, b);
+        
+        var isEqual = false;
+        try{
+          isEqual = angular.equals(a, b);
+        }catch(ex){
+            console.warn(ex.message);
+        }
+        return isEqual;
     }
-
+    
     function defaultIsSelectable() {
         return true;
     }
