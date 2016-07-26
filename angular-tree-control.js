@@ -57,13 +57,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         b = shallowCopy(b);
         b[$scope.options.nodeChildren] = [];
 
-        var isEqual = false;
-        try {
-            isEqual = window._.isEqual(a, b);
-        } catch (ex) {
-            console.warn(ex.message);
-        }
-        return isEqual;
+        return window._.isEqual(a, b);
     }
 
     function defaultIsSelectable() {
