@@ -275,15 +275,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 //                    return "" + $scope.orderBy;
 
-                    var templateOptions = {
-                        orderBy: $scope.orderBy ? " | orderBy:orderByFunc():isReverse()" : '',
-                        ulClass: classIfDefined($scope.options.injectClasses.ul, true),
-                        nodeChildren:  $scope.options.nodeChildren,
-                        liClass: classIfDefined($scope.options.injectClasses.li, true),
-                        iLeafClass: classIfDefined($scope.options.injectClasses.iLeaf, false),
-                        labelClass: classIfDefined($scope.options.injectClasses.label, false)
-                    };
-
                     var template;
                     var templateUrl = $scope.options.templateUrl || treeConfig.templateUrl;
 
@@ -291,20 +282,32 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         template = $templateCache.get(templateUrl);
                     }
 
+                    $scope.templateClass = function(className) {
+                        return classIfDefined($scope.options.injectClasses[className]);
+                    };
+
+                    $scope.templateOrderBy = function() {
+                        return $scope.orderBy ? " | orderBy:orderByFunc():isReverse()" : '';
+                    };
+
+                    $scope.templateNodeChildren = function() {
+                        return $scope.options.nodeChildren || "children";
+                    };
+
                     if(!template) {
                         template =
-                            '<ul {{options.ulClass}} >' +
-                            '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
+                            '<ul ng-class="templateClass(\'ul\')" >' +
+                            '<li ng-repeat="node in node[templateNodeChildren()] | filter:filterExpression:filterComparator {{templateOrderBy()}}" ng-class="[headClass(node), templateClass(\'li\')]"' +
                             'set-node-to-data>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
-                            '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
-                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<i class="tree-leaf-head" ng-class="templateClass(\'iLeaf\')"></i>' +
+                            '<div class="tree-label" ng-class="[selectedClass(), unselectableClass(), templateClass(\'label\')]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
                     }
 
-                    this.template = $compile($interpolate(template)({options: templateOptions}));
+                    this.template = $compile($interpolate(template)());
                 }],
                 compile: function(element, attrs, childTranscludeFn) {
                     return function ( scope, element, attrs, treemodelCntr ) {
