@@ -114,6 +114,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     expandedNodes: "=?",
                     onSelection: "&",
                     onNodeToggle: "&",
+                    contextMenu: "&",
                     options: "=?",
                     orderBy: "=?",
                     reverseOrder: "@",
@@ -147,6 +148,11 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             return false;
                         }
                     }
+
+                    $scope.menu = function(node) {
+                        if($scope.contextMenu)
+                            return $scope.contextMenu({node: node});
+                    };
 
                     $scope.headClass = function(node) {
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
