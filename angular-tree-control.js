@@ -79,6 +79,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
         ensureDefault($scope.options, "allowDeselect", true);
         ensureDefault($scope.options, "isSelectable", defaultIsSelectable);
+        ensureDefault($scope.options, "navigation", false);
     }
     
     angular.module( 'treeControl', [] )
@@ -123,9 +124,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 controller: ['$scope', '$templateCache', '$interpolate', 'treeConfig', function ($scope, $templateCache, $interpolate, treeConfig) {
                     
                     $scope.options = $scope.options || {};
-                    
                     ensureAllDefaultOptions($scope);
                   
+                    $scope.focusedNode = !!$scope.treeModel ? $scope.treeModel[0] : undefined;
                     $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
@@ -133,7 +134,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         $scope.expandedNodesMap["a"+i] = $scope.expandedNodes[i];
                     }
                     $scope.parentScopeOfTree = $scope.$parent;
-
+                    $scope.navigationEnabled = !!$scope.options.navigation;
+                    $scope.tabindex = $scope.navigationEnabled ? 'tabindex="-1"' : '';
 
                     function isSelectedNode(node) {
                         if (!$scope.options.multiSelection && ($scope.options.equality(node, $scope.selectedNode , $scope)))
@@ -172,6 +174,151 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return !!$scope.expandedNodesMap[this.$id];
                     };
 
+                    $scope.focusTree = function ($event) {
+                        var ulTreeBase = $event.target;
+                        if(!(ulTreeBase.getAttribute('data-skip') === 'true')){
+                            if(!$scope.focusedNode){
+                                $scope.focusedNode = $event.target.getElementsByClassName('tree-label')[0];
+                            }
+                            $scope.focusedNode.focus();
+                        }
+                        ulTreeBase.setAttribute('data-skip', false);
+                    };
+
+                    $scope.focusNode = function ($event) {
+                        $scope.focusedNode = $event.target;
+                    };
+
+                    $scope.keyDown = function ($event) {
+                        if(!$scope.navigationEnabled){
+                            return;
+                        }
+                        var transcludedScope = this;
+
+                        var keyHandlers = {
+                            9: handleTab,
+                            32: handleSpace,
+                            37: handleLeftArrow,
+                            38: handleUpArrow,
+                            39: handleRightArrow,
+                            40: handleDownArrow,
+                            106: handleStar
+                        };
+
+                        var handler = keyHandlers[$event.which];
+                        if(!!handler){
+                            if($event.which != 9){
+                                $event.preventDefault();
+                            }
+                            handler($event);
+                        }
+
+                        function handleTab($event) {
+                            if($event.shiftKey){
+                                $event.stopPropagation();
+                                var ulTreeBase = getRoot($event.target).getElementsByTagName('ul')[0];
+                                ulTreeBase.setAttribute('data-skip', true);
+                                ulTreeBase.focus();
+                            }
+                        }
+
+                        function handleDownArrow($event) {
+                            var $visibleNodes = getAllVisibleNodes($event.target);
+                            for (var i = 0; i < $visibleNodes.length; i++) {
+                                var $visibleNode = angular.element($visibleNodes[i].parentElement);
+                                if (transcludedScope.$id === $visibleNode.data('scope-id')) {
+                                    if(i + 1 < $visibleNodes.length){
+                                        $visibleNodes[i + 1].focus();
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
+                        function handleUpArrow($event) {
+                            var $visibleNodes = getAllVisibleNodes($event.target);
+                            for (var i = 0; i < $visibleNodes.length; i++) {
+                                var $visibleNode = angular.element($visibleNodes[i].parentElement);
+                                if (transcludedScope.$id === $visibleNode.data('scope-id')) {
+                                    if(i - 1 >= 0){
+                                        $visibleNodes[i - 1].focus();
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
+                        function handleLeftArrow($event) {
+                            if(transcludedScope.$parent.$parent.$id) {
+                                if (!!$scope.expandedNodesMap[transcludedScope.$id] && !$scope.options.isLeaf(transcludedScope.node, $scope)) {
+                                    $scope.selectNodeHead.call(transcludedScope);
+                                } else {
+                                    var $visibleNodes = getAllVisibleNodes($event.target);
+                                    for (var i = 0; i < $visibleNodes.length; i++) {
+                                        var $visibleNode = angular.element($visibleNodes[i].parentElement);
+                                        if (transcludedScope.$parent.$parent.$id === $visibleNode.data('scope-id')) {
+                                            $visibleNodes[i].focus();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        function handleRightArrow($event) {
+                            if(!!$scope.expandedNodesMap[transcludedScope.$id]){
+                                var $visibleNodes = $event.target.parentElement.getElementsByClassName('tree-label');
+                                if ($visibleNodes.length > 1) {
+                                    $visibleNodes[1].focus();
+                                }
+                            } else {
+                                if (!$scope.options.isLeaf(transcludedScope.node, $scope)) {
+                                    $scope.selectNodeHead.call(transcludedScope);
+                                }
+                            }
+                        }
+
+                        function handleSpace($event) {
+                            $scope.selectNodeLabel($event, transcludedScope.node);
+                        }
+
+                        function handleStar($event){
+                            expandAllChildren(transcludedScope.node);
+                        }
+
+                        function expandAllChildren(node) {
+                            if (!$scope.options.isLeaf(transcludedScope.node, $scope)) {
+                                if(!isAlreadyExpanded(node)){
+                                    $scope.expandedNodes.push(node);
+                                }
+                                angular.forEach(node[$scope.options.nodeChildren], function (childNode) {
+                                    expandAllChildren(childNode);
+                                });
+                            }
+                        }
+
+                        function isAlreadyExpanded(node){
+                            for (var i = 0; i < $scope.expandedNodes.length; i++) {
+                                if($scope.options.equality($scope.expandedNodes[i], node, $scope)){
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+
+                        function getRoot(element){
+                            var treeControlElement = element;
+                            while(treeControlElement.tagName !== 'TREECONTROL'){
+                                treeControlElement = treeControlElement.parentElement;
+                            }
+                            return treeControlElement;
+                        }
+
+                        function getAllVisibleNodes(element){
+                            return getRoot(element).getElementsByClassName('tree-label');
+                        }
+                    };
+
                     $scope.selectNodeHead = function() {
                         var transcludedScope = this;
                         var expanding = $scope.expandedNodesMap[transcludedScope.$id] === undefined;
@@ -199,7 +346,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         }
                     };
 
-                    $scope.selectNodeLabel = function( selectedNode){
+                    $scope.selectNodeLabel = function($event, selectedNode){
+                        $scope.focusedNode = $event.currentTarget;
                         var transcludedScope = this;
                         if(!$scope.options.isLeaf(selectedNode, $scope) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
                             // Branch node is not selectable, expand
@@ -293,12 +441,13 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     if(!template) {
                         template =
-                            '<ul {{options.ulClass}} >' +
+                            '<ul {{options.ulClass}} ng-focus="focusTree($event)">' +
                             '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
                             'set-node-to-data>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
-                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel($event, node)" tree-transclude ' +
+                            'ng-keydown="keyDown($event)" ' + $scope.tabindex + ' ng-focus="focusNode($event)"></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
@@ -362,6 +511,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                         //Rendering template for a root node
                         treemodelCntr.template( scope, function(clone) {
+                            if(scope.navigationEnabled){
+                                clone.attr('tabindex', 0);
+                            }
                             element.html('').append( clone );
                         });
                         // save the transclude function from compile (which is not bound to a scope as apposed to the one from link)
