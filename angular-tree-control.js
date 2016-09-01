@@ -85,7 +85,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         .constant('treeConfig', {
             templateUrl: null
         })
-        .directive( 'treecontrol', ['$compile', function( $compile ) {
+        .directive( 'treecontrol', ['$compile','$templateRequest', '$interpolate', function( $compile, $templateRequest, $interpolate ) {
             /**
              * @param cssClass - the css class
              * @param addClassProperty - should we wrap the class name with class=""
@@ -120,8 +120,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     filterExpression: "=?",
                     filterComparator: "=?"
                 },
-                controller: ['$scope', '$templateCache', '$interpolate', 'treeConfig', function ($scope, $templateCache, $interpolate, treeConfig) {
-                    
+                controller: ['$scope','treeConfig', function ($scope, treeConfig) {
                     $scope.options = $scope.options || {};
                     
                     ensureAllDefaultOptions($scope);
@@ -275,7 +274,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 //                    return "" + $scope.orderBy;
 
-                    var templateOptions = {
+                    this.templateOptions = {
                         orderBy: $scope.orderBy ? " | orderBy:orderByFunc():isReverse()" : '',
                         ulClass: classIfDefined($scope.options.injectClasses.ul, true),
                         nodeChildren:  $scope.options.nodeChildren,
@@ -285,26 +284,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 
                     var template;
-                    var templateUrl = $scope.options.templateUrl || treeConfig.templateUrl;
-
-                    if(templateUrl) {
-                        template = $templateCache.get(templateUrl);
-                    }
-
-                    if(!template) {
-                        template =
-                            '<ul {{options.ulClass}} >' +
-                            '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
-                            'set-node-to-data>' +
-                            '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
-                            '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
-                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
-                            '<treeitem ng-if="nodeExpanded()"></treeitem>' +
-                            '</li>' +
-                            '</ul>';
-                    }
-
-                    this.template = $compile($interpolate(template)({options: templateOptions}));
+                    this.templateUrl = $scope.options.templateUrl || treeConfig.templateUrl;
                 }],
                 compile: function(element, attrs, childTranscludeFn) {
                     return function ( scope, element, attrs, treemodelCntr ) {
@@ -361,13 +341,43 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 //                        });
 
                         //Rendering template for a root node
-                        treemodelCntr.template( scope, function(clone) {
-                            element.html('').append( clone );
-                        });
-                        // save the transclude function from compile (which is not bound to a scope as apposed to the one from link)
-                        // we can fix this to work with the link transclude function with angular 1.2.6. as for angular 1.2.0 we need
-                        // to keep using the compile function
-                        scope.$treeTransclude = childTranscludeFn;
+                        var defaultTemplate = '<ul {{options.ulClass}} >' +
+                        '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
+                        'set-node-to-data>' +
+                        '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
+                        '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
+                        '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                        '<treeitem ng-if="nodeExpanded()"></treeitem>' +
+                        '</li>' +
+                        '</ul>';
+                        
+                        var template;
+                        function compileTemplate() {
+                           treemodelCntr.template = $compile($interpolate(template)({options: treemodelCntr.templateOptions}));
+                           if(treemodelCntr.template){
+                              treemodelCntr.template( scope, function(clone) {
+                                 element.html('').append( clone );
+                              });
+                              // save the transclude function from compile (which is not bound to a scope as apposed to the one from link)
+                              // we can fix this to work with the link transclude function with angular 1.2.6. as for angular 1.2.0 we need
+                              // to keep using the compile function
+                              scope.$treeTransclude = childTranscludeFn;
+                           }
+                        }
+                        
+                        if(treemodelCntr.templateUrl) {
+                           $templateRequest(treemodelCntr.templateUrl, true).then(function(response) {
+                              template = response;
+                              if(!template) {
+                                 template = defaultTemplate;
+                              }
+                              compileTemplate();
+                           });
+                        } else {
+                           template = defaultTemplate;
+                           compileTemplate();
+                        }
+                        
                     };
                 }
             };
