@@ -3,8 +3,8 @@ Angular Tree Control
 
 [![npm version](https://badge.fury.io/js/angular-tree-control.svg)](https://badge.fury.io/js/angular-tree-control)
 [![Bower version](https://badge.fury.io/bo/angular-tree-control.svg)](http://badge.fury.io/bo/angular-tree-control)
-[![Build Status](https://travis-ci.org/wix/angular-tree-control.png)](https://travis-ci.org/wix/angular-tree-control)
-[![Coverage Status](https://coveralls.io/repos/wix/angular-tree-control/badge.png)](https://coveralls.io/r/wix/angular-tree-control)
+[![Build Status](https://travis-ci.org/wix/angular-tree-control.svg)](https://travis-ci.org/wix/angular-tree-control)
+[![Coverage Status](https://coveralls.io/repos/wix/angular-tree-control/badge.svg)](https://coveralls.io/r/wix/angular-tree-control)
 
 Pure [AngularJS](http://www.angularjs.org) based tree control component.
 
@@ -14,7 +14,7 @@ To get started, check out [wix.github.io/angular-tree-control](http://wix.github
 
 ## Why yet another tree control
 
-We have tried a number of tree controls built for angular and experience a of issues with each. As a result we decided
+We have tried a number of tree controls built for angular and experience a lot of issues with each. As a result we decided
 to build a new tree control with the following design guidelines
 
 - Isolated scope - the tree control should not pollute the scope it is rendered at

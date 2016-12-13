@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Angular Tree</title>
-    <script src="demo/jquery.2.0.3.js"></script>
+    <script src="demo/jquery-2.2.2.js"></script>
     <script src="demo/angular.1.2.29.js"></script>
     <script src="demo/bootstrap.3.1.1.js"></script>
     <script src="demo/ui-bootstrap-tpls.0.11.2.js"></script>
@@ -31,6 +31,7 @@
         .docs-sidenav > li > a:hover {background-color: transparent; color: #563d7c; border-left: 1px solid #563d7c;padding-left: 19px;}
         .type-hint-object {background:#999;}
         .type-hint-boolean {background:rgb(18, 131, 39);}
+        .type-hint-function {background: rgb(36, 53, 131);}
         .type-hint-number {background:rgb(189, 63, 66);}
     </style>
 </head>
@@ -174,6 +175,7 @@
         <tr><td><code>$last</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is last in the iterator.</td></tr>
         <tr><td><code>$odd</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is even (otherwise false).</td></tr>
         <tr><td><code>$even</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is odd (otherwise false).</td></tr>
+        <tr><td><code>$path</code></td><td><span class="label type-hint-function">function</span></td><td>a function that when called, returns the path to the current node.</td></tr>
     </table>
     <div class="row">
         <tabset>
@@ -428,8 +430,8 @@
                     <div save-content="events-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
-                                     on-selection="showSelected(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even)"
-                                     on-node-toggle="showToggle(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even)">
+                                     on-selection="showSelected(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even, $path)"
+                                     on-node-toggle="showToggle(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even, $path)">
                             label: {{node.label}} ({{node.id}})
                         </treecontrol>
                     </div>
@@ -460,6 +462,7 @@
         <tr><td><code>$last</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the repeated element is last in the iterator.</td></tr>
         <tr><td><code>$odd</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is even (otherwise false).</td></tr>
         <tr><td><code>$even</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the iterator position $index is odd (otherwise false).</td></tr>
+        <tr><td><code>$path</code></td><td><span class="label type-hint-function">function</span></td><td>a function that when called, returns the path to the current node.</td></tr>
         <tr><td><code>selected</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the node is selected, false if it is de-selected. Only applies to the on-selection event.</td></tr>
         <tr><td><code>expanded</code></td><td><span class="label type-hint-boolean">boolean</span></td><td>true if the node is expanding, false if the node is contracting. Only applies to the on-node-toggle event.</td></tr>
     </table>
@@ -476,17 +479,19 @@
     <script save-content="events-js">
         function Events($scope) {
             $scope.treedata=createSubTree(3, 4, "");
-            $scope.showToggle = function(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even) {
+            $scope.showToggle = function(node, expanded, $parentNode, $index, $first, $middle, $last, $odd, $even, $path) {
                 var parent = $parentNode?("child of: " + $parentNode.label):"root node";
                 var location = $first?"first":($last?"last":("middle node at index " + $index));
                 var oddEven = $odd?"odd":"even";
-                $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") +" (" + parent + ", " + location +", " + oddEven + ")</li>");
+                var path = $path().map(function(node) {return node.label});
+                $("#events-listing").append("<li>"+node.label+ (expanded?" expanded":" collapsed") +" (" + parent + ", " + location +", " + oddEven + ", ["+ path+"])</li>");
             };
-            $scope.showSelected = function(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even) {
+            $scope.showSelected = function(node, selected, $parentNode, $index, $first, $middle, $last, $odd, $even, $path) {
                 var parent = $parentNode?("child of: " + $parentNode.label):"root node";
                 var location = $first?"first":($last?"last":("middle node at index " + $index));
                 var oddEven = $odd?"odd":"even";
-                $("#events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") +" (" + parent + ", " + location +", " + oddEven + ")</li>");
+                var path = $path().map(function(node) {return node.label});
+                $("#events-listing").append("<li>"+node.label+ (selected?" selected":" deselected") +" (" + parent + ", " + location +", " + oddEven + ", ["+ path +"])</li>");
             };
         }
     </script>
@@ -750,6 +755,55 @@
     </script>
 </section>
 
+<section id="boot" ng-controller="Boot">
+    <div class="page-header">
+        <h1>Bootstrap Style <small>(Basic style, default configuration)</small></h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6 show-grid">
+            <div class="panel panel-default">
+                <div class="panel-body" style="background-color: #f5f5f5;">
+                    <div class="example-caption">EXAMPLE:</div>
+                    <div save-content="boot-html">
+                        <!-- Note that the tree does not set the background color. We inject it from the wrapper div. -->
+                        <div style="background-color: #f5f5f5;">
+                            <treecontrol class="tree-boot"
+                                         tree-model="treedata"
+                                         on-selection="showSelected(node)">
+                                label: {{node.label}} ({{node.id}})
+                            </treecontrol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <p>Bootstrap style of the tree control, set using the class <code>tree-boot</code>. The style does not include the background color, instead,
+                inject your own background color using a wrapper div element.</p>
+            <p>Click on the folder icons to open and close the tree nodes. Click on the node label to select a node in the tree.</p>
+            <p>Selected node: <code>{{selectedNode?selectedNode.label:"N/A"}}</code></p>
+        </div>
+    </div>
+    <div class="row">
+        <tabset>
+            <tab heading="Markup" >
+                <pre class="code" apply-content="boot-html" highlight-lang="html"></pre>
+            </tab>
+            <tab heading="JavaScript">
+                <pre class="code" apply-content="boot-js" highlight-lang="js"></pre>
+            </tab>
+        </tabset>
+    </div>
+    <script save-content="boot-js">
+        function Boot($scope) {
+            $scope.treedata=createSubTree(3, 4, "");
+            $scope.showSelected = function(sel) {
+                $scope.selectedNode = sel;
+            };
+        }
+    </script>
+</section>
+
 <section id="file-style" ng-controller="FileStyle">
     <div class="page-header">
         <h1>File Style using Tree Label Templates <small>(Basic style, default configuration)</small></h1>
@@ -1005,7 +1059,7 @@
                     <div save-content="sorting-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
-                                     order-by="{{orderby}}"
+                                     order-by="orderby"
                                      reverse-order="{{reverse}}">
                             label: {{node.label}} {{node.name}} ({{node.id}})
                         </treecontrol>
@@ -1017,12 +1071,15 @@
             <p>The <code>order-by</code> and <code>reverse-order</code> properties allows controlling the sorting of the tree nodes.
                 The value of those attributes is used with the <code>ng-repeat</code> orderBy filter -
                 see more details at the <a href="https://code.angularjs.org/1.2.0-rc.3/docs/api/ng.filter:orderBy">Angular JS orderBy</a> docs.</p>
-            <p>The sorting is done for each branch individually (sorting does not change the stucture of the tree itself).</p>
-            <input type="checkbox" ng-model="reverse"/> Reverse Order
-            <select ng-model="orderby">
-                <option value="label">label</option>
-                <option value="name">name</option>
-            </select>
+            <p>The sorting is done for each branch individually (sorting does not change the structure of the tree itself).</p>
+            <p>Note that since 0.2.24 the order-by property has changed from a '&' binding to a '=?' binding to allow support for arrays and functions.
+                This means that 0.2.23 and earlier usage like <code>order-by="{{before}}"</code> should be changed to <code>order-by="predicate"</code>.</p>
+            <p>Sort:</p>
+            <a ng-click="byLabel()">by label</a></br>
+            <a ng-click="byName()">by name</a></br>
+            <a ng-click="byNameAndLabel()">by name & label (multi-field)</a></br>
+            <a ng-click="byFunction()">by label number (using a function)</a></br>
+            <input type="checkbox" ng-model="reverse"/> Reverse Order</br>
         </div>
     </div>
     <div class="row">
@@ -1037,10 +1094,19 @@
     </div>
     <script save-content="sorting-js">
         function Sorting($scope) {
-            $scope.treedata=createSubTree(3, 4, "");
+            $scope.before = '{{predicate}}';
+
+            $scope.treedata=createSubTree(3, 12, "");
             $scope.reverse = true;
             $scope.orderby = 'label';
 
+            $scope.byLabel = function () {$scope.orderby = 'label'};
+            $scope.byName = function () {$scope.orderby = 'name'};
+            $scope.byNameAndLabel = function () {$scope.orderby = ['name', 'label']};
+            $scope.byFunction = function () {$scope.orderby = $scope.getLabelNumber};
+            $scope.getLabelNumber = function(obj) {
+                return Number(obj.label.substring(5));
+            }
         }
     </script>
 </section>
@@ -1360,6 +1426,5 @@
             return [];
     }
 </script>
-
 </body>
 </html>

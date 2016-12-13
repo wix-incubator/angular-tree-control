@@ -30,7 +30,7 @@ module.exports = function(grunt) {
                 background: true,
                 options: {
                     files: [
-                        'bower_components/jquery/jquery.js',
+                        'bower_components/jquery/dist/jquery.js',
                         'demo/angular.1.3.12.js',
                         'demo/angular-mocks.1.3.12.js',
                         'angular-tree-control.js',
