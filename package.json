@@ -12,7 +12,8 @@
   },
   "author": "Yoav Abrahami",
   "contributors": [
-    "Benjamin Orozco <benoror@gmail.com>"
+    "Benjamin Orozco <benoror@gmail.com>",
+    "José M. Fernández <jmfernandez@cnio.es>"
   ],
   "license": "MIT",
   "bugs": {

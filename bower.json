@@ -3,7 +3,8 @@
   "version": "0.2.28",
   "author": "Yoav Abrahami",
   "contributors": [
-    "Benjamin Orozco <benoror@gmail.com>"
+    "Benjamin Orozco <benoror@gmail.com>",
+    "José M. Fernández <jmfernandez@cnio.es>"
   ],
   "main": [
     "./angular-tree-control.js",
@@ -16,13 +17,13 @@
     "karma.conf.js"
   ],
   "dependencies": {
-    "angular": "~1.4.4"
+    "angular": "~1.4.4 || ~1.5.4"
   },
   "devDependencies": {
-    "angular-mocks": "~1.4.4",
+    "angular-mocks": "~1.4.4 || ~1.5.4",
     "jquery": "~2.2.2",
-    "bootstrap": "~3.1.1",
-    "angular-bootstrap": "~0.11.0",
+    "bootstrap": "~3.3.6",
+    "angular-bootstrap": "~1.2.5",
     "google-code-prettify": "1.0.1"
   }
 }

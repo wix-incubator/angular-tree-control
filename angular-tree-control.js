@@ -172,7 +172,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         return !!$scope.expandedNodesMap[this.$id];
                     };
 
-                    $scope.selectNodeHead = function() {
+                    $scope.selectNodeHead = function(node,$event) {
                         var transcludedScope = this;
                         var expanding = $scope.expandedNodesMap[transcludedScope.$id] === undefined;
                         $scope.expandedNodesMap[transcludedScope.$id] = (expanding ? transcludedScope.node : undefined);
@@ -192,18 +192,18 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         if ($scope.onNodeToggle) {
                             var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
                             var path = createPath(transcludedScope);
-                            $scope.onNodeToggle({node: transcludedScope.node, $parentNode: parentNode, $path: path,
+                            $scope.onNodeToggle({node: transcludedScope.node, $event: $event, $parentNode: parentNode, $path: path,
                               $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
                               $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even, expanded: expanding});
 
                         }
                     };
 
-                    $scope.selectNodeLabel = function( selectedNode){
+                    $scope.selectNodeLabel = function( selectedNode, $event){
                         var transcludedScope = this;
                         if(!$scope.options.isLeaf(selectedNode, $scope) && (!$scope.options.dirSelectable || !$scope.options.isSelectable(selectedNode))) {
                             // Branch node is not selectable, expand
-                            this.selectNodeHead();
+                            this.selectNodeHead(selectedNode,$event);
                         }
                         else if($scope.options.isLeaf(selectedNode, $scope) && (!$scope.options.isSelectable(selectedNode))) {
                             // Leaf node is not selectable
@@ -242,7 +242,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             if ($scope.onSelection) {
                                 var parentNode = (transcludedScope.$parent.node === transcludedScope.synteticRoot)?null:transcludedScope.$parent.node;
                                 var path = createPath(transcludedScope)
-                                $scope.onSelection({node: selectedNode, selected: selected, $parentNode: parentNode, $path: path,
+                                $scope.onSelection({node: selectedNode, $event: $event, selected: selected, $parentNode: parentNode, $path: path,
                                   $index: transcludedScope.$index, $first: transcludedScope.$first, $middle: transcludedScope.$middle,
                                   $last: transcludedScope.$last, $odd: transcludedScope.$odd, $even: transcludedScope.$even});
                             }
@@ -296,9 +296,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             '<ul {{options.ulClass}} >' +
                             '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
                             'set-node-to-data>' +
-                            '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
+                            '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node,$event)"></i>' +
                             '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
-                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node,$event)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
