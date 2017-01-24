@@ -292,19 +292,20 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     }
 
                     if(!template) {
-                        var open = $interpolate.startSymbol();
-                        var close = $interpolate.endSymbol();
-                        template = (
-                            '<ul ' + open + 'options.ulClass' + close + ' >' +
-                            '<li ng-repeat="node in node.' + open + 'options.nodeChildren' + close + ' | filter:filterExpression:filterComparator ' + open + 'options.orderBy' + close + '" ng-class="headClass(node)" ' + open + 'options.liClass' + close + '' +
+                        template =
+                            '<ul {{options.ulClass}} >' +
+                            '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
                             'set-node-to-data>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
-                            '<i class="tree-leaf-head ' + open + 'options.iLeafClass' + close + '"></i>' +
-                            '<div class="tree-label ' + open + 'options.labelClass' + close + '" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
+                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
-                            '</ul>'
-                        );
+                            '</ul>';
+                        template = template
+                            .replace(/{{/g, $interpolate.startSymbol())
+                            .replace(/}}/g, $interpolate.endSymbol())
+                        ;
                     }
 
                     this.template = $compile($interpolate(template)({options: templateOptions}));
