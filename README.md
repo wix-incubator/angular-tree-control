@@ -34,8 +34,13 @@ Copy the script and css into your project and add a script and link tag to your 
 
 ```html
 <script type="text/javascript" src="/angular-tree-control.js"></script>
+
+<!-- Include context-menu module if you're going to use menu-id attribute -->
+<script type="text/javascript" src="/context-menu.js"></script>
+
 <!-- link for CSS when using the tree as a Dom element -->
 <link rel="stylesheet" type="text/css" href="css/tree-control.css">
+
 <!-- link for CSS when using the tree as an attribute -->
 <link rel="stylesheet" type="text/css" href="css/tree-control-attribute.css">
 ```
@@ -113,6 +118,7 @@ Attributes of angular treecontrol
 - `expanded-nodes` : [Array[Node]] binding for the expanded nodes in the tree. Updating this value updates the nodes that are expanded in the tree.
 - `on-selection` : `(node, selected)` callback called whenever selecting a node in the tree. The callback expression can use the selected node (`node`) and a boolean which indicates if the node was selected or deselected (`selected`).
 - `on-node-toggle` : `(node, expanded)` callback called whenever a node expands or collapses in the tree. The callback expression can use the toggled node (`node`) and a boolean which indicates expansion or collapse (`expanded`).
+- `on-right-click` : `(node)` callback called whenever a node is right-clicked.
 - `options` : different options to customize the tree control.
   - `multiSelection` : [Boolean] enable multiple nodes selection in the tree.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
@@ -133,6 +139,7 @@ Attributes of angular treecontrol
 - `reverse-order` : whether or not to reverse the ordering of sibling nodes based on the value of `order-by`
 - `filter-expression` : value for ng-repeat to use for filtering the sibling nodes
 - `filter-comparator` : value for ng-repeat to use for comparing nodes with the filter expression
+- `menu-id` : the id of an ul element which will be displayed after a right-click
 
 ### The tree labels
 

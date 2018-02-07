@@ -12,6 +12,7 @@
     <link  href="demo/prettify-style.css" rel="stylesheet" type="text/css">
 
     <script src="angular-tree-control.js"></script>
+    <script src="context-menu.js"></script>
     <link rel="stylesheet" type="text/css" href="css/tree-control.css">
     <link rel="stylesheet" type="text/css" href="css/tree-control-attribute.css">
     <style>
@@ -33,6 +34,7 @@
         .type-hint-boolean {background:rgb(18, 131, 39);}
         .type-hint-function {background: rgb(36, 53, 131);}
         .type-hint-number {background:rgb(189, 63, 66);}
+	.dropdown-menu li a.disabled { pointer-events: none; cursor: default; color:#bbb; }
     </style>
 </head>
 <body ng-app="example">
@@ -1049,7 +1051,7 @@
 
 <section id="sorting" ng-controller="Sorting">
     <div class="page-header">
-        <h1>Sorting tree nodes <small>(order-by, reserve-order)</small></h1>
+        <h1>Sorting tree nodes <small>(order-by, reverse-order)</small></h1>
     </div>
     <div class="row">
         <div class="col-md-6 show-grid">
@@ -1068,7 +1070,8 @@
             </div>
         </div>
         <div class="col-md-6">
-            <p>The <code>order-by</code> and <code>reverse-order</code> properties allows controlling the sorting of the tree nodes.
+            <p>The <code>order-by</code> and <code>reverse-order</code> properties allows
+	      controlling the sorting of the tree nodes.
                 The value of those attributes is used with the <code>ng-repeat</code> orderBy filter -
                 see more details at the <a href="https://code.angularjs.org/1.2.0-rc.3/docs/api/ng.filter:orderBy">Angular JS orderBy</a> docs.</p>
             <p>The sorting is done for each branch individually (sorting does not change the structure of the tree itself).</p>
@@ -1232,15 +1235,130 @@
     </script>
 </section>
 
-<section id="externalTemplate" ng-controller="ExternalTemplate">
+
+<section id="rightclick" ng-controller="RightClick">
     <div class="page-header">
-        <h1>External Template <small>(options.templateUrl, treeConfig.templateUrl)</small></h1>
+        <h1>Right Click &amp; Context Menu <small>(on-right-click &amp; menu-id)</small></h1>
+
     </div>
     <div class="row">
         <div class="col-md-6 show-grid">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="example-caption">EXAMPLE:</div>
+
+                    <div save-content="rightclick-html">
+                        <treecontrol class="tree-classic"
+                                     tree-model="treedata"
+				     expanded-nodes="expandedNodes"
+                                     on-selection="doSelect(node)"
+				     on-right-click="doRightClick(node)"
+				     menu-id="ctxMenu">
+                            {{node.label}}
+                        </treecontrol>	
+
+			
+                        <ul id="ctxMenu" class="dropdown-menu">
+                          <li><a ng-click="doCook()" 
+                                 ng-class="isLeaf() ? '' : 'disabled'">Cook {{selectedFood.name}}</a></li>
+                          <li class="divider"></li>  
+                          <li><a context-submenu-id="ctxSubMenuOrange"
+				 ng-class="selectedFood.color == 'Orange' ? '' : 'disabled'">Orange...</a></li>
+                          <li><a context-submenu-id="ctxSubMenuGreen"
+				 ng-class="selectedFood.color == 'Green' ? '' : 'disabled'">Green...</a></li>
+                        </ul>
+
+
+                        <ul id="ctxSubMenuOrange" class="dropdown-menu">
+                          <li><a ng-click="doAction('juice' + selectedFood.name)">Juice {{selectedFood.name}}</a></li>
+                          <li><a ng-click="doAction('peel orange food')">Peel Orange Food</a></li>
+                        </ul>
+
+
+                        <ul id="ctxSubMenuGreen" class="dropdown-menu">
+                          <li><a ng-click="doAction('chop' + selectedFood.name)">Chop {{selectedFood.name}}</a></li>
+                          <li><a ng-click="doAction('shred green food')">Shred Green Food</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <p>The angular tree control provides right-click and context menu functionality:
+	      <ul>
+		<li>
+		  <code>on-right-click</code> 
+		  is evaluated as an angular expression (like <code>ng-click</code> value) when
+		  a right-click event is detected.  If context menu is enabled, then this will be
+		  evaluated before the context menu is opened.
+		</li>
+		<li>
+		  <code>menu-id</code> is the <strong>id</strong> for an <code>&lt;ul&gt;</code>
+		  element which will be displayed after a right-click has been detected.
+		</li>
+	      </ul>
+	    </p>
+	    <p>The last right-click was on the <code>{{lastRightClickNode}}</code> node </p>
+	    <p>The last food to be cooked was <code>{{lastCookedFood}}</code></p>
+	    <p>The last context menu action was <code>{{lastAction}}</code></p>
+        </div>
+    </div>
+    <div class="row">
+        <tabset>
+            <tab heading="Markup" >
+                <pre class="code" apply-content="rightclick-html" highlight-lang="html"></pre>
+            </tab>
+            <tab heading="JavaScript">
+                <pre class="code" apply-content="rightclick-js" highlight-lang="js"></pre>
+            </tab>
+        </tabset>
+    </div>
+
+    <script save-content="rightclick-js">
+      function RightClick($scope) {
+        $scope.treedata=[
+            { "label" : "Vegetables", "children" : [
+              { "label": "Vegetable:Carrot (Orange)",  "name" : "Carrot",  "color" : "Orange", "class" : "Vegetable", "children" : [] },
+              { "label": "Vegetable:Cabbbage (Green)", "name" : "Cabbage", "color" : "Green",  "class" : "Vegetable", "children" : [] },
+              { "label": "Vegetable:Potato (Brown)",   "name" : "Potato",  "color" : "Brown",  "class" : "Vegetable", "children" : [] } 
+            ]},
+            { "label" : "Fruit", "children" : [
+              { "label": "Fruit:Apricot (Orange)", "name" : "Apricot", "color" : "Orange", "class" : "Fruit", "children" : [] },
+              { "label": "Fruit:Apple (Red)",      "name" : "Apple",   "color" : "Red",    "class" : "Fruit", "children" : [] },
+              { "label": "Fruit:Grape (Green)",    "name" : "Grape",   "color" : "Green",  "class" : "Fruit", "children" : [] }
+            ]}
+        ];
+        $scope.expandedNodes=[$scope.treedata[0], $scope.treedata[1]];
+
+        $scope.selectedFood = null;
+        $scope.doSelect = function(node) { $scope.selectedFood = node;};
+
+        $scope.lastRightClickNode = null;
+        $scope.doRightClick = function(node) { $scope.lastRightClickNode = node.label; }
+
+        $scope.lastCookedFood = null;
+        $scope.doCook = function() { $scope.lastCookedFood = $scope.selectedFood.name; };
+      
+        $scope.lastAction = null;
+        $scope.doAction = function(cmd) { $scope.lastAction = cmd; };
+
+        $scope.isLeaf = function() { return $scope.selectedFood && $scope.selectedFood.children.length == 0;};
+     }
+    </script>
+</section>
+
+
+<section id="externalTemplate" ng-controller="ExternalTemplate">
+    <div class="page-header">
+        <h1>External Template <small>(options.templateUrl, treeConfig.templateUrl)</small></h1>
+
+    </div>
+    <div class="row">
+        <div class="col-md-6 show-grid">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="example-caption">EXAMPLE:</div>
+
                     <div save-content="external-template-html">
                         <treecontrol class="tree-classic"
                                      tree-model="treedata"
@@ -1324,6 +1442,7 @@
         </ul>
     </script>
 </section>
+
 
 </div>
 <div class="col-md-3">

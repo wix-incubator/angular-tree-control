@@ -80,11 +80,12 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         ensureDefault($scope.options, "allowDeselect", true);
         ensureDefault($scope.options, "isSelectable", defaultIsSelectable);
     }
-    
-    angular.module( 'treeControl', [] )
+
+    angular.module( 'treeControl', ['contextMenu'] )
         .constant('treeConfig', {
             templateUrl: null
         })
+
         .directive( 'treecontrol', ['$compile', function( $compile ) {
             /**
              * @param cssClass - the css class
@@ -100,9 +101,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 else
                     return "";
             }
-            
-            
-            
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -114,6 +112,8 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     expandedNodes: "=?",
                     onSelection: "&",
                     onNodeToggle: "&",
+                    onRightClick: "&",
+                    menuId: "@",
                     options: "=?",
                     orderBy: "=?",
                     reverseOrder: "@",
@@ -121,11 +121,11 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     filterComparator: "=?"
                 },
                 controller: ['$scope', '$templateCache', '$interpolate', 'treeConfig', function ($scope, $templateCache, $interpolate, treeConfig) {
-                    
+
                     $scope.options = $scope.options || {};
-                    
+
                     ensureAllDefaultOptions($scope);
-                  
+
                     $scope.selectedNodes = $scope.selectedNodes || [];
                     $scope.expandedNodes = $scope.expandedNodes || [];
                     $scope.expandedNodesMap = {};
@@ -249,6 +249,25 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                         }
                     };
 
+                    $scope.rightClickNodeLabel = function( targetNode, $event ) {
+
+                        // Is there a right click function??
+                        if($scope.onRightClick) {
+
+                            // Turn off the browser default context-menu
+                            if($event)
+                                $event.preventDefault();
+
+                            // Are are we changing the 'selected' node (as well)?
+                            if ($scope.selectedNode != targetNode) {
+                                this.selectNodeLabel(targetNode);
+                            }
+
+                            // Finally go do what they asked
+                            $scope.onRightClick({node: targetNode});
+                        }
+                    };
+
                     $scope.selectedClass = function() {
                         var isThisNodeSelected = isSelectedNode(this.node);
                         var labelSelectionClass = classIfDefined($scope.options.injectClasses.labelSelected, false);
@@ -266,6 +285,9 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     };
 
                     //tree template
+                    var rcLabel = $scope.onRightClick ? ' tree-right-click="rightClickNodeLabel(node)"' : '';
+                    var ctxMenuId = $scope.menuId ? ' context-menu-id="'+ $scope.menuId+'"' : '';
+
                     $scope.isReverse = function() {
                       return !($scope.reverseOrder === 'false' || $scope.reverseOrder === 'False' || $scope.reverseOrder === '' || $scope.reverseOrder === false);
                     };
@@ -273,7 +295,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     $scope.orderByFunc = function() {
                       return $scope.orderBy;
                     };
-//                    return "" + $scope.orderBy;
 
                     var templateOptions = {
                         orderBy: $scope.orderBy ? " | orderBy:orderByFunc():isReverse()" : '',
@@ -298,7 +319,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             'set-node-to-data>' +
                             '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
                             '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
-                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div>' +
+                            '<div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" ' + rcLabel + ctxMenuId + ' tree-transclude></div>' +
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
@@ -306,6 +327,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     this.template = $compile($interpolate(template)({options: templateOptions}));
                 }],
+
                 compile: function(element, attrs, childTranscludeFn) {
                     return function ( scope, element, attrs, treemodelCntr ) {
 
@@ -381,6 +403,18 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 }
             };
         }])
+
+        .directive('treeRightClick', function($parse) {
+            return function(scope, element, attrs) {
+                var fn = $parse(attrs.treeRightClick);
+                element.bind('contextmenu', function(event) {
+                    scope.$apply(function() {
+                        fn(scope, {$event:event});    // go do our stuff
+                    });
+                });
+            };
+        })
+
         .directive("treeitem", function() {
             return {
                 restrict: 'E',

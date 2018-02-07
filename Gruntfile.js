@@ -34,6 +34,7 @@ module.exports = function(grunt) {
                         'demo/angular.1.3.12.js',
                         'demo/angular-mocks.1.3.12.js',
                         'angular-tree-control.js',
+                        'context-menu.js',
                         'test/**/*.js'
                     ]
                 }
