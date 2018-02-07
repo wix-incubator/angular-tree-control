@@ -1,6 +1,6 @@
 {
   "name": "angular-tree-control",
-  "version": "0.2.28",
+  "version": "0.2.30",
   "description": "Angular Tree Control",
   "main": "angular-tree-control.js",
   "scripts": {
@@ -12,7 +12,8 @@
   },
   "author": "Yoav Abrahami",
   "contributors": [
-    "Benjamin Orozco <benoror@gmail.com>"
+    "Benjamin Orozco <benoror@gmail.com>",
+    "Stuart McGrigor"
   ],
   "license": "MIT",
   "bugs": {

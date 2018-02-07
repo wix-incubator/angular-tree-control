@@ -613,31 +613,7 @@ describe('treeControl', function() {
             expect(element.find('li:eq(1)').text()).toBe('b');
             expect(element.find('li:eq(2)').text()).toBe('a');
         });
-
-        it('should order sub-trees on different orders by expression', function() {
-            $rootScope.treedata = [
-                { subTreeSortOrder:"-label", label: "a", children: [ {label:"a2", children:[]}, {label:"a3", children:[]}, {label:"a1", children:[]} ] },
-                { subTreeSortOrder:"label",  label: "b", children: [ {label:"b2", children:[]}, {label:"b3", children:[]}, {label:"b1", children:[]} ] }
-            ];
-            element = $compile('<treecontrol tree-model="treedata" order-by-expression="node.subTreeSortOrder">{{node.label}}</treecontrol>')($rootScope);
-            $rootScope.$digest();
-            element.find('li:eq(1) .tree-branch-head').click();  // expand 'b' sub-tree
-            element.find('li:eq(0) .tree-branch-head').click();  // expand 'a' sub-tree
-            expect(element.find('li').length).toBe(8);
-
-            // 'A' sub-tree is ordered by descending label
-            expect(element.find('li:eq(0) div.tree-label:eq(0)').text()).toBe('a');
-            expect(element.find('li:eq(1)').text()).toBe('a3');
-            expect(element.find('li:eq(2)').text()).toBe('a2');
-            expect(element.find('li:eq(3)').text()).toBe('a1');
-
-            // 'B' sub-tree is ordered by ascending label
-            expect(element.find('li:eq(4) div.tree-label:eq(0)').text()).toBe('b');
-            expect(element.find('li:eq(5)').text()).toBe('b1');
-            expect(element.find('li:eq(6)').text()).toBe('b2');
-            expect(element.find('li:eq(7)').text()).toBe('b3');
-        });
-
+      
         it('should be able to accept alternative children variable name', function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata.push({kinder: [{}]});
