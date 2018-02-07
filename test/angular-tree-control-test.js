@@ -1,11 +1,12 @@
 describe('treeControl', function() {
-    var $compile, $rootScope, element, num;
+    var $compile, $rootScope, element, num, $templateCache;
 
     beforeEach(function () {
         module('treeControl');
         inject(function ($injector) {
             $compile = $injector.get('$compile');
             $rootScope = $injector.get('$rootScope');
+            $templateCache = $injector.get('$templateCache');
         });
         num = 1;
     });
@@ -73,6 +74,7 @@ describe('treeControl', function() {
             $rootScope.$digest();
             expect(element.find('li.tree-leaf').length).toBe(0);
         });
+
     });
 
     describe('rendering context menu', function () {
@@ -114,6 +116,28 @@ describe('treeControl', function() {
             expect(element.find('li.tree-leaf').length).toBe(3);
         });
 
+        it('should display first level parents as leafs, based on condition', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            // reverse which is leaf and which is branch - now we have 2 leafs that are not expanded
+            $rootScope.treeOptions = {isLeaf: function(node) {return node.children.length > 0;}};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li.tree-collapsed').length).toBe(0);
+            expect(element.find('li.tree-leaf').length).toBe(2);
+        });
+
+        it('should display second level as branches, based on condition', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            // reverse which is leaf and which is branch - now we have 2 leafs that are not expanded
+            $rootScope.treeOptions = {isLeaf: function(node) {return node.children.length > 0;}};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            element.find('li:eq(1) .tree-branch-head').click();
+            element.find('li:eq(0) .tree-branch-head').click();
+            // now the first level "leafs" are expanded, and we have 4 second level "branches"
+            expect(element.find('li.tree-collapsed').length).toBe(4);
+            expect(element.find('li.tree-leaf').length).toBe(2);
+        });
     });
 
     describe('rendering using external scope data', function () {
@@ -209,6 +233,18 @@ describe('treeControl', function() {
             expect(element.find('li:eq(1) span').text()).toBe('node 6 odd:true');
             expect(element.find('li:eq(2) span').text()).toBe('node 11 odd:false');
             expect(element.find('li:eq(3) span').text()).toBe('node 16 odd:true');
+        });
+
+        it('should support $path', function () {
+            element = $compile('<treecontrol tree-model="treedata">{{node.label}} path:{{renderPath($path)}}</treecontrol>')($rootScope);
+            $rootScope.renderPath = function(path) {
+                return path().map(function(obj) {return obj.label});
+            };
+            $rootScope.$digest();
+
+            expect(element.find('li:eq(0) span').text()).toBe('node 1 path:["node 1"]');
+            element.find('li:eq(0) .tree-branch-head').click(); // expanding node 1
+            expect(element.find('li:eq(0) li:eq(0) span').text()).toBe('node 2 path:["node 2","node 1"]');
         });
     });
 
@@ -356,7 +392,30 @@ describe('treeControl', function() {
         expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
         expect($rootScope.nodeToggle).toHaveBeenCalledWith($rootScope.treedata[1].children[0].label, $rootScope.treedata[1].label, 0, true, false, false, false, true);
       });
-    });
+
+        it('should support $path', function () {
+            $rootScope.treedata = createSubTree(3, 2);
+            element = $compile('<treecontrol tree-model="treedata" on-node-toggle="nodeToggle(node.label, $path)">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            var calls = [];
+            $rootScope.nodeToggle = function(label, path) {
+              calls.push({label: label, path: path().map(function(obj) {return obj.label})});
+            };
+            element.find('li:eq(1) .tree-branch-head').click(); // expanding node 8
+            element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // expanding node 9
+            element.find('li:eq(1) li:eq(0) li:eq(0) .tree-branch-head').click(); // expanding node 10
+            element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // contracting node 8
+            expect(calls[0].label).toEqual('node 8');
+            expect(calls[0].path).toEqual(['node 8']);
+            expect(calls[1].label).toEqual('node 9');
+            expect(calls[1].path).toEqual(['node 9', 'node 8']);
+            expect(calls[2].label).toEqual('node 10');
+            expect(calls[2].path).toEqual(['node 10', 'node 9', 'node 8']);
+            expect(calls[3].label).toEqual('node 9');
+            expect(calls[3].path).toEqual(['node 9', 'node 8']);
+        });
+    })
 
     describe('multi-selection', function() {
         it('should publish the currently selected nodes on scope', function () {
@@ -407,6 +466,23 @@ describe('treeControl', function() {
             expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, true);
             expect($rootScope.itemSelected).toHaveBeenCalledWith($rootScope.treedata[0].label, false);
             expect($rootScope.itemSelected.calls.length).toBe(2);
+        });
+
+        it('should call on-selection with $path function', function () {
+            $rootScope.treeOptions = {multiSelection: true};
+            $rootScope.treedata = createSubTree(3, 2);
+            element = $compile('<treecontrol tree-model="treedata" on-selection="itemSelected(node.label, $path)" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            var calls = [];
+            $rootScope.itemSelected = function(label, path) {
+                calls.push({label: label, path: path().map(function(obj) {return obj.label})});
+            };
+            element.find('li:eq(1) .tree-branch-head').click(); // expanding node 8
+            element.find('li:eq(1) li:eq(0) .tree-branch-head').click(); // expanding node 9
+            element.find('li:eq(1) li:eq(0) li:eq(0) div').click(); // click node 10
+            expect(calls[0].label).toEqual('node 10');
+            expect(calls[0].path).toEqual(['node 10', 'node 9', 'node 8']);
         });
 
         it('should un-select a node after second click', function () {
@@ -462,11 +538,65 @@ describe('treeControl', function() {
             ];
             $rootScope.predicate = 'label';
             $rootScope.reverse = false;
-            element = $compile('<treecontrol tree-model="treedata" order-by="{{predicate}}" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" order-by="predicate" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
             expect(element.find('li:eq(0)').text()).toBe('a');
             expect(element.find('li:eq(1)').text()).toBe('b');
             expect(element.find('li:eq(2)').text()).toBe('c');
+        });
+
+        it('should order sibling nodes in normal order with inplace order-by', function() {
+            $rootScope.treedata = [
+                { label: "a", children: [] },
+                { label: "c", children: [] },
+                { label: "b", children: [] }
+            ];
+            $rootScope.reverse = false;
+            element = $compile('<treecontrol tree-model="treedata" order-by="\'label\'" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('a');
+            expect(element.find('li:eq(1)').text()).toBe('b');
+            expect(element.find('li:eq(2)').text()).toBe('c');
+        });
+
+        it('should order sibling nodes in normal order with multiple fields', function() {
+            $rootScope.treedata = [
+                { group: 2, label: "c", children: [] },
+                { group: 1, label: "b", children: [] },
+                { group: 2, label: "b", children: [] },
+                { group: 2, label: "a", children: [] },
+                { group: 1, label: "c", children: [] }
+            ];
+            $rootScope.predicate = ['group', 'label'];
+            $rootScope.reverse = false;
+            element = $compile('<treecontrol tree-model="treedata" order-by="predicate" reverse-order="{{reverse}}">{{node.group}}-{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('1-b');
+            expect(element.find('li:eq(1)').text()).toBe('1-c');
+            expect(element.find('li:eq(2)').text()).toBe('2-a');
+            expect(element.find('li:eq(3)').text()).toBe('2-b');
+            expect(element.find('li:eq(4)').text()).toBe('2-c');
+        });
+
+        it('should order sibling nodes in normal order with a function', function() {
+            $rootScope.treedata = [
+                { group: 2, label: "c", children: [] },
+                { group: 1, label: "b", children: [] },
+                { group: 2, label: "b", children: [] },
+                { group: 2, label: "a", children: [] },
+                { group: 1, label: "c", children: [] }
+            ];
+            $rootScope.predicate = function(obj) {
+                return obj.group + '-' + obj.label;
+            };
+            $rootScope.reverse = false;
+            element = $compile('<treecontrol tree-model="treedata" order-by="predicate" reverse-order="{{reverse}}">{{node.group}}-{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+            expect(element.find('li:eq(0)').text()).toBe('1-b');
+            expect(element.find('li:eq(1)').text()).toBe('1-c');
+            expect(element.find('li:eq(2)').text()).toBe('2-a');
+            expect(element.find('li:eq(3)').text()).toBe('2-b');
+            expect(element.find('li:eq(4)').text()).toBe('2-c');
         });
 
         it('should order sibling nodes in reverse order', function() {
@@ -477,7 +607,7 @@ describe('treeControl', function() {
             ];
             $rootScope.predicate = 'label';
             $rootScope.reverse = true;
-            element = $compile('<treecontrol tree-model="treedata" order-by="{{predicate}}" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
+            element = $compile('<treecontrol tree-model="treedata" order-by="predicate" reverse-order="{{reverse}}">{{node.label}}</treecontrol>')($rootScope);
             $rootScope.$digest();
             expect(element.find('li:eq(0)').text()).toBe('c');
             expect(element.find('li:eq(1)').text()).toBe('b');
@@ -777,7 +907,9 @@ describe('treeControl', function() {
             element.find('li:eq(1) .tree-branch-head').click();
             expect($rootScope.expandedNodes).not.toContain($rootScope.treedata[1]);
         });
+    });
 
+    describe('expanded-nodes binding', function () {
         it('should retain expansions after full model refresh', function () {
             var testTree = createSubTree(2, 2);
             $rootScope.treedata = angular.copy(testTree);
@@ -792,6 +924,86 @@ describe('treeControl', function() {
             expect(element.find('li:eq(0)').hasClass('tree-expanded')).toBeTruthy();
         });
 
+        it('should support a large tree', function () {
+            var testTree = createSubTree(3, 10);
+            element = $compile('<treecontrol tree-model="treedata" expanded-nodes="expandedNodes">{{node.label}}</treecontrol>')($rootScope);
+
+            var expandedNodes = [];
+            function diveInto(parent) {
+                expandedNodes.push(parent);
+                if (Array.isArray(parent.children)) {
+                    parent.children.forEach(function(child) {
+                        diveInto(child);
+                    });
+                }
+            }
+            testTree.forEach(function(rootNode) {
+                diveInto(rootNode);
+            });
+
+            $rootScope.treedata = testTree;
+            $rootScope.$digest();
+            $rootScope.expandedNodes = expandedNodes;
+            $rootScope.$digest();
+
+            //console.log(element);
+            expect(element.find('li.tree-expanded').length + element.find('li.tree-leaf').length).toBe($rootScope.expandedNodes.length);
+        });
+
+    });
+
+    describe('external template', function () {
+        beforeEach(function () {
+          $rootScope.treedata = createSubTree(3, 2);
+          $rootScope.expandedNodes = [$rootScope.treedata[1], $rootScope.treedata[1].children[1]];
+          $templateCache.put("my-template",
+            '<ul {{options.ulClass}} >' +
+            '  <li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
+            'set-node-to-data>' +
+            '    <i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
+            '    <i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
+            '    <div class="item-wrapper"><div class="tree-label {{options.labelClass}}" ng-class="[selectedClass(), unselectableClass()]" ng-click="selectNodeLabel(node)" tree-transclude></div></div>' +
+            '    <treeitem ng-if="nodeExpanded()"></treeitem>' +
+            '  </li>' +
+            '</ul>');
+          $rootScope.treeOptions = {
+            templateUrl: 'my-template'
+          };
+          element = $compile('<treecontrol tree-model="treedata" expanded-nodes="expandedNodes" options="treeOptions"><div class="item-wrapper-2">{{node.label}}</div></treecontrol>')($rootScope);
+          $rootScope.$digest();
+        });
+
+        it('should contain 6 labels with 2 wrapper divs: div.item-wrapper (from the custom template) and div.item-wrapper-2 (from the tree label template). ' +
+           'The number 6 is because we have a tree with 2 nodes at each level with two expanded nodes - so 2 roots and 2 children of each expanded node.', function () {
+          expect(element.find('li div.item-wrapper div.item-wrapper-2').length).toBe(6);
+        });
+    });
+
+    describe('selected Node null or undefined', function() {
+
+        it('should delete the selected node without breaking the $digest', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" selected-node="selectedItem">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            element.find('li:eq(0) div').click();
+            expect($rootScope.selectedItem.label).toBe('node 1');
+            delete $rootScope.selectedItem ;
+            $rootScope.$digest();
+
+        });
+
+        it('should change the selected node to null without breaking the $digest', function () {
+            $rootScope.treedata = createSubTree(2, 2);
+            element = $compile('<treecontrol tree-model="treedata" selected-node="selectedItem">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            element.find('li:eq(0) div').click();
+            expect($rootScope.selectedItem.label).toBe('node 1');
+            $rootScope.selectedItem = null;
+            $rootScope.$digest();
+
+        });
     });
 
 });

@@ -1,6 +1,6 @@
 {
   "name": "angular-tree-control",
-  "version": "0.2.12",
+  "version": "0.2.28",
   "description": "Angular Tree Control",
   "main": "angular-tree-control.js",
   "scripts": {
@@ -10,8 +10,11 @@
     "type": "git",
     "url": "git://github.com/wix/angular-tree-control.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Yoav Abrahami",
+  "contributors": [
+    "Benjamin Orozco <benoror@gmail.com>"
+  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/wix/angular-tree-control/issues"
   },
