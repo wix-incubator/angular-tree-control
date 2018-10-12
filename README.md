@@ -128,7 +128,18 @@ Attributes of angular treecontrol
   - `isLeaf` : function (node) -> boolean used to determine if a node is a leaf or branch. The default function checks for existence of children of the node to determine leaf or branch.
   - `injectClasses` : allows to inject additional CSS classes into the tree DOM
     - `ul` : inject classes into the ul elements
-    - `li` : inject classes into the li elements
+    - `li` : inject classes into the li elements. Also allows for an external function that takes a single `node` parameter.
+
+    ```js
+    // Example:
+    function getBranchClass(node) {
+        // `matchingNodeIds` is local to a parent component controller.
+        if (matchingNodeIds.includes(node.id)) {
+            return "tree-branch-match";
+        }
+    }
+    ```
+
     - `liSelected` : inject classes into the li elements only when the node is selected
     - `iExpanded` : inject classes into the 'i' element for the expanded nodes
     - `iCollapsed` : inject classes into the 'i' element for the collapsed nodes

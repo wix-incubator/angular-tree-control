@@ -1,6 +1,8 @@
 describe('treeControl', function() {
     var $compile, $rootScope, element, num, $templateCache;
 
+    var LI_CLASS = "tree-branch-test";
+
     beforeEach(function () {
         module('treeControl');
         inject(function ($injector) {
@@ -17,6 +19,12 @@ describe('treeControl', function() {
             currentLevel.push({label: 'node ' + (num++), children: createSubTree(levels-1, children)});
         }
         return currentLevel;
+    }
+
+    function liClassFn(node) {
+        if (node.label === "node 7") {
+            return LI_CLASS;
+        }
     }
 
     describe('rendering', function () {
@@ -613,7 +621,7 @@ describe('treeControl', function() {
             expect(element.find('li:eq(1)').text()).toBe('b');
             expect(element.find('li:eq(2)').text()).toBe('a');
         });
-      
+
         it('should be able to accept alternative children variable name', function () {
             $rootScope.treedata = createSubTree(2, 2);
             $rootScope.treedata.push({kinder: [{}]});
@@ -708,6 +716,30 @@ describe('treeControl', function() {
             element.find('li:eq(0) .tree-branch-head').click();
             expect(element.find('li:eq(0) .tree-branch-head').hasClass('expandcls')).toBeTruthy();
             expect(element.find('li:eq(1) .tree-branch-head').hasClass('collapsecls')).toBeTruthy();
+        });
+
+        it('should be able to accept a string or function for the li element class names', function () {
+            // Constant li class
+
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treeOptions = {injectClasses: { li: LI_CLASS }};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            expect(element.find('li:eq(0)').hasClass(LI_CLASS)).toBe(true);
+
+            expect(element.find('li:eq(1)').hasClass(LI_CLASS)).toBe(true);
+
+            // Conditional li class, via a function.
+
+            $rootScope.treedata = createSubTree(2, 2);
+            $rootScope.treeOptions = {injectClasses: { li: liClassFn }};
+            element = $compile('<treecontrol tree-model="treedata" options="treeOptions">{{node.label}}</treecontrol>')($rootScope);
+            $rootScope.$digest();
+
+            expect(element.find('li:eq(0)').hasClass(LI_CLASS)).toBe(true);
+
+            expect(element.find('li:eq(1)').hasClass(LI_CLASS)).toBe(false);
         });
 
         it('should filter sibling nodes based on filter expression which is a string', function() {
