@@ -70,6 +70,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         ensureDefault($scope.options.injectClasses, "ul", "");
         ensureDefault($scope.options.injectClasses, "li", "");
         ensureDefault($scope.options.injectClasses, "liSelected", "");
+        ensureDefault($scope.options.injectClasses, "iBranch", "");
         ensureDefault($scope.options.injectClasses, "iExpanded", "");
         ensureDefault($scope.options.injectClasses, "iCollapsed", "");
         ensureDefault($scope.options.injectClasses, "iLeaf", "");
@@ -85,7 +86,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         .constant('treeConfig', {
             templateUrl: null
         })
-
         .directive( 'treecontrol', ['$compile', function( $compile ) {
             /**
              * @param cssClass - the css class
@@ -101,6 +101,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 else
                     return "";
             }
+
             return {
                 restrict: 'EA',
                 require: "treecontrol",
@@ -149,16 +150,29 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     }
 
                     $scope.headClass = function(node) {
+                        var liClass = $scope.options.injectClasses.iBranch;
+
+                        if (typeof liClass === "function") {
+                            liClass = liClass(node);
+                        }
+
+                        var additionalClasses = " " + classIfDefined(liClass, false);
+
                         var liSelectionClass = classIfDefined($scope.options.injectClasses.liSelected, false);
-                        var injectSelectionClass = "";
-                        if (liSelectionClass && isSelectedNode(node))
-                            injectSelectionClass = " " + liSelectionClass;
-                        if ($scope.options.isLeaf(node, $scope))
-                            return "tree-leaf" + injectSelectionClass;
-                        if ($scope.expandedNodesMap[this.$id])
-                            return "tree-expanded" + injectSelectionClass;
-                        else
-                            return "tree-collapsed" + injectSelectionClass;
+
+                        if (liSelectionClass && isSelectedNode(node)) {
+                            additionalClasses += " " + liSelectionClass;
+                        }
+
+                        if ($scope.options.isLeaf(node, $scope)) {
+                            return "tree-leaf" + additionalClasses;
+                        }
+
+                        if ($scope.expandedNodesMap[this.$id]) {
+                            return "tree-expanded" + additionalClasses;
+                        }
+
+                        return "tree-collapsed" + additionalClasses;
                     };
 
                     $scope.iBranchClass = function() {
@@ -327,7 +341,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
 
                     this.template = $compile($interpolate(template)({options: templateOptions}));
                 }],
-
                 compile: function(element, attrs, childTranscludeFn) {
                     return function ( scope, element, attrs, treemodelCntr ) {
 
@@ -378,10 +391,6 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             scope.expandedNodesMap = newExpandedNodesMap;
                         });
 
-//                        scope.$watch('expandedNodesMap', function(newValue) {
-//
-//                        });
-
                         //Rendering template for a root node
                         treemodelCntr.template( scope, function(clone) {
                             element.html('').append( clone );
@@ -403,18 +412,16 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                 }
             };
         }])
-
         .directive('treeRightClick', function($parse) {
             return function(scope, element, attrs) {
                 var fn = $parse(attrs.treeRightClick);
                 element.bind('contextmenu', function(event) {
                     scope.$apply(function() {
-                        fn(scope, {$event:event});    // go do our stuff
+                        fn(scope, {$event:event});
                     });
                 });
             };
         })
-
         .directive("treeitem", function() {
             return {
                 restrict: 'E',
