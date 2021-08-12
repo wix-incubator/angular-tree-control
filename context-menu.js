@@ -46,7 +46,7 @@
                                 });
 
                                 var ulDim = { height: ul.prop("clientHeight"),
-                                              width:  ul.prop("cientWidth")
+                                              width:  ul.prop("clientWidth")
                                             };
 
                                 var pgDim = getPageDimensions();

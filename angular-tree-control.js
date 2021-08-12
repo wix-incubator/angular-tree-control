@@ -79,6 +79,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
         ensureDefault($scope.options, "isLeaf", defaultIsLeaf);
         ensureDefault($scope.options, "allowDeselect", true);
         ensureDefault($scope.options, "isSelectable", defaultIsSelectable);
+        ensureDefault($scope, "selectOnRightClick", true);
     }
 
     angular.module( 'treeControl', ['contextMenu'] )
@@ -114,6 +115,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                     onNodeToggle: "&?",
                     onRightClick: "&?",
                     menuId: "@",
+                    selectOnRightClick: "=?",
                     options: "=?",
                     orderBy: "=?",
                     reverseOrder: "@",
@@ -272,7 +274,7 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                                 $event.preventDefault();
 
                             // Are are we changing the 'selected' node (as well)?
-                            if ($scope.selectedNode != targetNode) {
+                            if ($scope.selectedNode != targetNode && $scope.selectOnRightClick) {
                                 this.selectNodeLabel(targetNode);
                             }
 

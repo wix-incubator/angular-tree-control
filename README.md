@@ -119,6 +119,7 @@ Attributes of angular treecontrol
 - `on-selection` : `(node, selected)` callback called whenever selecting a node in the tree. The callback expression can use the selected node (`node`) and a boolean which indicates if the node was selected or deselected (`selected`).
 - `on-node-toggle` : `(node, expanded)` callback called whenever a node expands or collapses in the tree. The callback expression can use the toggled node (`node`) and a boolean which indicates expansion or collapse (`expanded`).
 - `on-right-click` : `(node)` callback called whenever a node is right-clicked.
+- `select-on-right-click` : Should the right click propagate to a node selected? If `false` it will not fire the `on-selection` callback. Defaults to `true`.
 - `options` : different options to customize the tree control.
   - `multiSelection` : [Boolean] enable multiple nodes selection in the tree.
   - `nodeChildren` : the name of the property of each node that holds the node children. Defaults to 'children'.
