@@ -335,6 +335,10 @@ if (typeof module !== "undefined" && typeof exports !== "undefined" && module.ex
                             '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                             '</li>' +
                             '</ul>';
+                        template = template
+                            .replace(/{{/g, $interpolate.startSymbol())
+                            .replace(/}}/g, $interpolate.endSymbol())
+                        ;
                     }
 
                     this.template = $compile($interpolate(template)({options: templateOptions}));
